@@ -5,10 +5,11 @@ const SoundManager = function (data) {
 SoundManager.prototype = {
 	sounds: null,
 	update() {
-		const _api = createjs.Sound;
 		const s = this.scene;
 		const ss = s.settings;
-		_api.setMute(Boolean(s.state.paused || ss.soundsEnabled === false));
+		createjs.Sound.muted = Boolean(
+			s.state.paused || ss.soundsEnabled === false
+		);
 	},
 	setVolume(sound, vol) {
 		if (this.sounds[sound]) {

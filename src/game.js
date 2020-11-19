@@ -1,39 +1,40 @@
 import Editor from "./scenes/editor";
 import Main from "./scenes/main";
-
-function Game(error, assets, options) {
-	this.assets = assets;
-	this.settings = options;
-	this.initCanvas();
-	this.initStage();
-	this.setSize();
-	this.switchScene(error);
-	this.setSize();
-	this.startTicker();
-}
-const s = {
+const scenes = {
 	Editor,
 	Main,
 };
-Game.prototype = {
-	gameContainer: null,
-	tickCount: 0,
-	currentScene: null,
-	assets: null,
-	stage: null,
-	canvas: null,
-	stats: null,
-	width: 0,
-	height: 0,
-	fullscreen: false,
-	onStateChange: null,
+class Game {
+	constructor(error, assets, options) {
+		this.gameContainer = null;
+		this.tickCount = 0;
+		this.currentScene = null;
+		this.stage = null;
+		this.canvas = null;
+		this.stats = null;
+		this.width = 0;
+		this.height = 0;
+		this.fullscreen = false;
+		this.onStateChange = null;
+
+		this.assets = assets;
+		this.settings = options;
+		this.initCanvas();
+		this.initStage();
+		this.setSize();
+		this.switchScene(error);
+		this.setSize();
+		this.startTicker();
+	}
+
 	initCanvas() {
 		const canvas = document.createElement("canvas");
 		const panFrame = document.getElementById(this.settings.defaultContainerID);
 		panFrame.appendChild(canvas);
 		this.gameContainer = panFrame;
 		this.canvas = canvas;
-	},
+	}
+
 	initStage() {
 		const stage = new createjs.Stage(this.canvas);
 		stage.autoClear = false;
@@ -42,7 +43,8 @@ Game.prototype = {
 		stage.mouseMoveOutside = true;
 		stage.preventSelection = false;
 		this.stage = stage;
-	},
+	}
+
 	setSize() {
 		let h = window.innerHeight;
 		let w = window.innerWidth;
@@ -76,25 +78,30 @@ Game.prototype = {
 		if (this.currentScene) {
 			this.currentScene.command("resize");
 		}
-	},
+	}
+
 	startTicker() {
 		createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCED;
-		createjs.Ticker.setFPS(this.settings.drawFPS);
+		createjs.Ticker.framerate = this.settings.drawFPS;
 		createjs.Ticker.on("tick", this.update.bind(this));
-	},
-	update() {
+	}
+
+	update(e) {
 		this.currentScene.update();
 		this.tickCount++;
-	},
-	switchScene(transition) {
+	}
+
+	switchScene(sceneId) {
 		if (this.currentScene !== null) {
 			this.currentScene.close();
 		}
-		this.currentScene = new s[transition](this);
-	},
+		this.currentScene = new scenes[sceneId](this);
+	}
+
 	command() {
 		this.currentScene.command(...arguments);
-	},
+	}
+
 	close() {
 		createjs.Ticker.reset();
 		createjs.Ticker.removeAllEventListeners();
@@ -113,7 +120,7 @@ Game.prototype = {
 		this.tickCount = null;
 		this.height = null;
 		this.width = null;
-	},
-};
+	}
+}
 
 export default Game;

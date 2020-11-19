@@ -19,7 +19,7 @@ const Player = function (options, value) {
 		vehicles = options.settings.track.vehicle;
 	}
 	this._baseVehicleType = vehicles;
-	this._gamepad = new GamePad(options);
+	this.gamepad = new GamePad(options);
 	this._ghost = false;
 	this._color = value.color ? value.color : "#000000";
 	this.setDefaults();
@@ -58,8 +58,8 @@ Player.prototype.setDefaults = function () {
 	this._addCheckpoint = false;
 	this._checkpoints = [];
 	this._crashed = false;
-	this._effect = false;
-	this._effectTicks = 0;
+	this.explosion = false;
+	this.explosionTicks = 0;
 	this._opacity = 1;
 	this.complete = false;
 	this._powerupsConsumed = {
@@ -116,7 +116,7 @@ Player.prototype.getTargetsHit = function () {
 	return this._powerupsConsumed.targets.length;
 };
 Player.prototype.getGamepad = function () {
-	return this._gamepad;
+	return this.gamepad;
 };
 Player.prototype.setBaseVehicle = function (p2) {
 	this._baseVehicleType = p2;
@@ -160,8 +160,8 @@ Player.prototype.createTempVehicle = function (type, end, base, filter) {
 		this._tempVehicleTicks += end;
 	} else {
 		this.getActiveVehicle().stopSounds();
-		this._effect = new Explosion(base, this._scene);
-		this._effectTicks = 45;
+		this.explosion = new Explosion(base, this._scene);
+		this.explosionTicks = 45;
 		this._tempVehicleType = type;
 		this._tempVehicle = new types[type](this, base, filter);
 		this._tempVehicleTicks = end;
@@ -179,8 +179,8 @@ Player.prototype.update = function () {
 				this._tempVehicleTicks--;
 			}
 			if (this._tempVehicleTicks <= 0 && this._crashed === false) {
-				this._effectTicks = 45;
-				this._effect = new Explosion(
+				this.explosionTicks = 45;
+				this.explosion = new Explosion(
 					this._tempVehicle.focalPoint.pos,
 					this._scene
 				);
@@ -192,9 +192,9 @@ Player.prototype.update = function () {
 				prevPageButtonSprite = this._baseVehicle;
 			}
 		}
-		if (this._effectTicks > 0) {
-			this._effectTicks--;
-			this._effect.update();
+		if (this.explosionTicks > 0) {
+			this.explosionTicks--;
+			this.explosion.update();
 		}
 		prevPageButtonSprite.update();
 		if (this._addCheckpoint) {
@@ -253,8 +253,8 @@ Player.prototype.draw = function () {
 	if (this._tempVehicleTicks > 0) {
 		barline = this._tempVehicle;
 	}
-	if (this._effectTicks > 0) {
-		this._effect.draw(this._effectTicks / 100);
+	if (this.explosionTicks > 0) {
+		this.explosion.draw(this.explosionTicks / 100);
 	}
 	barline.draw();
 	if (this.isGhost()) {
@@ -262,7 +262,7 @@ Player.prototype.draw = function () {
 	}
 };
 Player.prototype.checkKeys = function () {
-	const self = this._gamepad;
+	const self = this.gamepad;
 	const e = this._ghost;
 	const scene = this._scene;
 	if (
@@ -334,7 +334,7 @@ Player.prototype.crashed = function () {
 	this._crashed = true;
 };
 Player.prototype.gotoCheckpoint = function () {
-	const snapshot = this._gamepad;
+	const snapshot = this.gamepad;
 	const nodes = snapshot.replaying;
 	const self = this._scene;
 	if (this._checkpoints.length > 0) {
@@ -397,7 +397,7 @@ Player.prototype.gotoCheckpoint = function () {
 	}
 };
 Player.prototype.restartScene = function () {
-	const snapshot = this._gamepad;
+	const snapshot = this.gamepad;
 	const nodes = snapshot.replaying;
 	if (nodes === false) {
 		this._scene.restartTrack = true;
@@ -421,8 +421,8 @@ Player.prototype.close = function () {
 	this._user = null;
 	this._settings = null;
 	this._baseVehicleType = null;
-	this._gamepad.close();
-	this._gamepad = null;
+	this.gamepad.close();
+	this.gamepad = null;
 	this._baseVehicle = null;
 	this._tempVehicleType = null;
 	this._tempVehicle = null;
@@ -430,8 +430,8 @@ Player.prototype.close = function () {
 	this._addCheckpoint = null;
 	this._checkpoints = null;
 	this._crashed = null;
-	this._effect = null;
-	this._effectTicks = null;
+	this.explosion = null;
+	this.explosionTicks = null;
 	this._powerupsConsumed = null;
 };
 Player.prototype.reset = function () {
@@ -441,7 +441,7 @@ Player.prototype.reset = function () {
 	this._baseVehicle.stopSounds();
 	this.setDefaults();
 	this.createBaseVehicle(new Vector2(0, 35), 1, new Vector2(0, 0));
-	this._gamepad.reset();
+	this.gamepad.reset();
 	this._scene.state.playerAlive = this.isAlive();
 };
 

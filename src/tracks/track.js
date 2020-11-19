@@ -23,9 +23,10 @@ function Track(data) {
 	this.game = data.game;
 	this.settings = data.game.settings;
 	this.camera = data.camera;
-	this.sectors = {};
-	this.sectors.drawSectors = [];
-	this.sectors.physicsSectors = [];
+	this.sectors = {
+		scenerySectors: [],
+		physicsSectors: [],
+	};
 	this.totalSectors = [];
 	this.powerups = [];
 	this.powerupsLookupTable = {};
@@ -90,16 +91,16 @@ Track.prototype = {
 		const e = type.split("#");
 		const fogsArray = e[0].split(",");
 		let linesAry = [];
-		let nameArgs = [];
+		let nameArguments = [];
 		if (e.length > 2) {
 			linesAry = e[1].split(",");
-			nameArgs = e[2].split(",");
+			nameArguments = e[2].split(",");
 		} else if (e.length > 1) {
-			nameArgs = e[1].split(",");
+			nameArguments = e[1].split(",");
 		}
 		this.addLines(fogsArray, this.addPhysicsLine);
 		this.addLines(linesAry, this.addSceneryLine);
-		this.addPowerups(nameArgs);
+		this.addPowerups(nameArguments);
 	},
 	addPowerups(t) {
 		const count = t.length;
@@ -109,9 +110,9 @@ Track.prototype = {
 			if (((parts = t[s].split(" ")), parts.length >= 2)) {
 				const result = [];
 				let n = parts.length;
-				let i = 1;
-				for (; n > i; i++) {
-					const a = parseInt(parts[i], 32);
+				let index = 1;
+				for (; n > index; index++) {
+					const a = Number.parseInt(parts[index], 32);
 					result.push(a);
 				}
 				const name = round(result[0]);
@@ -176,11 +177,11 @@ Track.prototype = {
 					}
 					case "W": {
 						const data = result[0];
-						const index = result[1];
+						const y = result[1];
 						const buffer = result[2];
-						const msg = result[3];
-						n = new Teleport(data, index, this);
-						const test = new Teleport(buffer, msg, this);
+						const message = result[3];
+						n = new Teleport(data, y, this);
+						const test = new Teleport(buffer, message, this);
 						n.addOtherPortalRef(test);
 						test.addOtherPortalRef(n);
 						this.addPowerup(n);
@@ -198,14 +199,21 @@ Track.prototype = {
 		this.targets.push(target);
 	},
 	addPowerup(x) {
-		const translate = this.sectors.drawSectors;
-		const isCreditCard1 = this.sectors.physicsSectors;
+		const scenerySectors = this.sectors.scenerySectors;
+		const physicsSectors = this.sectors.physicsSectors;
 		const p = x.x;
 		const n = x.y;
 		const bannerHidden = this.settings.drawSectorSize;
 		const bannedWords = this.settings.physicsSectorSize;
-		this.addRef(p, n, x, character.POWERUPS, isCreditCard1, bannedWords);
-		const a = this.addRef(p, n, x, character.POWERUPS, translate, bannerHidden);
+		this.addRef(p, n, x, character.POWERUPS, physicsSectors, bannedWords);
+		const a = this.addRef(
+			p,
+			n,
+			x,
+			character.POWERUPS,
+			scenerySectors,
+			bannerHidden
+		);
 		return (
 			a !== false && this.totalSectors.push(a),
 			x !== null &&
@@ -214,20 +222,16 @@ Track.prototype = {
 		);
 	},
 	addLines(lines, callback) {
-		const count = lines.length;
-		let mid = 0;
-		for (; count > mid; mid++) {
-			const buf = lines[mid].split(" ");
-			const l = buf.length;
-			if (l > 3) {
-				let i = 0;
-				for (; l - 2 > i; i = i + 2) {
-					const a = parseInt(buf[i], 32);
-					const c = parseInt(buf[i + 1], 32);
-					const b = parseInt(buf[i + 2], 32);
-					const dg = parseInt(buf[i + 3], 32);
+		for (const line of lines) {
+			const parts = line.split(" ");
+			if (parts.length > 3) {
+				for (let index = 0; parts.length - 2 > index; index += 2) {
+					const a = Number.parseInt(parts[index], 32);
+					const c = Number.parseInt(parts[index + 1], 32);
+					const b = Number.parseInt(parts[index + 2], 32);
+					const dg = Number.parseInt(parts[index + 3], 32);
 					const res = a + c + b + dg;
-					if (!isNaN(res)) {
+					if (!Number.isNaN(res)) {
 						callback.call(this, a, c, b, dg);
 					}
 				}
@@ -242,12 +246,11 @@ Track.prototype = {
 		const base = y - t;
 		const height = w - x;
 		const sqrt8 = sqrt(base ** 2 + height ** 2);
-		let r;
+
 		if (sqrt8 >= 2) {
-			r = new PhysicsLine(t, x, y, w);
-			this.addPhysicsLineToTrack(r);
+			const line = new PhysicsLine(t, x, y, w);
+			this.addPhysicsLineToTrack(line);
 		}
-		return r;
 	},
 	addPhysicsLineToTrack(node) {
 		const height = this.settings.drawSectorSize;
@@ -258,12 +261,12 @@ Track.prototype = {
 		const x2 = p2.x;
 		const y2 = p2.y;
 		const g = bresenham(x, y1, x2, y2, height);
-		const detail = this.sectors.drawSectors;
+		const detail = this.sectors.scenerySectors;
 		const length = g.length;
-		let i = 0;
-		for (; length > i; i = i + 2) {
-			const n = g[i];
-			const f = g[i + 1];
+		let index = 0;
+		for (; length > index; index = index + 2) {
+			const n = g[index];
+			const f = g[index + 1];
 			const e = this.addRef(n, f, node, character.LINE, detail, height);
 			if (e !== false) {
 				this.totalSectors.push(e);
@@ -273,29 +276,28 @@ Track.prototype = {
 		const m = bresenham(x, y1, x2, y2, s);
 		const isCreditCard1 = this.sectors.physicsSectors;
 		const l = m.length;
-		i = 0;
-		for (; l > i; i = i + 2) {
-			const n = m[i];
-			const f = m[i + 1];
+		index = 0;
+		for (; l > index; index = index + 2) {
+			const n = m[index];
+			const f = m[index + 1];
 			this.addRef(n, f, node, character.LINE, isCreditCard1, s);
 		}
 		this.physicsLines.push(node);
 		return node;
 	},
-	addSceneryLine(i, x, y, w) {
-		i = round(i);
+	addSceneryLine(index, x, y, w) {
+		index = round(index);
 		x = round(x);
 		y = round(y);
 		w = round(w);
-		const base = y - i;
+		const base = y - index;
 		const height = w - x;
 		const sqrt8 = sqrt(base ** 2 + height ** 2);
-		let rect;
+
 		if (sqrt8 >= 2) {
-			rect = new SceneryLine(i, x, y, w);
-			this.addSceneryLineToTrack(rect);
+			const line = new SceneryLine(index, x, y, w);
+			this.addSceneryLineToTrack(line);
 		}
-		return rect;
 	},
 	addSceneryLineToTrack(node) {
 		const height = this.settings.drawSectorSize;
@@ -306,12 +308,12 @@ Track.prototype = {
 		const x2 = p2.x;
 		const y2 = p2.y;
 		const g = bresenham(x, y, x2, y2, height);
-		const detail = this.sectors.drawSectors;
+		const detail = this.sectors.scenerySectors;
 		const l = g.length;
-		let i = 0;
-		for (; l > i; i = i + 2) {
-			const p = g[i];
-			const n = g[i + 1];
+
+		for (let index = 0; l > index; index += 2) {
+			const p = g[index];
+			const n = g[index + 1];
 			const e = this.addRef(p, n, node, character.LINE, detail, height);
 			if (e !== false) {
 				this.totalSectors.push(e);
@@ -322,22 +324,24 @@ Track.prototype = {
 	},
 	addRef(e, r, s, name, x, n) {
 		const url = floor(e / n);
-		const i = floor(r / n);
+		const index = floor(r / n);
 		let eo1 = false;
-		undefined === x[url] && (x[url] = []);
-		if (undefined === x[url][i]) {
-			const u = new Sector(url, i, this);
-			x[url][i] = u;
-			eo1 = u;
+		if (undefined === x[url]) {
+			x[url] = [];
+		}
+		if (undefined === x[url][index]) {
+			const sector = new Sector(url, index, this);
+			x[url][index] = sector;
+			eo1 = sector;
 		}
 		switch (name) {
 			case character.LINE:
-				x[url][i].addLine(s);
-				s.addSectorReference(x[url][i]);
+				x[url][index].addLine(s);
+				s.addSectorReference(x[url][index]);
 				break;
 			case character.POWERUPS:
-				x[url][i].addPowerup(s);
-				s.addSectorReference(x[url][i]);
+				x[url][index].addPowerup(s);
+				s.addSectorReference(x[url][index]);
 				break;
 			default:
 		}
@@ -349,20 +353,20 @@ Track.prototype = {
 		this.cleanPowerups();
 	},
 	cleanLines() {
-		const commonBlockProps = this.physicsLines;
+		const commonBlockProperties = this.physicsLines;
 		const result = this.sceneryLines;
-		const len = commonBlockProps.length;
+		const length_ = commonBlockProperties.length;
 		const rows = result.length;
-		let i = len - 1;
-		for (; i >= 0; i--) {
-			if (commonBlockProps[i].remove) {
-				commonBlockProps.splice(i, 1);
+		let index = length_ - 1;
+		for (; index >= 0; index--) {
+			if (commonBlockProperties[index].remove) {
+				commonBlockProperties.splice(index, 1);
 			}
 		}
-		let j = rows - 1;
-		for (; j >= 0; j--) {
-			if (result[j].remove) {
-				result.splice(j, 1);
+		let index_ = rows - 1;
+		for (; index_ >= 0; index_--) {
+			if (result[index_].remove) {
+				result.splice(index_, 1);
 			}
 		}
 	},
@@ -377,10 +381,10 @@ Track.prototype = {
 				controls.splice(id, 1);
 			}
 		}
-		let i = l - 1;
-		for (; i >= 0; i--) {
-			if (_tooltips[i].remove) {
-				_tooltips.splice(i, 1);
+		let index = l - 1;
+		for (; index >= 0; index--) {
+			if (_tooltips[index].remove) {
+				_tooltips.splice(index, 1);
 			}
 		}
 		this.targetCount = _tooltips.length;
@@ -396,17 +400,17 @@ Track.prototype = {
 		this.setPowerupStates(backwardNode);
 	},
 	setPowerupStates(e) {
-		const msgObj = this.powerupsLookupTable;
+		const messageObject = this.powerupsLookupTable;
 		let t;
 		for (t in e) {
 			const target = e[t];
-			const params = msgObj[target];
-			if (params.remove && params.id) {
-				delete msgObj[target];
+			const parameters = messageObject[target];
+			if (parameters.remove && parameters.id) {
+				delete messageObject[target];
 				delete e[target];
 			}
-			params.hit = true;
-			params.sector.powerupCanvasDrawn = false;
+			parameters.hit = true;
+			parameters.sector.powerupCanvasDrawn = false;
 		}
 	},
 	getCode() {
@@ -419,9 +423,9 @@ Track.prototype = {
 		const deltaSize = delta.length;
 		const count = reactions.length;
 		if (l > 0) {
-			let i;
-			for (i in stdout) {
-				const chunk = stdout[i];
+			let index;
+			for (index in stdout) {
+				const chunk = stdout[index];
 				if (!chunk.recorded) {
 					result = `${result}${chunk.p1.x.toString(32)} ${chunk.p1.y.toString(
 						32
@@ -429,14 +433,14 @@ Track.prototype = {
 				}
 			}
 			result = result.slice(0, -1);
-			for (i in stdout) {
-				stdout[i].recorded = false;
+			for (index in stdout) {
+				stdout[index].recorded = false;
 			}
 		}
 		if (((result = `${result}#`), deltaSize > 0)) {
-			let i;
-			for (i in delta) {
-				const chunk = delta[i];
+			let index;
+			for (index in delta) {
+				const chunk = delta[index];
 				if (!chunk.recorded) {
 					result = `${result}${chunk.p1.x.toString(32)} ${chunk.p1.y.toString(
 						32
@@ -444,8 +448,8 @@ Track.prototype = {
 				}
 			}
 			result = result.slice(0, -1);
-			for (i in delta) {
-				delta[i].recorded = false;
+			for (index in delta) {
+				delta[index].recorded = false;
 			}
 		}
 		if (((result = `${result}#`), count > 0)) {
@@ -463,9 +467,9 @@ Track.prototype = {
 	},
 	resetPowerups() {
 		const targets = this.powerups;
-		let i;
-		for (i in targets) {
-			const target = targets[i];
+		let index;
+		for (index in targets) {
+			const target = targets[index];
 			if (target.hit && !target.remove) {
 				target.hit = false;
 				target.sector.powerupCanvasDrawn = false;
@@ -478,12 +482,12 @@ Track.prototype = {
 		const p2 = input.p2;
 		this.addPhysicsLine(p1.x, p1.y, p2.x, p2.y);
 	},
-	erase(x, i, id) {
+	erase(x, index_, id) {
 		this.dirty = true;
-		const scope = x.x - i;
-		const n = x.y - i;
-		const text = x.x + i;
-		const e = x.y + i;
+		const scope = x.x - index_;
+		const n = x.y - index_;
+		const text = x.x + index_;
+		const e = x.y + index_;
 		const height = $(scope, text);
 		const index = replace(scope, text);
 		const k = $(n, e);
@@ -493,14 +497,14 @@ Track.prototype = {
 		const metersPerLine = floor(index / width);
 		const randomLineNumber = floor(k / width);
 		const y = floor(f / width);
-		const MODULE_NOTICES = this.sectors.drawSectors;
+		const MODULE_NOTICES = this.sectors.scenerySectors;
 		const data = [];
 		let moduleSlug = metersPerLine;
 		for (; mid >= moduleSlug; moduleSlug++) {
 			let type = y;
 			for (; randomLineNumber >= type; type++) {
 				if (MODULE_NOTICES[moduleSlug] && MODULE_NOTICES[moduleSlug][type]) {
-					data.push(MODULE_NOTICES[moduleSlug][type].erase(x, i, id));
+					data.push(MODULE_NOTICES[moduleSlug][type].erase(x, index_, id));
 				}
 			}
 		}
@@ -520,40 +524,40 @@ Track.prototype = {
 		this.canvasPool.update();
 	},
 	collide(a) {
-		const modV2 = this.settings.physicsSectorSize;
-		const i = Math.floor(a.pos.x / modV2 - 0.5);
-		const j = Math.floor(a.pos.y / modV2 - 0.5);
+		const moduleV2 = this.settings.physicsSectorSize;
+		const index = Math.floor(a.pos.x / moduleV2 - 0.5);
+		const index_ = Math.floor(a.pos.y / moduleV2 - 0.5);
 		const matrix = this.sectors.physicsSectors;
-		if (matrix[i] && matrix[i][j]) {
-			matrix[i][j].resetCollided();
+		if (matrix[index] && matrix[index][index_]) {
+			matrix[index][index_].resetCollided();
 		}
-		if (matrix[i + 1] && matrix[i + 1][j]) {
-			matrix[i + 1][j].resetCollided();
+		if (matrix[index + 1] && matrix[index + 1][index_]) {
+			matrix[index + 1][index_].resetCollided();
 		}
-		if (matrix[i + 1] && matrix[i + 1][j + 1]) {
-			matrix[i + 1][j + 1].resetCollided();
+		if (matrix[index + 1] && matrix[index + 1][index_ + 1]) {
+			matrix[index + 1][index_ + 1].resetCollided();
 		}
-		if (matrix[i] && matrix[i][j + 1]) {
-			matrix[i][j + 1].resetCollided();
+		if (matrix[index] && matrix[index][index_ + 1]) {
+			matrix[index][index_ + 1].resetCollided();
 		}
-		if (matrix[i] && matrix[i][j]) {
-			matrix[i][j].collide(a);
+		if (matrix[index] && matrix[index][index_]) {
+			matrix[index][index_].collide(a);
 		}
-		if (matrix[i + 1] && matrix[i + 1][j]) {
-			matrix[i + 1][j].collide(a);
+		if (matrix[index + 1] && matrix[index + 1][index_]) {
+			matrix[index + 1][index_].collide(a);
 		}
-		if (matrix[i + 1] && matrix[i + 1][j + 1]) {
-			matrix[i + 1][j + 1].collide(a);
+		if (matrix[index + 1] && matrix[index + 1][index_ + 1]) {
+			matrix[index + 1][index_ + 1].collide(a);
 		}
-		if (matrix[i] && matrix[i][j + 1]) {
-			matrix[i][j + 1].collide(a);
+		if (matrix[index] && matrix[index][index_ + 1]) {
+			matrix[index][index_ + 1].collide(a);
 		}
 	},
 	getDrawSector(delta, index) {
 		const width = this.settings.drawSectorSize;
 		const mid = floor(delta / width);
 		const m0 = floor(index / width);
-		const MPermMove = this.sectors.drawSectors;
+		const MPermMove = this.sectors.scenerySectors;
 		let flipx = false;
 		return (
 			typeof MPermMove[mid] != "undefined" &&
@@ -566,7 +570,7 @@ Track.prototype = {
 		const scene = this.scene;
 		const camera = scene.camera;
 		const canvas = scene.screen;
-		const ctx = scene.game.canvas.getContext("2d");
+		const context = scene.game.canvas.getContext("2d");
 		const scale = camera.zoom;
 		const pos = camera.position;
 		const currentCenter = scene.screen.center;
@@ -574,17 +578,17 @@ Track.prototype = {
 		const radius = (pos.x * scale) / width;
 		const windowHeight = (pos.y * scale) / width;
 		const widthProportions = canvas.width / width;
-		const propsWidth = canvas.height / width;
-		const scrollTop = propsWidth / 2;
+		const propertiesWidth = canvas.height / width;
+		const scrollTop = propertiesWidth / 2;
 		let w = widthProportions / 2;
 		const maxX = radius - w - 1;
 		const levelBegin = windowHeight - scrollTop - 1;
 		const x2 = radius + w;
 		const t = windowHeight + scrollTop;
-		ctx.imageSmoothingEnabled = false;
-		ctx.mozImageSmoothingEnabled = false;
-		ctx.oImageSmoothingEnabled = false;
-		ctx.webkitImageSmoothingEnabled = false;
+		context.imageSmoothingEnabled = false;
+		context.mozImageSmoothingEnabled = false;
+		context.oImageSmoothingEnabled = false;
+		context.webkitImageSmoothingEnabled = false;
 		const y = radius * width - currentCenter.x;
 		const h = windowHeight * width - currentCenter.y;
 		for (const sector of this.totalSectors) {
@@ -607,11 +611,11 @@ Track.prototype = {
 				if (
 					((scrollX = 0 | scrollX),
 					(top = 0 | top),
-					ctx.drawImage(sector.canvas, scrollX, top, width, width),
+					context.drawImage(sector.canvas, scrollX, top, width, width),
 					sector.hasPowerups && sector.powerupCanvasDrawn)
 				) {
 					w = sector.powerupCanvasOffset * scale;
-					ctx.drawImage(
+					context.drawImage(
 						sector.powerupCanvas,
 						scrollX - w / 2,
 						top - w / 2,
@@ -627,9 +631,9 @@ Track.prototype = {
 	closeSectors() {
 		const conns = this.totalSectors;
 		const l = conns.length;
-		let i = 0;
-		for (; l > i; i++) {
-			conns[i].close();
+		let index = 0;
+		for (; l > index; index++) {
+			conns[index].close();
 		}
 	},
 	close() {

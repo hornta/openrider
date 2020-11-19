@@ -5,11 +5,11 @@ const PlayerManager = function (data) {
 	this.game = data.game;
 	this.settings = data.settings;
 	this.firstPlayer = null;
-	this._players = [];
-	this._playerLookup = {};
+	this.players = [];
+	this.playerLookup = {};
 };
 PlayerManager.prototype.update = function () {
-	const chYxis = this._players;
+	const chYxis = this.players;
 	const len = chYxis.length;
 	let i = 0;
 	for (; len > i; i++) {
@@ -17,39 +17,29 @@ PlayerManager.prototype.update = function () {
 	}
 };
 PlayerManager.prototype.mutePlayers = function () {
-	const onCompleteBindings = this._players;
-	const len = onCompleteBindings.length;
-	let i = 0;
-	for (; len > i; i++) {
-		const s = onCompleteBindings[i].getActiveVehicle();
-		s.stopSounds();
+	for (const player of this.players) {
+		player.getActiveVehicle().stopSounds();
 	}
 };
 PlayerManager.prototype.updateGamepads = function () {
-	const onCompleteBindings = this._players;
-	const len = onCompleteBindings.length;
-	let i = 0;
-	for (; len > i; i++) {
-		onCompleteBindings[i]._gamepad.update();
+	for (const player of this.players) {
+		player.gamepad.update();
 	}
 };
 PlayerManager.prototype.createPlayer = function (callback, options) {
 	return new Player(this.scene, options);
 };
 PlayerManager.prototype.addPlayer = function (p) {
-	this._players.push(p);
-	this._playerLookup[p.id] = p;
+	this.players.push(p);
+	this.playerLookup[p.id] = p;
 };
 PlayerManager.prototype.checkKeys = function () {
-	const onCompleteBindings = this._players;
-	const len = onCompleteBindings.length;
-	let i = 0;
-	for (; len > i; i++) {
-		onCompleteBindings[i].checkKeys();
+	for (const player of this.players) {
+		player.checkKeys();
 	}
 };
 PlayerManager.prototype.draw = function () {
-	const s = this._players;
+	const s = this.players;
 	const i = s.length;
 	let l = 0;
 	for (; i > l; l++) {
@@ -57,16 +47,16 @@ PlayerManager.prototype.draw = function () {
 	}
 };
 PlayerManager.prototype.getPlayerByIndex = function (newOwner) {
-	return this._players[newOwner];
+	return this.players[newOwner];
 };
 PlayerManager.prototype.getPlayerById = function (playerId) {
-	return this._playerLookup[playerId];
+	return this.playerLookup[playerId];
 };
 PlayerManager.prototype.getPlayerCount = function () {
-	return this._players.length;
+	return this.players.length;
 };
 PlayerManager.prototype.reset = function () {
-	const forms = this._players;
+	const forms = this.players;
 	const len = forms.length;
 	let i = 0;
 	for (; len > i; i++) {
@@ -74,13 +64,13 @@ PlayerManager.prototype.reset = function () {
 	}
 };
 PlayerManager.prototype.clear = function () {
-	this._players = [];
-	this._playerLookup = {};
-	this._players.push(this.firstPlayer);
-	this._playerLookup[this.firstPlayer.id] = this.firstPlayer;
+	this.players = [];
+	this.playerLookup = {};
+	this.players.push(this.firstPlayer);
+	this.playerLookup[this.firstPlayer.id] = this.firstPlayer;
 };
 PlayerManager.prototype._closePlayers = function () {
-	const conns = this._players;
+	const conns = this.players;
 	const l = conns.length;
 	let i = 0;
 	for (; l > i; i++) {
@@ -89,9 +79,9 @@ PlayerManager.prototype._closePlayers = function () {
 };
 PlayerManager.prototype.close = function () {
 	this._closePlayers();
-	this._players = null;
+	this.players = null;
 	this.firstPlayer = null;
-	this._playerLookup = null;
+	this.playerLookup = null;
 	this.scene = null;
 	this.game = null;
 	this.settings = null;

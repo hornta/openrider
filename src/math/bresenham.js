@@ -1,12 +1,12 @@
 function bresenham(t, c, v, b, s) {
-	const str = [];
+	const lines = [];
 	let i = t;
 	let g = c;
 	const a = (b - c) / (v - t);
 	const startHour = v > t ? 1 : -1;
 	const strokeSize = b > c ? 1 : -1;
 	let d = 0;
-	str.push(t, c);
+	lines.push(t, c);
 	do {
 		const reverseIsSingle = Math.floor(i / s) == Math.floor(v / s);
 		const reverseValue = Math.floor(g / s) == Math.floor(b / s);
@@ -30,14 +30,14 @@ function bresenham(t, c, v, b, s) {
 		if ((y - t) ** 2 + (p - c) ** 2 < (w - t) ** 2 + (x - c) ** 2) {
 			i = y;
 			g = p;
-			str.push(y, p);
+			lines.push(y, p);
 		} else {
 			i = w;
 			g = x;
-			str.push(w, x);
+			lines.push(w, x);
 		}
 	} while (d++ < 5e3);
-	return str;
+	return lines;
 }
 
 export default bresenham;
