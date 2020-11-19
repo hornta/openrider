@@ -6,6 +6,10 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "@tweenjs/tween.js": "^18.6.4",
+    "createjs": "^1.0.1",
+    "jquery": "^3.5.1",
+    "lodash": "^4.17.20",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.0",
@@ -20,8 +24,53 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
-    ]
+      "react-app/jest",
+			"eslint:all",
+			"plugin:import/errors",
+  		"plugin:import/warnings",
+      "plugin:prettier/recommended"
+    ],
+    "env": {
+      "browser": true
+    },
+    "globals": {
+      "createjs": "readonly"
+		},
+		"plugins": ["import"],
+    "rules": {
+      "max-lines-per-function": 0,
+      "max-statements": 0,
+      "max-params": 0,
+      "max-lines": 0,
+      "max-depth": 0,
+      "id-length": 0,
+      "one-var": 0,
+      "no-magic-numbers": 0,
+      "no-underscore-dangle": 0,
+      "no-plusplus": 0,
+      "no-ternary": 0,
+      "no-param-reassign": 0,
+      "func-style": 0,
+      "func-names": 0,
+      "eqeqeq": 0,
+      "sort-keys": 0,
+      "no-bitwise": 0,
+      "no-empty-function": 0,
+      "guard-for-in": 0,
+      "no-undefined": 0,
+      "prefer-rest-params": 0,
+      "prefer-destructuring": 0,
+      "operator-assignment": 0,
+      "no-nested-ternary": 0,
+      "init-declarations": 0,
+      "no-continue": 0,
+      "no-loop-func": 0,
+      "camelcase": 0,
+      "complexity": 0
+    }
+  },
+  "prettier": {
+    "useTabs": true
   },
   "browserslist": {
     "production": [
@@ -34,5 +83,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.1.2"
   }
 }

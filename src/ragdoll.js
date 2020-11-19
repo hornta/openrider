@@ -1,0 +1,239 @@
+import Mass from "./mass";
+import Spring from "./spring";
+import Vector2 from "./math/vector2";
+import Vehicle from "./vehicle";
+import inventoryManager from "./inventoryManager";
+
+function Ragdoll(val, data) {
+	this.parent = data;
+
+	const obj = [];
+	const root = [];
+	const error = new Vector2(0, 0);
+	const c = new Mass();
+	const a = new Mass();
+	const x = new Mass();
+	const img = new Mass();
+	const self = new Mass();
+	const result = new Mass();
+	const key = new Mass();
+	const b = new Mass();
+	const value = new Mass();
+	const f = new Mass();
+	c.init(error, data);
+	a.init(error, data);
+	x.init(error, data);
+	img.init(error, data);
+	self.init(error, data);
+	result.init(error, data);
+	key.init(error, data);
+	b.init(error, data);
+	value.init(error, data);
+	f.init(error, data);
+	obj.push(c);
+	obj.push(a);
+	obj.push(x);
+	obj.push(img);
+	obj.push(self);
+	obj.push(result);
+	obj.push(key);
+	obj.push(b);
+	obj.push(value);
+	obj.push(f);
+	root.push(new Spring(c, a, this));
+	root.push(new Spring(c, x, this));
+	root.push(new Spring(x, self, this));
+	root.push(new Spring(c, img, this));
+	root.push(new Spring(img, result, this));
+	root.push(new Spring(a, key, this));
+	root.push(new Spring(key, value, this));
+	root.push(new Spring(a, b, this));
+	root.push(new Spring(b, f, this));
+	for (const i in obj) {
+		obj[i].radius = 3;
+	}
+	for (const i in obj) {
+		obj[i].friction = 0.05;
+	}
+	a.radius = 8;
+	c.radius = a.radius;
+	for (const i in root) {
+		root[i].springConstant = 0.4;
+	}
+	for (const i in root) {
+		root[i].dampConstant = 0.7;
+	}
+	this.masses = obj;
+	this.springs = root;
+	this.head = c;
+	this.waist = a;
+	this.lElbow = x;
+	this.rElbow = img;
+	this.rHand = result;
+	this.lHand = self;
+	this.lKnee = key;
+	this.rKnee = b;
+	this.lFoot = value;
+	this.rFoot = f;
+	for (const i in val) {
+		this[i].pos.equ(val[i]);
+	}
+}
+Ragdoll.prototype = new Vehicle();
+Ragdoll.prototype.init = Ragdoll.prototype.initialize;
+Ragdoll.prototype.parent = null;
+Ragdoll.prototype.zero = function (v, a) {
+	v = v.factor(0.7);
+	a = a.factor(0.7);
+	const newEventHandlers = this.springs;
+	const teleports = this.masses;
+	for (const i in newEventHandlers) {
+		const r = newEventHandlers[i].m2.pos.sub(newEventHandlers[i].m1.pos).len();
+		newEventHandlers[i].lrest = r;
+		newEventHandlers[i].leff = r;
+	}
+	for (let i = 1; i <= 4; i++) {
+		newEventHandlers[i].lrest = 13;
+		newEventHandlers[i].leff = 13;
+	}
+	for (const i in newEventHandlers) {
+		if (newEventHandlers[i].leff > 20) {
+			newEventHandlers[i].lrest = 20;
+			newEventHandlers[i].leff = 20;
+		}
+	}
+	const gamestate = [
+		this.head,
+		this.lElbow,
+		this.rElbow,
+		this.lHand,
+		this.rHand,
+	];
+	const d = [this.waist, this.lKnee, this.rKnee, this.lFoot, this.rFoot];
+	for (const i in gamestate) {
+		gamestate[i].old = gamestate[i].pos.sub(v);
+	}
+	for (const i in d) {
+		d[i].old = d[i].pos.sub(a);
+	}
+	for (const i in teleports) {
+		teleports[i].vel.equ(teleports[i].pos.sub(teleports[i].old));
+		teleports[i].vel.x += 1 * (Math.random() - Math.random());
+		teleports[i].vel.y += 1 * (Math.random() - Math.random());
+	}
+};
+Ragdoll.prototype.draw = function () {
+	const node = this.head;
+	const edge = this.waist;
+	const precomps = this.lElbow;
+	const subsynset = this.rElbow;
+	const xCumPos = this.rHand;
+	const healthBorderBtn = this.lHand;
+	const settings = this.lKnee;
+	const self = this.rKnee;
+	const resultbm = this.lFoot;
+	const body = this.rFoot;
+	const data = this.parent.scene;
+	const config = data.camera;
+	const dpr = config.zoom;
+	const ctx = data.game.canvas.getContext("2d");
+	const f = (this.dir, this.parent.alpha);
+	ctx.strokeStyle = `rgba(0,0,0,${f})`;
+	ctx.lineWidth = 5 * dpr;
+	ctx.lineCap = "round";
+	ctx.lineJoin = "round";
+	const point = node.pos.toScreen(data);
+	ctx.beginPath();
+	ctx.moveTo(point.x, point.y);
+	const dest = precomps.pos.toScreen(data);
+	ctx.lineTo(dest.x, dest.y);
+	const b = healthBorderBtn.pos.toScreen(data);
+	ctx.lineTo(b.x, b.y);
+	ctx.stroke();
+	ctx.strokeStyle = `rgba(0,0,0,${0.5 * f})`;
+	ctx.beginPath();
+	ctx.moveTo(point.x, point.y);
+	const xMax2d = subsynset.pos.toScreen(data);
+	ctx.lineTo(xMax2d.x, xMax2d.y);
+	const buttFrom = xCumPos.pos.toScreen(data);
+	ctx.lineTo(buttFrom.x, buttFrom.y);
+	ctx.stroke();
+	ctx.strokeStyle = `rgba(0,0,0,${f})`;
+	ctx.lineWidth = 8 * dpr;
+	ctx.beginPath();
+	ctx.moveTo(point.x, point.y);
+	const center = edge.pos.toScreen(data);
+	ctx.lineTo(center.x, center.y);
+	ctx.stroke();
+	ctx.lineWidth = 5 * dpr;
+	ctx.beginPath();
+	ctx.moveTo(center.x, center.y);
+	const buttTo = settings.pos.toScreen(data);
+	ctx.lineTo(buttTo.x, buttTo.y);
+	const item = resultbm.pos.toScreen(data);
+	ctx.lineTo(item.x, item.y);
+	let opt = settings.pos.sub(edge.pos).normalize();
+	opt = opt.factor(4).add(resultbm.pos);
+	const to = opt.toScreen(data);
+	ctx.lineTo(to.x, to.y);
+	ctx.stroke();
+	ctx.strokeStyle = `rgba(0,0,0,${0.5 * f})`;
+	ctx.lineWidth = 5 * dpr;
+	ctx.beginPath();
+	ctx.moveTo(center.x, center.y);
+	const ip = self.pos.toScreen(data);
+	ctx.lineTo(ip.x, ip.y);
+	let options = self.pos.sub(edge.pos).normalize();
+	options = options.factor(4).add(body.pos);
+	const code = body.pos.toScreen(data);
+	ctx.lineTo(code.x, code.y);
+	const p1 = options.toScreen(data);
+	ctx.lineTo(p1.x, p1.y);
+	ctx.stroke();
+	point.inc(point.sub(center).factor(0.25));
+	ctx.lineWidth = Number(dpr);
+	ctx.strokeStyle = `rgba(0,0,0,${f})`;
+	ctx.fillStyle = `rgba(255,255,255,${f})`;
+	ctx.beginPath();
+	ctx.arc(point.x, point.y, 5 * dpr, 0, 1.99999 * Math.PI, false);
+	ctx.fill();
+	ctx.stroke();
+	ctx.strokeStyle = `rgba(0,0,0,${f})`;
+	ctx.lineWidth = 0.5 * dpr;
+	ctx.beginPath();
+	const obj = this.parent.cosmetics;
+	const child = inventoryManager.getItem(obj.head);
+	const callback = this.drawHeadAngle;
+	child.draw(ctx, point.x, point.y, callback, dpr, this.dir, 1);
+};
+Ragdoll.prototype.update = function () {
+	let i = (this.springs, this.masses, this.springs.length - 1);
+	for (; i >= 0; i--) {
+		this.springs[i].update();
+	}
+	let type = this.masses.length - 1;
+	for (; type >= 0; type--) {
+		this.masses[type].update();
+	}
+	this.updateDrawHeadAngle();
+};
+Ragdoll.prototype.updateDrawHeadAngle = function () {
+	let s = "";
+	let pos = "";
+	if (this.dir < 0) {
+		pos = this.head.pos;
+		s = this.waist.pos;
+	} else {
+		s = this.head.pos;
+		pos = this.waist.pos;
+	}
+	const p = s.x;
+	const cy = s.y;
+	const left = pos.x;
+	const r = pos.y;
+	const x = p - left;
+	const y = cy - r;
+	this.drawHeadAngle = -(Math.atan2(x, y) + Math.PI);
+};
+
+export default Ragdoll;
