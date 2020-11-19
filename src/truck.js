@@ -32,10 +32,8 @@ self.swapped = false;
 self.crashed = false;
 self.createMasses = function (b) {
 	this.masses = [];
-	this.masses.push(new Mass());
-	this.masses.push(new Mass());
-	this.masses[0].init(new Vector2(b.x - 15, b.y + 7), this);
-	this.masses[1].init(new Vector2(b.x + 15, b.y + 7), this);
+	this.masses.push(new Mass(new Vector2(b.x - 15, b.y + 7), this));
+	this.masses.push(new Mass(new Vector2(b.x + 15, b.y + 7), this));
 	this.masses[0].friction = 0.1;
 	this.masses[1].friction = 0.1;
 	this.masses.push(new Wheel(new Vector2(b.x - 20, b.y + 35), this));

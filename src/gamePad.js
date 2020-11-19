@@ -25,13 +25,13 @@ GamePad.prototype = {
 	tickNumberOfKeysDown: 0,
 	replaying: false,
 	listen() {
-		document.onkeydown = this.handleButtonDown.bind(this);
-		document.onkeyup = this.handleButtonUp.bind(this);
+		document.addEventListener("keydown", this.handleButtonDown.bind(this));
+		document.addEventListener("keyup", this.handleButtonUp.bind(this));
 	},
 	unlisten() {
 		this.downButtons = {};
-		document.onkeydown = function () {};
-		document.onkeyup = function () {};
+		document.addEventListener("keydown", function () {});
+		document.addEventListener("keyup", function () {});
 	},
 	pause() {
 		this.paused = true;
@@ -52,7 +52,7 @@ GamePad.prototype = {
 		const keys = {};
 
 		for (const i in array) {
-			if (array[i] instanceof Array) {
+			if (Array.isArray(array[i])) {
 				for (const key in array[i]) {
 					keys[array[i][key]] = i;
 				}
@@ -207,7 +207,7 @@ GamePad.prototype = {
 						result[j] = [];
 					}
 					if (!answer) {
-						if (result[g] && result[g].indexOf(s) !== -1) {
+						if (result[g] && result[g].includes(s)) {
 							s += 1;
 						}
 					}

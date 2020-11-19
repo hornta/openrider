@@ -2,7 +2,7 @@ import Camera from "../view/camera";
 import CameraTool from "../tools/cameraTool";
 import CampaignScore from "../utils/campaignScore";
 import Fullscreen from "../controls/fullscreen";
-import GameSettings from "../GameSettings";
+import GameSettings from "../gameSettings";
 import LoadingCircle from "../utils/loadingCircle";
 import MessageManager from "../utils/messageManager";
 import MouseHandler from "../mouseHandler";
@@ -57,7 +57,6 @@ function Main(options) {
 		this.tapToStartOrRestart.bind(this)
 	);
 }
-const round = Math.round;
 Main.prototype = {
 	game: null,
 	assets: null,
@@ -208,18 +207,18 @@ Main.prototype = {
 		if (this.track) {
 			this.track.close();
 		}
-		const scope = new Track(this);
+		const track = new Track(this);
 		const partial = this.getAvailableTrackCode();
 		if (partial != 0) {
-			scope.read(partial);
-			this.track = scope;
+			track.read(partial);
+			this.track = track;
 			this.setTrackAllowedVehicles();
 			this.state.preloading = false;
 			this.loading = false;
 			this.restartTrack = true;
 			this.ready = true;
 		}
-		this.track = scope;
+		this.track = track;
 	},
 	setTrackAllowedVehicles() {
 		const vehicleObj = this.track;
@@ -291,12 +290,16 @@ Main.prototype = {
 			if (this.isStateDirty()) {
 				this.updateState();
 			}
-			this.stage.clear();
-			this.draw();
-			this.stage.update();
 			this.camera.updateZoom();
 		} else if (this.importCode) {
 			this.createTrack();
+		}
+	},
+	render() {
+		if (this.ready) {
+			this.stage.clear();
+			this.draw();
+			this.stage.update();
 		}
 	},
 	isStateDirty() {
@@ -635,7 +638,7 @@ Main.prototype = {
 	},
 	sortByRunTicksIterator(q) {
 		const s = this.settings;
-		const i = parseInt(q.race.run_ticks, 10);
+		const i = Number.parseInt(q.race.run_ticks, 10);
 		const n = formatNumber((i / s.drawFPS) * 1e3);
 		q.runTime = n;
 		return i;
@@ -649,7 +652,7 @@ Main.prototype = {
 		for (side in radius) {
 			const r = radius[side];
 			const source = r.id;
-			if (targets.indexOf(source) === -1) {
+			if (!targets.includes(source)) {
 				s = false;
 			}
 		}
@@ -705,20 +708,6 @@ Main.prototype = {
 			applyViewModelsSpy.reset(true);
 			this.listen();
 		}
-	},
-	drawFPS() {
-		const total = createjs.Ticker.getMeasuredFPS();
-		const i = this.game.pixelRatio;
-		const ctx = this.game.canvas.getContext("2d");
-		const thickness = 5;
-		const labelsY = this.screen.height - 12 * i;
-		const m = round(10 * total) / 10;
-		const recordText = `FPS : ${m}`;
-		ctx.save();
-		ctx.fillStyle = "#000000";
-		ctx.font = `${8 * i}pt arial`;
-		ctx.fillText(recordText, thickness * i, labelsY);
-		ctx.restore();
 	},
 	close() {
 		this.fullscreenControls = null;

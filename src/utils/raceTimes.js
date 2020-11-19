@@ -65,7 +65,7 @@ options.addRace = function (options2, x) {
 		g.beginFill(color).drawCircle(0, 0, 20);
 		shape.x = 25;
 		shape.y = 25;
-		const str = formatNumber((parseInt(z.run_ticks, 10) / fps) * 1e3);
+		const str = formatNumber((Number.parseInt(z.run_ticks, 10) / fps) * 1e3);
 		const b = new createjs.Text(str, `30px ${COIN}`, "#000000");
 		b.x = 55;
 		b.y = 9;

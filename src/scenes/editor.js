@@ -214,9 +214,12 @@ Editor.prototype = {
 			this.updateState();
 		}
 		this.stage.clear();
-		this.draw();
+		// This.draw();
 		this.stage.update();
 		this.camera.updateZoom();
+	},
+	render() {
+		this.draw();
 	},
 	isStateDirty() {
 		const proto = this.oldState;

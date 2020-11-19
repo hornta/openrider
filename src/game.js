@@ -1,5 +1,7 @@
 import Editor from "./scenes/editor";
 import Main from "./scenes/main";
+import { Ticker } from "@pixi/ticker";
+
 const scenes = {
 	Editor,
 	Main,
@@ -29,8 +31,8 @@ class Game {
 
 	initCanvas() {
 		const canvas = document.createElement("canvas");
-		const panFrame = document.getElementById(this.settings.defaultContainerID);
-		panFrame.appendChild(canvas);
+		const panFrame = document.querySelector(this.settings.defaultContainerID);
+		panFrame.append(canvas);
 		this.gameContainer = panFrame;
 		this.canvas = canvas;
 	}
@@ -81,6 +83,9 @@ class Game {
 	}
 
 	startTicker() {
+		this.ticker = new Ticker();
+		this.ticker.start();
+		this.ticker.add(this.render.bind(this));
 		createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCED;
 		createjs.Ticker.framerate = this.settings.drawFPS;
 		createjs.Ticker.on("tick", this.update.bind(this));
@@ -89,6 +94,10 @@ class Game {
 	update(e) {
 		this.currentScene.update();
 		this.tickCount++;
+	}
+
+	render() {
+		this.currentScene.render();
 	}
 
 	switchScene(sceneId) {
@@ -115,7 +124,7 @@ class Game {
 		this.stage.enableDOMEvents(false);
 		this.stage.removeAllEventListeners();
 		this.stage = null;
-		this.canvas.parentNode.removeChild(this.canvas);
+		this.canvas.remove();
 		this.canvas = null;
 		this.tickCount = null;
 		this.height = null;

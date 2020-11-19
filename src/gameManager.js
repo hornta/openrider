@@ -1,8 +1,7 @@
-import * as PIXI from "pixi.js";
 import $ from "jquery";
 import EventEmitter from "eventemitter3";
 import Game from "./game";
-import GameManifest from "./GameManifest";
+import GameManifest from "./gameManifest";
 
 let loader = false;
 let res = false;
@@ -16,7 +15,6 @@ class GameManager extends EventEmitter {
 		this.game = null;
 		this.scene = null;
 		this.trackId = null;
-		this.trackEvent = function (name, val, type, value) {};
 		this.state = {
 			preloading: true,
 			loadingPercent: 0,
@@ -35,11 +33,6 @@ class GameManager extends EventEmitter {
 		loader.addEventListener("progress", this.handleProgress.bind(this));
 		loader.addEventListener("complete", this.handleComplete.bind(this));
 		res = new createjs.LoadQueue(false, "", "Anonymous");
-
-		this.pixi = new PIXI.Application({
-			forceCanvas: true,
-			backgroundColor: 0xffffff,
-		});
 	}
 
 	clearRequests() {
@@ -76,7 +69,7 @@ class GameManager extends EventEmitter {
 	}
 
 	handleProgress(event) {
-		const namespacePrefixEq = ((event.loaded / event.total) * 100) | 0;
+		const namespacePrefixEq = Math.trunc((event.loaded / event.total) * 100);
 		const { state } = this;
 		state.loadingPercent = namespacePrefixEq;
 		state.preloading = true;
@@ -88,7 +81,7 @@ class GameManager extends EventEmitter {
 		if (t <= 0) {
 			t = 0.5;
 		}
-		let r = ((0.5 / t) * 100) | 0;
+		let r = Math.trunc((0.5 / t) * 100);
 		r = Math.min(r, 100);
 		const { state } = this;
 		state.loadingPercent = r;
@@ -257,25 +250,11 @@ class GameManager extends EventEmitter {
 		// eslint-disable-next-line no-undef
 		const t = Application.Helpers.AjaxHelper.get(s);
 		t.done(this.svrTrackRequestSuccess.bind(this));
-		t.fail(this.svrTrackRequestError.bind(this));
 		this.loadTrackRequest = t;
 	}
 
 	cdnTrackRequestSuccess(value) {
 		if (this.settings.track && value.id == this.trackId) {
-			if (this.settings.isCampaign) {
-				this.trackEvent(
-					"campaign-track",
-					"track-loaded-success",
-					this.settings.track.id
-				);
-			} else {
-				this.trackEvent(
-					"track",
-					"track-loaded-success",
-					this.settings.track.id
-				);
-			}
 			this.command("add track", value);
 			this.loadTrackRequest = null;
 		}
@@ -287,19 +266,6 @@ class GameManager extends EventEmitter {
 			event.result == 1 &&
 			event.data.track.id == this.trackId
 		) {
-			if (this.settings.isCampaign) {
-				this.trackEvent(
-					"campaign-track",
-					"track-loaded-success",
-					this.settings.track.id
-				);
-			} else {
-				this.trackEvent(
-					"track",
-					"track-loaded-success",
-					this.settings.track.id
-				);
-			}
 			if (event.result == 1) {
 				this.command("add track", event.data.track);
 			}
@@ -308,37 +274,8 @@ class GameManager extends EventEmitter {
 	}
 
 	cdnTrackRequestError(lstnrs, eventName) {
-		if (this.settings.isCampaign) {
-			this.trackEvent(
-				"campaign-track",
-				"track-loaded-fail-cdn",
-				`${this.settings.track.id}-${eventName}`
-			);
-		} else {
-			this.trackEvent(
-				"track",
-				"track-loaded-fail-cdn",
-				`${this.settings.track.id}-${eventName}`
-			);
-		}
 		this.svrTrackRequest(this.trackId);
 		this.loadTrackRequest = null;
-	}
-
-	svrTrackRequestError(lstnrs, eventName) {
-		if (this.settings.isCampaign) {
-			this.trackEvent(
-				"campaign-track",
-				"track-loaded-fail-svr",
-				`${this.settings.track.id}-${eventName}`
-			);
-		} else {
-			this.trackEvent(
-				"track",
-				"track-loaded-fail-svr",
-				`${this.settings.track.id}-${eventName}`
-			);
-		}
 	}
 
 	resize() {

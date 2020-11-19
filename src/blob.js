@@ -26,8 +26,7 @@ self.createMasses = function (b) {
 	colList.push(new Wheel(new Vector2(b.x + -15, b.y + 40), this));
 	colList.push(new Wheel(new Vector2(b.x + -15, b.y + 10), this));
 	colList.push(new Wheel(new Vector2(b.x + 15, b.y + 10), this));
-	const mass = new Mass();
-	mass.init(new Vector2(0, 0), this);
+	const mass = new Mass(new Vector2(0, 0), this);
 	mass.vel = new Vector2(0, 0);
 	this.m0 = colList[0];
 	this.m1 = colList[1];

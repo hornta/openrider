@@ -76,9 +76,9 @@ class MouseHandler extends EventEmitter {
 	}
 
 	disableContextMenu() {
-		this.scene.game.canvas.oncontextmenu = function () {
+		this.scene.game.canvas.addEventListener("contextmenu", function () {
 			return false;
-		};
+		});
 	}
 
 	onMouseUp(e) {

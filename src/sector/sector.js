@@ -211,7 +211,7 @@ Sector.prototype = {
 		const width = camera.zoom;
 		const newEdges = this.physicsLines;
 		const c = this.sceneryLines;
-		const height = (this.drawSectorSize * width) | 0;
+		const height = Math.trunc(this.drawSectorSize * width);
 		const canvas = this.canvasPool.getCanvas();
 		canvas.width = height;
 		canvas.height = height;
@@ -251,7 +251,7 @@ Sector.prototype = {
 		const x = this.x;
 		const y = this.y;
 		if (!canvas) {
-			const widthHeight = (this.drawSectorSize * ratio) | 0;
+			const widthHeight = Math.trunc(this.drawSectorSize * ratio);
 			canvas = this.canvasPool.getCanvas();
 			canvas.width = widthHeight;
 			canvas.height = widthHeight;
@@ -281,7 +281,7 @@ Sector.prototype = {
 		if (allItems.length > 0) {
 			const camera = this.scene.camera;
 			const zoom = camera.zoom;
-			const value = (this.drawSectorSize * zoom) | 0;
+			const value = Math.trunc(this.drawSectorSize * zoom);
 			const top = this.powerupCanvasOffset;
 			const element = this.canvasPool.getCanvas();
 			element.width = value + top * zoom;
@@ -311,8 +311,8 @@ Sector.prototype = {
 	},
 	update() {
 		const zoom = this.camera.zoom;
-		this.realX = (this.x * zoom) | 0;
-		this.realY = (this.y * zoom) | 0;
+		this.realX = Math.trunc(this.x * zoom);
+		this.realY = Math.trunc(this.y * zoom);
 		this.zoom = zoom;
 	},
 	resetCollided() {
@@ -400,7 +400,7 @@ Sector.prototype = {
 		}
 	},
 	drawBackground(ctx, color, canvas) {
-		const width = (this.drawSectorSize * color) | 0;
+		const width = Math.trunc(this.drawSectorSize * color);
 		ctx.beginPath();
 		ctx.rect(0, 0, width, width);
 		ctx.fillStyle = canvas;

@@ -1,5 +1,5 @@
 function formatNumber(n) {
-	n = parseInt(n, 10);
+	n = Number.parseInt(n, 10);
 	const m = Math.floor(n / 6e4);
 	let value = (n - 6e4 * m) / 1e3;
 	value = value.toFixed(2);

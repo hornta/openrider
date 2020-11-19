@@ -130,16 +130,16 @@ const n = {
 	events: new E(),
 	init() {},
 	proxy(e, t) {
+		// eslint-disable-next-line consistent-return
 		return () => {
 			if (n.developerMode !== !1) {
 				return e.apply(t, arguments);
 			}
 			try {
 				return e.apply(t, arguments);
-			} catch (r) {
+			} catch {
 				//
 			}
-			return undefined;
 		};
 	},
 	createCookie(name, r, t) {
@@ -161,6 +161,7 @@ const n = {
 				let t = document.cookie.indexOf(";", e);
 				return (
 					t == -1 && (t = document.cookie.length),
+					// eslint-disable-next-line unicorn/prefer-string-slice
 					unescape(document.cookie.substring(e, t))
 				);
 			}

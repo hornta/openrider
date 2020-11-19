@@ -1,4 +1,6 @@
-/* eslint-disable */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-empty */
+/* eslint-disable no-undef */
 import $ from "jquery";
 import applicationSettings from "./applicationSettings";
 
@@ -51,6 +53,7 @@ AjaxHelper.prototype = {
 		const startTime = new Date().getTime();
 		const self = $.extend(options, config);
 		const job = $.ajax(self);
+		// eslint-disable-next-line consistent-this
 		const javaScriptButton = this;
 		return (
 			job.done(this._set_app_signed_request),
@@ -64,6 +67,7 @@ AjaxHelper.prototype = {
 			self.check_status == 1 && job.fail(this._check_status),
 			self.track_timings == 1 &&
 				job.done(function () {
+					// eslint-disable-next-line no-undef
 					if (typeof Application.Helpers.GoogleAnalyticsHelper != "undefined") {
 						const event = {
 							timingLabel: label,
@@ -75,6 +79,7 @@ AjaxHelper.prototype = {
 								event.timingLabel += data.templates.join(",");
 							}
 						}
+						// eslint-disable-next-line no-undef
 						Application.Helpers.GoogleAnalyticsHelper.track_user_timing(event);
 					}
 				}),
@@ -87,10 +92,13 @@ AjaxHelper.prototype = {
 		);
 	},
 	_fire_application_event(annotationID) {
+		// eslint-disable-next-line no-undef
 		Application.events.publish("ajax.request", annotationID);
 	},
 	_check_event_notification(simpleselect) {
+		// eslint-disable-next-line no-undef
 		if (typeof Application.Views.AchievementNotificationView != "undefined") {
+			// eslint-disable-next-line no-undef
 			if (!Application.AchievementNotification) {
 				const descriptions = {
 					web: true,
@@ -99,6 +107,7 @@ AjaxHelper.prototype = {
 					/** @type {boolean} */
 					descriptions.web = false;
 				}
+				// eslint-disable-next-line no-undef
 				Application.AchievementNotification = new Application.Views.AchievementNotificationView(
 					descriptions
 				);
@@ -148,7 +157,7 @@ AjaxHelper.prototype = {
 							simpleselect.data.rewarded_video_event
 						);
 					}
-				} catch (n) {}
+				} catch {}
 			}
 		}
 	},
@@ -206,7 +215,7 @@ AjaxHelper.prototype = {
 				if (window.parent !== window) {
 					window.parent.Application;
 				}
-			} catch (i) {
+			} catch {
 				/** @type {boolean} */
 				r = true;
 			}
@@ -245,6 +254,7 @@ AjaxHelper.prototype = {
 	},
 	_track_pixel(cardMask) {
 		if (typeof cardMask.kl_px != "undefined") {
+			// eslint-disable-next-line unicorn/explicit-length-check
 			if ($("#kl_px").length) {
 				$("#kl_px").attr("src", cardMask.kl_px);
 			} else {

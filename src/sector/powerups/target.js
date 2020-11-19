@@ -4,7 +4,7 @@ function Target(x, data, obj) {
 	this.x = x;
 	this.y = data;
 	this.hit = false;
-	this.id = Math.random().toString(36).substr(2);
+	this.id = Math.random().toString(36).slice(2);
 	this.init(obj);
 }
 const options = {
@@ -123,7 +123,7 @@ self.collide = function (target) {
 	const sqrt8 = Math.sqrt(x ** 2 + y ** 2);
 	const targets = player._powerupsConsumed.targets;
 	const data = this.scene;
-	if (sqrt8 < 26 && player.isAlive() && targets.indexOf(this.id) === -1) {
+	if (sqrt8 < 26 && player.isAlive() && !targets.includes(this.id)) {
 		targets.push(this.id);
 		const l = targets.length;
 		const r = data.track.targetCount;

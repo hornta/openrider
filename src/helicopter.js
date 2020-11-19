@@ -72,14 +72,10 @@ self.drawCockpit = function () {
 self.createMasses = function (b) {
 	const obj = [];
 	obj.push(new Prop(new Vector2(b.x + 0, b.y + 18), this));
-	const service = new Mass();
-	const r = new Mass();
-	const field = new Mass();
-	const h = new Mass();
-	service.init(new Vector2(b.x + -17, b.y + 42), this);
-	r.init(new Vector2(b.x + 17, b.y + 42), this);
-	field.init(new Vector2(b.x + -40, b.y + 15), this);
-	h.init(new Vector2(b.x + 40, b.y + 15), this);
+	const service = new Mass(new Vector2(b.x + -17, b.y + 42), this);
+	const r = new Mass(new Vector2(b.x + 17, b.y + 42), this);
+	const field = new Mass(new Vector2(b.x + -40, b.y + 15), this);
+	const h = new Mass(new Vector2(b.x + 40, b.y + 15), this);
 	obj.push(service);
 	obj.push(r);
 	obj.push(field);

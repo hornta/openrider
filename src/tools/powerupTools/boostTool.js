@@ -68,7 +68,7 @@ self.draw = function (x) {
 			angle = angle + 2 * PI;
 		}
 		this.drawPathToMouse(x, angle);
-		this.powerup.angle = (angle * (180 / PI) - 90) | 0;
+		this.powerup.angle = Math.trunc(angle * (180 / PI) - 90);
 		this.powerup.draw(a, b, r, x);
 	} else if (device === "desktop") {
 		x.globalAlpha = 0.8;

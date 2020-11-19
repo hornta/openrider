@@ -34,10 +34,9 @@ self.swapped = false;
 self.ragdoll = null;
 self.createMasses = function (d, e) {
 	this.masses = [];
-	const p = new Mass();
+	const p = new Mass(new Vector2(d.x, d.y - 36), this);
 	const f = new Wheel(new Vector2(d.x + 21, d.y + 3), this);
 	const obj = new Wheel(new Vector2(d.x + -21, d.y + 3), this);
-	p.init(new Vector2(d.x, d.y - 36), this);
 	p.drive = this.createRagdoll.bind(this);
 	obj.radius = 11.7;
 	f.radius = 11.7;

@@ -26,8 +26,7 @@ self.createMasses = function (pos) {
 	this.masses = [];
 	const t = new Canopy(pos.x, pos.y - 10, this);
 	t.radius = 30;
-	const o = new Mass();
-	o.init(new Vector2(pos.x, pos.y + 35), this);
+	const o = new Mass(new Vector2(pos.x, pos.y + 35), this);
 	o.friction = 0.1;
 	this.masses.push(t);
 	this.masses.push(o);

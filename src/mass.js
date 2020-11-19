@@ -1,19 +1,7 @@
 import Vector2 from "./math/vector2";
 
-function Mass() {}
-
-Mass.prototype = {
-	pos: null,
-	old: null,
-	vel: null,
-	parent: null,
-	radius: 0,
-	friction: 0,
-	collide: false,
-	contact: false,
-	scene: null,
-	drawPos: null,
-	init(target, node) {
+class Mass {
+	constructor(target, node) {
 		this.pos = new Vector2();
 		this.old = new Vector2();
 		this.vel = new Vector2(0, 0);
@@ -26,7 +14,8 @@ Mass.prototype = {
 		this.scene = node.scene;
 		this.pos.equ(target);
 		this.old.equ(target);
-	},
+	}
+
 	drive(x, y) {
 		const { friction } = this;
 		const resolutionScale = -(x * this.vel.x + y * this.vel.y) * friction;
@@ -35,7 +24,8 @@ Mass.prototype = {
 		this.pos.x += x;
 		this.pos.y += y;
 		this.contact = true;
-	},
+	}
+
 	update() {
 		const args = this.vel;
 		args.inc(this.parent.gravity);
@@ -52,17 +42,18 @@ Mass.prototype = {
 		args.x = this.pos.x - this.old.x;
 		args.y = this.pos.y - this.old.y;
 		this.old.equ(this.pos);
-	},
+	}
+
 	draw() {
 		const obj = this.pos.toScreen(this.scene);
 		const ctx = this.scene.game.canvas.getContext("2d");
-		const SCALE = (this.radius, this.scene.camera.zoom);
+		const SCALE = this.scene.camera.zoom;
 		ctx.beginPath();
 		ctx.fillStyle = "rgba(0,0,0,1)";
 		ctx.arc(obj.x, obj.y, this.radius * SCALE, 0, 2 * Math.PI, false);
 		ctx.fill();
 		ctx.closePath();
-	},
-};
+	}
+}
 
 export default Mass;

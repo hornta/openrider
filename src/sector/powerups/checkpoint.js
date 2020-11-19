@@ -3,7 +3,7 @@ import Powerup from "../../powerup";
 function Checkpoint(x, data, obj) {
 	this.x = x;
 	this.y = data;
-	this.id = Math.random().toString(36).substr(2);
+	this.id = Math.random().toString(36).slice(2);
 	this.init(obj);
 }
 const sqrt = Math.sqrt;
@@ -122,7 +122,7 @@ self.collide = function (target) {
 	const y = target.pos.y - this.y;
 	const sqrt8 = sqrt(x ** 2 + y ** 2);
 	const nodesOnScreen = player._powerupsConsumed.checkpoints;
-	if (sqrt8 < 26 && player.isAlive() && nodesOnScreen.indexOf(this.id) === -1) {
+	if (sqrt8 < 26 && player.isAlive() && !nodesOnScreen.includes(this.id)) {
 		nodesOnScreen.push(this.id);
 		player.setCheckpointOnUpdate();
 		if (player.isGhost() === false) {

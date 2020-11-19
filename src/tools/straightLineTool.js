@@ -131,8 +131,8 @@ self.drawPointData = function (ctx, options) {
 		const targets = this.game.pixelRatio;
 		ctx.fillStyle = "#000000";
 		ctx.font = `${8 * targets}pt arial`;
-		ctx.fillText(`${String(s)}\u00b0`, intersect.x + 10, intersect.y + 10);
-		ctx.strokeText(`${String(s)}\u00b0`, intersect.x + 10, intersect.y + 10);
+		ctx.fillText(`${String(s)}\u00B0`, intersect.x + 10, intersect.y + 10);
+		ctx.strokeText(`${String(s)}\u00B0`, intersect.x + 10, intersect.y + 10);
 	}
 };
 self.drawLine = function (context, props) {

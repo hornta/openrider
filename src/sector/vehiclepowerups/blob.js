@@ -4,7 +4,7 @@ function Blob(value, i, b, a) {
 	this.x = value;
 	this.y = i;
 	this.time = b;
-	this.id = Math.random().toString(36).substr(2);
+	this.id = Math.random().toString(36).slice(2);
 	this.hit = false;
 	this.init(a);
 }
@@ -141,7 +141,7 @@ me.collide = function (other) {
 	const sqrt8 = sqrt(x ** 2 + y ** 2);
 	const nodesOnScreen = self._powerupsConsumed.misc;
 	const scene = this.scene;
-	if (sqrt8 < 30 && self.isAlive() && nodesOnScreen.indexOf(this.id) === -1) {
+	if (sqrt8 < 30 && self.isAlive() && !nodesOnScreen.includes(this.id)) {
 		nodesOnScreen.push(this.id);
 		const next = this.time * scene.settings.drawFPS;
 		self.setTempVehicle(

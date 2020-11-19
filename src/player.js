@@ -39,7 +39,7 @@ function equals(result, value) {
 				value[name].constructor == Object
 					? equals(result[name], value[name])
 					: value[name];
-		} catch (s) {
+		} catch {
 			result[name] = value[name];
 		}
 	}
@@ -310,8 +310,8 @@ Player.prototype._createCheckpoint = function () {
 	t._crashed = this._crashed;
 	this._checkpoints.push(t);
 };
-Player.prototype._snapshotFilter = function (type, defaultAlpha) {
-	switch (type) {
+Player.prototype._snapshotFilter = function (key, value) {
+	switch (key) {
 		case "parent":
 		case "player":
 		case "scene":
@@ -320,11 +320,12 @@ Player.prototype._snapshotFilter = function (type, defaultAlpha) {
 		case "springs":
 		case "focalPoint":
 		case "gamepad":
+			// eslint-disable-next-line unicorn/no-useless-undefined
 			return undefined;
 		case "explosion":
 			return false;
 		default:
-			return defaultAlpha;
+			return value;
 	}
 };
 Player.prototype.setCheckpointOnUpdate = function () {

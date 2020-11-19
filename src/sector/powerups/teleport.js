@@ -3,7 +3,7 @@ import Powerup from "../../powerup";
 function Teleport(x, data, obj) {
 	this.x = x;
 	this.y = data;
-	this.id = Math.random().toString(36).substr(2);
+	this.id = Math.random().toString(36).slice(2);
 	this.init(obj);
 }
 const getAlignItem = (Math.max, Math.sqrt);
@@ -887,7 +887,7 @@ self.collide = function (other) {
 	const ctx = other.parent;
 	const player = ctx.player;
 	const nodesOnScreen = player._powerupsConsumed.misc;
-	if (nodesOnScreen.indexOf(this.id) === -1) {
+	if (!nodesOnScreen.includes(this.id)) {
 		const dx = other.pos.x - this.x;
 		const dy = other.pos.y - this.y;
 		const a = dx ** 2 + dy ** 2;

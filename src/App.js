@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 // eslint-disable-next-line no-unused-vars
-import GameSettings from "./GameSettings";
+import GameSettings from "./gameSettings";
 import gameManager from "./gameManager";
 
 const App = () => {
