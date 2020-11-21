@@ -357,25 +357,26 @@ Editor.prototype = {
 		this.updateState();
 	},
 	setStateDefaults() {
-		const self = {};
-		return (
-			(self.paused = this.settings.mobile ? true : this.settings.startPaused),
-			(self.loading = false),
-			(self.playing = this.settings.waitForKeyPress),
-			(self.tool = this.toolHandler.currentTool),
-			(self.toolOptions = this.toolHandler.getToolOptions()),
-			(self.grid = this.toolHandler.options.grid),
-			(self.cameraLocked = this.toolHandler.options.cameraLocked),
-			(self.zoomPercentage = this.camera.zoomPercentage),
-			(self.vehicle = this.vehicle),
-			(self.showDialog = false),
-			(self.dialogOptions = false),
-			(self.preloading = false),
-			(self.fullscreen = this.settings.fullscreen),
-			(self.inFocus = true),
-			this.controls && (self.hideMenus = this.controls.isVisible()),
-			self
-		);
+		const state = {
+			paused: this.settings.mobile ? true : this.settings.startPaused,
+			loading: false,
+			playing: this.settings.waitForKeyPress,
+			tool: this.toolHandler.currentTool,
+			toolOptions: this.toolHandler.getToolOptions(),
+			grid: this.toolHandler.options.grid,
+			cameraLocked: this.toolHandler.options.cameraLocked,
+			zoomPercentage: this.camera.zoomPercentage,
+			vehicle: this.vehicle,
+			showDialog: false,
+			dialogOptions: false,
+			preloading: false,
+			fullscreen: this.settings.fullscreen,
+			inFocus: true,
+		};
+		if (this.controls) {
+			state.hideMenus = this.controls.isVisible();
+		}
+		return state;
 	},
 	toggleVehicle() {
 		const format = this.track.allowedVehicles;
@@ -416,6 +417,7 @@ Editor.prototype = {
 		this.state.playing = false;
 		this.state.showDialog = name;
 	},
+
 	getTrackCode() {
 		this.state.dialogOptions = {};
 		this.state.dialogOptions.verified = this.verified;

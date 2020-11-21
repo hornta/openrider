@@ -21,7 +21,7 @@ self.p2 = null;
 self.active = false;
 self.draw = function (x) {
 	const node = this.mouse.touch;
-	const c = node.pos;
+	const c = node.position;
 	const y = this.camera.zoom;
 	const device = this.scene.settings.device;
 	if (

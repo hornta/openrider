@@ -22,7 +22,7 @@ class Vehicle {
 
 	explode() {
 		this.scene.sound.play("bomb_sound", 1);
-		this.explosion = new Explosion(this.masses[0].pos, this.scene);
+		this.explosion = new Explosion(this.masses[0].position, this.scene);
 		this.dead();
 	}
 
@@ -62,10 +62,10 @@ class Vehicle {
 		const numActivities = d.length;
 		let i = numActivities - 1;
 		for (; i >= 0; i--) {
-			d[i].pos.x += left;
-			d[i].pos.y += top;
-			d[i].old.x += left;
-			d[i].old.y += top;
+			d[i].position.x += left;
+			d[i].position.y += top;
+			d[i].prevPosition.x += left;
+			d[i].prevPosition.y += top;
 		}
 	}
 }

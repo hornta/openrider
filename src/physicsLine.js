@@ -3,11 +3,11 @@ import Vector2 from "./math/vector2";
 function PhysicsLine(value, data, options, name) {
 	const u = new Vector2(value, data);
 	const t = new Vector2(options, name);
-	const b = t.sub(u);
+	const b = t.subtract(u);
 	this.p1 = u;
 	this.p2 = t;
 	this.pp = b;
-	this.len = b.len();
+	this.len = b.length();
 	this.sectors = [];
 	this.collided = false;
 	this.remove = false;
@@ -30,7 +30,9 @@ PhysicsLine.prototype = {
 		const p = this.p2;
 		let msg = ` ${p.x.toString(32)} ${p.y.toString(32)}`;
 		const x = this.checkForConnectedLine(e, p);
-		x && (msg += x.getCode(e));
+		if (x) {
+			msg += x.getCode(e);
+		}
 		return msg;
 	},
 	checkForConnectedLine(c, e) {
@@ -61,8 +63,8 @@ PhysicsLine.prototype = {
 			const p2 = this.p2;
 			const d = s;
 			const tca = start;
-			const u = p2.sub(p1);
-			const v1 = p1.sub(d);
+			const u = p2.subtract(p1);
+			const v1 = p1.subtract(d);
 			const a = u.dot(u);
 			const roundDistance = 2 * v1.dot(u);
 			const sampleWidth = v1.dot(v1) - tca * tca;
@@ -98,7 +100,7 @@ PhysicsLine.prototype = {
 	collide(obj) {
 		if (!this.collided) {
 			this.collided = true;
-			const pos = obj.pos;
+			const pos = obj.position;
 			const scale = obj.velocity;
 			const h = obj.radius;
 			let x = 0;

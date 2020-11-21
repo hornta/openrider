@@ -525,8 +525,8 @@ Track.prototype = {
 	},
 	collide(a) {
 		const moduleV2 = this.settings.physicsSectorSize;
-		const index = Math.floor(a.pos.x / moduleV2 - 0.5);
-		const index_ = Math.floor(a.pos.y / moduleV2 - 0.5);
+		const index = Math.floor(a.position.x / moduleV2 - 0.5);
+		const index_ = Math.floor(a.position.y / moduleV2 - 0.5);
 		const matrix = this.sectors.physicsSectors;
 		if (matrix[index] && matrix[index][index_]) {
 			matrix[index][index_].resetCollided();
@@ -572,11 +572,11 @@ Track.prototype = {
 		const canvas = scene.screen;
 		const context = scene.game.canvas.getContext("2d");
 		const scale = camera.zoom;
-		const pos = camera.position;
+		const position = camera.position;
 		const currentCenter = scene.screen.center;
 		const width = this.settings.drawSectorSize * scale;
-		const radius = (pos.x * scale) / width;
-		const windowHeight = (pos.y * scale) / width;
+		const radius = (position.x * scale) / width;
+		const windowHeight = (position.y * scale) / width;
 		const widthProportions = canvas.width / width;
 		const propertiesWidth = canvas.height / width;
 		const scrollTop = propertiesWidth / 2;

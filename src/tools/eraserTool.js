@@ -35,14 +35,14 @@ self.release = function () {
 };
 self.hold = function () {
 	const target = this.mouse.touch;
-	const p1 = target.pos;
+	const p1 = target.position;
 	const obj = this.scene.track;
 	const arc = this.scene.screen;
 	const camera = this.scene.camera;
 	const circle = arc.center;
-	const pos = camera.position;
-	const r = (p1.x - circle.x) / camera.zoom + pos.x;
-	const y = (p1.y - circle.y) / camera.zoom + pos.y;
+	const position = camera.position;
+	const r = (p1.x - circle.x) / camera.zoom + position.x;
+	const y = (p1.y - circle.y) / camera.zoom + position.y;
 	this.eraserPoint.x = Math.round(r);
 	this.eraserPoint.y = Math.round(y);
 	const c = obj.erase(
@@ -61,7 +61,7 @@ self.draw = function () {
 };
 self.drawEraser = function (ctx) {
 	const node = this.mouse.touch;
-	const c = node.pos;
+	const c = node.position;
 	ctx.beginPath();
 	ctx.arc(c.x, c.y, this.options.radius, 0, 2 * Math.PI, false);
 	ctx.lineWidth = 1;

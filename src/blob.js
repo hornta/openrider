@@ -104,12 +104,12 @@ class Blob extends Vehicle {
 			let i = 0;
 			m = 0;
 			for (; m < n; m++) {
-				tw += positions[m].pos.x;
-				i += positions[m].pos.y;
+				tw += positions[m].position.x;
+				i += positions[m].position.y;
 			}
 			const curr = this.head;
-			curr.pos.x = 0.25 * tw;
-			curr.pos.y = 0.25 * i;
+			curr.position.x = 0.25 * tw;
+			curr.position.y = 0.25 * i;
 			curr.velocity = positions[0].velocity;
 		}
 	}
@@ -179,10 +179,10 @@ class Blob extends Vehicle {
 			const curPosAndNor = this.masses;
 			const s = this.scene;
 			const zoom = s.camera.zoom;
-			const r = curPosAndNor[0].pos.toScreen(s);
-			const p2 = curPosAndNor[1].pos.toScreen(s);
-			const line = curPosAndNor[2].pos.toScreen(s);
-			const center = curPosAndNor[3].pos.toScreen(s);
+			const r = curPosAndNor[0].position.toScreen(s);
+			const p2 = curPosAndNor[1].position.toScreen(s);
+			const line = curPosAndNor[2].position.toScreen(s);
+			const center = curPosAndNor[3].position.toScreen(s);
 			context.globalAlpha = this.player._opacity;
 			context.beginPath();
 			context.strokeStyle = "#000000";

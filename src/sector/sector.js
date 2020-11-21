@@ -260,10 +260,10 @@ Sector.prototype = {
 		if (!ctx) {
 			ctx = canvas.getContext("2d");
 		}
-		const pos = line.p1;
+		const position = line.p1;
 		const lastPoint = line.p2;
-		const value = (pos.x - x) * ratio;
-		const h = (pos.y - y) * ratio;
+		const value = (position.x - x) * ratio;
+		const h = (position.y - y) * ratio;
 		const dx = (lastPoint.x - x) * ratio;
 		const height = (lastPoint.y - y) * ratio;
 		ctx.save();
@@ -361,7 +361,7 @@ Sector.prototype = {
 		let d;
 		let e;
 		let options;
-		let pos;
+		let position;
 		const x = this.x;
 		const y = this.y;
 		const i = c.length;
@@ -372,11 +372,11 @@ Sector.prototype = {
 				c.splice(len, 1);
 			} else {
 				options = e.p1;
-				pos = e.p2;
+				position = e.p2;
 				value = (options.x - x) * width;
 				step = (options.y - y) * width;
-				size = (pos.x - x) * width;
-				d = (pos.y - y) * width;
+				size = (position.x - x) * width;
+				d = (position.y - y) * width;
 				ctx.moveTo(value, step);
 				ctx.lineTo(size, d);
 			}

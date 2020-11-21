@@ -107,8 +107,12 @@ self.intersectsLine = function (start, end) {
 		a = ch;
 		ch = s;
 	}
-	a > h + g && (a = h + g);
-	h > ch && (ch = h);
+	if (a > h + g) {
+		a = h + g;
+	}
+	if (h > ch) {
+		ch = h;
+	}
 	return !(ch > a);
 };
 self.toScreen = function (width, i) {
@@ -164,11 +168,11 @@ self.drawSectors = function () {
 	const canvas = scene.screen;
 	const context = scene.game.canvas.getContext("2d");
 	const zoom = camera.zoom;
-	const pos = camera.position;
+	const position = camera.position;
 	const currentCenter = scene.screen.center;
 	const scale = this.settings.drawSectorSize * zoom;
-	const y = (pos.x * zoom) / scale;
-	const minValue = (pos.y * zoom) / scale;
+	const y = (position.x * zoom) / scale;
+	const minValue = (position.y * zoom) / scale;
 	let i = canvas.width / scale;
 	const translateX = canvas.height / scale;
 	const baseName = translateX / 2;

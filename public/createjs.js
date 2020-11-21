@@ -1,4 +1,3 @@
-/* eslint-disable */
 /*!
 * @license CreateJS
 * Visit http://createjs.com/ for documentation, updates and examples.

@@ -4,6 +4,14 @@ class Vector2 {
 		this.y = y;
 	}
 
+	static add(v1, v2) {
+		return new Vector2(v1.x + v2.x, v1.y + v2.y);
+	}
+
+	static add3(v1, v2, v3) {
+		return new Vector2(v1.x + v2.x + v3.x, v1.y + v2.y + v3.y);
+	}
+
 	toReal(game) {
 		const camera = game.camera;
 		const screen = game.screen;
@@ -26,7 +34,7 @@ class Vector2 {
 		return this.x ** 2 + this.y ** 2;
 	}
 
-	len() {
+	length() {
 		return Math.sqrt(this.x ** 2 + this.y ** 2);
 	}
 
@@ -34,7 +42,7 @@ class Vector2 {
 		return this.x * v.x + this.y * v.y;
 	}
 
-	factor(s) {
+	multiply(s) {
 		return new Vector2(this.x * s, this.y * s);
 	}
 
@@ -62,7 +70,7 @@ class Vector2 {
 		source.y = this.y + obj.y;
 	}
 
-	sub(b) {
+	subtract(b) {
 		return new Vector2(this.x - b.x, this.y - b.y);
 	}
 
@@ -87,16 +95,13 @@ class Vector2 {
 	}
 
 	getAngleInDegrees(towardsPos) {
-		const current = towardsPos.sub(this);
+		const current = towardsPos.subtract(this);
 		const blockWidth = Math.atan2(current.x, -current.y);
 		let entryX = blockWidth * (180 / Math.PI);
-		entryX < 0 && (entryX += 360);
+		if (entryX < 0) {
+			entryX += 360;
+		}
 		return entryX;
-	}
-
-	getAngleInRadians(towardsPos) {
-		const current = towardsPos.sub(this);
-		return Math.atan2(current.x, -current.y);
 	}
 }
 

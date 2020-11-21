@@ -85,7 +85,7 @@ AjaxHelper.prototype = {
 				}),
 			job.done(this._track_pixel),
 			self.track == 1 &&
-				job.done(function (canCreateDiscussions) {
+				job.done(function () {
 					javaScriptButton._track_pageview(label);
 				}),
 			job
@@ -115,35 +115,35 @@ AjaxHelper.prototype = {
 			if (
 				typeof simpleselect.data != "undefined" &&
 				(typeof simpleselect.data.achievements_earned != "undefined" &&
-					$.each(simpleselect.data.achievements_earned, function (
-						canCreateDiscussions,
-						e
-					) {
-						Application.AchievementNotification.notify(e);
-					}),
+					$.each(
+						simpleselect.data.achievements_earned,
+						function (canCreateDiscussions, e) {
+							Application.AchievementNotification.notify(e);
+						}
+					),
 				typeof simpleselect.data.campaign_events != "undefined" &&
-					$.each(simpleselect.data.campaign_events, function (
-						canCreateDiscussions,
-						e
-					) {
-						/** @type {boolean} */
-						e.campaign_event = true;
-						Application.AchievementNotification.notify(e);
-					}),
+					$.each(
+						simpleselect.data.campaign_events,
+						function (canCreateDiscussions, e) {
+							/** @type {boolean} */
+							e.campaign_event = true;
+							Application.AchievementNotification.notify(e);
+						}
+					),
 				typeof simpleselect.data.leaderboard_passed_events != "undefined" &&
-					$.each(simpleselect.data.leaderboard_passed_events, function (
-						canCreateDiscussions,
-						e
-					) {
-						Application.AchievementNotification.notify(e);
-					}),
+					$.each(
+						simpleselect.data.leaderboard_passed_events,
+						function (canCreateDiscussions, e) {
+							Application.AchievementNotification.notify(e);
+						}
+					),
 				typeof simpleselect.data.inventory_events != "undefined" &&
-					$.each(simpleselect.data.inventory_events, function (
-						canCreateDiscussions,
-						e
-					) {
-						Application.AchievementNotification.notify(e);
-					}),
+					$.each(
+						simpleselect.data.inventory_events,
+						function (canCreateDiscussions, e) {
+							Application.AchievementNotification.notify(e);
+						}
+					),
 				typeof simpleselect.data.rewarded_video_event != "undefined" &&
 					simpleselect.data.rewarded_video_event.ad_network === "ironsource")
 			) {

@@ -273,7 +273,7 @@ class GameManager extends EventEmitter {
 		}
 	}
 
-	cdnTrackRequestError(lstnrs, eventName) {
+	cdnTrackRequestError() {
 		this.svrTrackRequest(this.trackId);
 		this.loadTrackRequest = null;
 	}
@@ -305,5 +305,4 @@ class GameManager extends EventEmitter {
 	}
 }
 
-const gameManager = new GameManager();
-export default gameManager;
+export default GameManager;

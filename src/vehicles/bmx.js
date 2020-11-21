@@ -76,7 +76,7 @@ class BMX extends Vehicle {
 
 	createRagdoll() {
 		this.ragdoll = new Ragdoll(this.getStickMan(), this);
-		this.ragdoll.zero(this.head.velocity, this.rearWheel.vevelocityl);
+		this.ragdoll.zero(this.head.velocity, this.rearWheel.velocity);
 		this.ragdoll.dir = this.dir;
 		this.rearWheel.motor = 0;
 		this.rearWheel.brake = false;
@@ -123,45 +123,60 @@ class BMX extends Vehicle {
 		const world = this.frontWheel;
 		const particle = this.rearWheel;
 		const bearingRad = this.pedala;
-		const t = world.pos.sub(particle.pos);
-		const instructionInfo = e.pos.sub(world.pos.add(particle.pos).factor(0.5));
+		const t = world.position.subtract(particle.position);
+		const instructionInfo = e.position.subtract(
+			Vector2.add(world.position, particle.position).multiply(0.5)
+		);
 		const p = new Vector2(t.y * s, -t.x * s);
 		const stickMan = {};
-		stickMan.head = particle.pos
-			.add(t.factor(0.35))
-			.add(instructionInfo.factor(1.2));
-		stickMan.rHand = particle.pos.add(t.factor(0.8)).add(p.factor(0.68));
+		stickMan.head = Vector2.add3(
+			particle.position,
+			t.multiply(0.35),
+			instructionInfo.multiply(1.2)
+		);
+		stickMan.rHand = Vector2.add3(
+			particle.position,
+			t.multiply(0.8),
+			p.multiply(0.68)
+		);
 		stickMan.lHand = stickMan.rHand;
-		let a = stickMan.head.sub(stickMan.lHand);
+		let a = stickMan.head.subtract(stickMan.lHand);
 		a = new Vector2(a.y * s, -a.x * s);
-		stickMan.rElbow = stickMan.head
-			.add(stickMan.lHand)
-			.factor(0.5)
-			.add(a.factor(130 / a.lenSqr()));
+		stickMan.rElbow = Vector2.add(
+			Vector2.add(stickMan.head, stickMan.lHand).multiply(0.5),
+			a.multiply(130 / a.lenSqr())
+		);
 		stickMan.lElbow = stickMan.rElbow;
-		stickMan.waist = particle.pos.add(t.factor(0.2)).add(p.factor(0.5));
-		const pos = new Vector2(6 * Math.cos(bearingRad), 6 * Math.sin(bearingRad));
+		stickMan.waist = Vector2.add3(
+			particle.position,
+			t.multiply(0.2),
+			p.multiply(0.5)
+		);
+		const position = new Vector2(
+			6 * Math.cos(bearingRad),
+			6 * Math.sin(bearingRad)
+		);
 		return (
-			(stickMan.lFoot = particle.pos
-				.add(t.factor(0.4))
-				.add(p.factor(0.05))
-				.add(pos)),
-			(a = stickMan.waist.sub(stickMan.lFoot)),
+			(stickMan.lFoot = particle.position
+				.add(t.multiply(0.4))
+				.add(p.multiply(0.05))
+				.add(position)),
+			(a = stickMan.waist.subtract(stickMan.lFoot)),
 			(a = new Vector2(-a.y * s, a.x * s)),
 			(stickMan.lKnee = stickMan.waist
 				.add(stickMan.lFoot)
-				.factor(0.5)
-				.add(a.factor(160 / a.lenSqr()))),
-			(stickMan.rFoot = particle.pos
-				.add(t.factor(0.4))
-				.add(p.factor(0.05))
-				.sub(pos)),
-			(a = stickMan.waist.sub(stickMan.rFoot)),
+				.multiply(0.5)
+				.add(a.multiply(160 / a.lenSqr()))),
+			(stickMan.rFoot = particle.position
+				.add(t.multiply(0.4))
+				.add(p.multiply(0.05))
+				.subtract(position)),
+			(a = stickMan.waist.subtract(stickMan.rFoot)),
 			(a = new Vector2(-a.y * s, a.x * s)),
 			(stickMan.rKnee = stickMan.waist
 				.add(stickMan.rFoot)
-				.factor(0.5)
-				.add(a.factor(160 / a.lenSqr()))),
+				.multiply(0.5)
+				.add(a.multiply(160 / a.lenSqr()))),
 			stickMan
 		);
 	}
@@ -298,23 +313,23 @@ class BMX extends Vehicle {
 	}
 
 	updateDrawHeadAngle() {
-		const o = this.frontWheel.pos;
-		const pos = this.rearWheel.pos;
+		const o = this.frontWheel.position;
+		const position = this.rearWheel.position;
 		const i = o.x;
 		const size = o.y;
-		const length = pos.x;
-		const row = pos.y;
+		const length = position.x;
+		const row = position.y;
 		const start = i - length;
 		const end = size - row;
 		this.drawHeadAngle = -(Math.atan2(start, end) - Math.PI / 2);
 	}
 
 	drawBikeFrame() {
-		const point = this.rearWheel.pos.toScreen(this.scene);
-		const center = this.frontWheel.pos.toScreen(this.scene);
-		const n = this.head.pos.toScreen(this.scene);
+		const point = this.rearWheel.position.toScreen(this.scene);
+		const center = this.frontWheel.position.toScreen(this.scene);
+		const n = this.head.position.toScreen(this.scene);
 		const OVERLAY_ALPHA = (this.scene.game.pixelRatio, this.player._opacity);
-		let a = center.sub(point);
+		let a = center.subtract(point);
 		let position = new Vector2(
 			(center.y - point.y) * this.dir,
 			(point.x - center.x) * this.dir
@@ -337,10 +352,12 @@ class BMX extends Vehicle {
 		ctx.arc(point.x, point.y, 10.5 * scale, 0, 2 * Math.PI, false);
 		ctx.fill();
 		ctx.stroke();
-		const r1 = point.add(a.factor(0.3)).add(position.factor(0.25));
-		const pos = point.add(a.factor(0.4)).add(position.factor(0.05));
-		const outerPosition = point.add(a.factor(0.84)).add(position.factor(0.42));
-		const currentVM = point.add(a.factor(0.84)).add(position.factor(0.37));
+		const r1 = point.add(a.multiply(0.3)).add(position.multiply(0.25));
+		const pos = point.add(a.multiply(0.4)).add(position.multiply(0.05));
+		const outerPosition = point
+			.add(a.multiply(0.84))
+			.add(position.multiply(0.42));
+		const currentVM = point.add(a.multiply(0.84)).add(position.multiply(0.37));
 		ctx.beginPath();
 		ctx.strokeStyle = "rgba(0,0,0,1)";
 		ctx.moveTo(point.x, point.y);
@@ -360,14 +377,14 @@ class BMX extends Vehicle {
 			6 * Math.sin(bearingRad) * scale
 		);
 		const m = pos.add(p);
-		const p1 = pos.sub(p);
+		const p1 = pos.subtract(p);
 		ctx.beginPath();
 		ctx.moveTo(m.x, m.y);
 		ctx.lineTo(p1.x, p1.y);
 		ctx.stroke();
-		let p2coord = point.add(a.factor(0.25)).add(position.factor(0.4));
-		const tempLook = point.add(a.factor(0.17)).add(position.factor(0.38));
-		let p3coord = point.add(a.factor(0.3)).add(position.factor(0.45));
+		let p2coord = point.add(a.multiply(0.25)).add(position.multiply(0.4));
+		const tempLook = point.add(a.multiply(0.17)).add(position.multiply(0.38));
+		let p3coord = point.add(a.multiply(0.3)).add(position.multiply(0.45));
 		ctx.beginPath();
 		ctx.strokeStyle = "rgba(0,0,0,1)";
 		ctx.lineWidth = 3 * scale;
@@ -375,15 +392,15 @@ class BMX extends Vehicle {
 		ctx.lineTo(p3coord.x, p3coord.y);
 		ctx.moveTo(pos.x, pos.y);
 		ctx.lineTo(p2coord.x, p2coord.y);
-		const mouthStart = point.add(a.factor(1)).add(position.factor(0));
-		let p4coord = point.add(a.factor(0.97)).add(position.factor(0));
-		let p1coord = point.add(a.factor(0.8)).add(position.factor(0.48));
+		const mouthStart = point.add(a.multiply(1)).add(position.multiply(0));
+		let p4coord = point.add(a.multiply(0.97)).add(position.multiply(0));
+		let p1coord = point.add(a.multiply(0.8)).add(position.multiply(0.48));
 		ctx.moveTo(mouthStart.x, mouthStart.y);
 		ctx.lineTo(p4coord.x, p4coord.y);
 		ctx.lineTo(p1coord.x, p1coord.y);
-		let arrowEnd = point.add(a.factor(0.86)).add(position.factor(0.5));
-		const endT = point.add(a.factor(0.82)).add(position.factor(0.65));
-		const end = point.add(a.factor(0.78)).add(position.factor(0.67));
+		let arrowEnd = point.add(a.multiply(0.86)).add(position.multiply(0.5));
+		const endT = point.add(a.multiply(0.82)).add(position.multiply(0.65));
+		const end = point.add(a.multiply(0.78)).add(position.multiply(0.67));
 		if (
 			(ctx.moveTo(p1coord.x, p1coord.y),
 			ctx.lineTo(arrowEnd.x, arrowEnd.y),
@@ -396,18 +413,18 @@ class BMX extends Vehicle {
 				this.ragdoll.draw();
 			}
 		} else {
-			position = n.sub(point.add(a.factor(0.5)));
-			const e = r1.add(a.factor(-0.1)).add(position.factor(0.3));
-			p = m.sub(e);
+			position = n.subtract(point.add(a.multiply(0.5)));
+			const e = r1.add(a.multiply(-0.1)).add(position.multiply(0.3));
+			p = m.subtract(e);
 			let offset = new Vector2(p.y * s, -p.x * s);
-			offset = offset.factor(scale * scale);
-			p1coord = e.add(p.factor(0.5)).add(offset.factor(200 / p.lenSqr()));
-			p2coord = m.add(p.factor(0.12)).add(offset.factor(50 / p.lenSqr()));
-			p = p1.sub(e);
+			offset = offset.multiply(scale * scale);
+			p1coord = e.add(p.multiply(0.5)).add(offset.multiply(200 / p.lenSqr()));
+			p2coord = m.add(p.multiply(0.12)).add(offset.multiply(50 / p.lenSqr()));
+			p = p1.subtract(e);
 			offset = new Vector2(p.y * s, -p.x * s);
-			offset = offset.factor(scale * scale);
-			p3coord = e.add(p.factor(0.5)).add(offset.factor(200 / p.lenSqr()));
-			p4coord = p1.add(p.factor(0.12)).add(offset.factor(50 / p.lenSqr()));
+			offset = offset.multiply(scale * scale);
+			p3coord = e.add(p.multiply(0.5)).add(offset.multiply(200 / p.lenSqr()));
+			p4coord = p1.add(p.multiply(0.12)).add(offset.multiply(50 / p.lenSqr()));
 			ctx.strokeStyle = "rgba(0,0,0,0.5)";
 			ctx.lineWidth = 6 * scale;
 			ctx.beginPath();
@@ -432,17 +449,19 @@ class BMX extends Vehicle {
 			ctx.moveTo(m.x, m.y);
 			ctx.lineTo(p2coord.x, p2coord.y);
 			ctx.stroke();
-			const code = r1.add(a.factor(0.05)).add(position.factor(0.9));
+			const code = r1.add(a.multiply(0.05)).add(position.multiply(0.9));
 			ctx.lineWidth = 8 * scale;
 			ctx.beginPath();
 			ctx.moveTo(e.x, e.y);
 			ctx.lineTo(code.x, code.y);
 			ctx.stroke();
-			const item = r1.add(a.factor(0.15)).add(position.factor(1.05));
-			a = code.sub(end);
+			const item = r1.add(a.multiply(0.15)).add(position.multiply(1.05));
+			a = code.subtract(end);
 			position = new Vector2(a.y * s, -a.x * s);
-			position = position.factor(scale * scale);
-			arrowEnd = end.add(a.factor(0.4)).add(position.factor(130 / a.lenSqr()));
+			position = position.multiply(scale * scale);
+			arrowEnd = end
+				.add(a.multiply(0.4))
+				.add(position.multiply(130 / a.lenSqr()));
 			ctx.lineWidth = 5 * scale;
 			ctx.beginPath();
 			ctx.moveTo(code.x, code.y);

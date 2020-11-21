@@ -50,9 +50,9 @@ Tool.prototype = {
 	},
 	moveCamera() {
 		const e = this.mouse.secondaryTouch;
-		const start = e.pos;
+		const start = e.position;
 		const camera = this.camera;
-		const i = e.old.pos.sub(start).factor(1 / camera.zoom);
+		const i = e.old.position.subtract(start).multiply(1 / camera.zoom);
 		camera.position.inc(i);
 	},
 	draw() {},
@@ -69,11 +69,11 @@ Tool.prototype = {
 		const org = this.mouse.touch;
 		let value = self.desiredZoom;
 		value += factor * step;
-		self.setZoom(value / scale, org.pos);
+		self.setZoom(value / scale, org.position);
 		if (self.desiredZoom < newScale) {
-			self.setZoom(zoom, org.pos);
+			self.setZoom(zoom, org.position);
 		} else if (self.desiredZoom > z2) {
-			self.setZoom(z, org.pos);
+			self.setZoom(z, org.position);
 		}
 	},
 	checkKeys() {

@@ -60,14 +60,14 @@ Camera.prototype = {
 			const prevLevelVitorc = model.focalPoint;
 			const bounds = this.position;
 			let factor = 3;
-			const base = prevLevelVitorc.pos.x - bounds.x;
-			const height = prevLevelVitorc.pos.y - bounds.y;
+			const base = prevLevelVitorc.position.x - bounds.x;
+			const height = prevLevelVitorc.position.y - bounds.y;
 			const sqrt8 = Math.sqrt(base ** 2 + height ** 2);
 			if (sqrt8 > 1500) {
 				factor = 1;
 			}
-			bounds.x += (prevLevelVitorc.pos.x - bounds.x) / factor;
-			bounds.y += (prevLevelVitorc.pos.y - bounds.y) / factor;
+			bounds.x += (prevLevelVitorc.position.x - bounds.x) / factor;
+			bounds.y += (prevLevelVitorc.position.y - bounds.y) / factor;
 		}
 	},
 	updateZoom() {
@@ -175,8 +175,8 @@ Camera.prototype = {
 		if (this.playerFocus) {
 			const model = this.playerFocus.getActiveVehicle();
 			const prevLevelVitorc = model.focalPoint;
-			this.position.x = prevLevelVitorc.pos.x;
-			this.position.y = prevLevelVitorc.pos.y;
+			this.position.x = prevLevelVitorc.position.x;
+			this.position.y = prevLevelVitorc.position.y;
 		}
 	},
 	close() {

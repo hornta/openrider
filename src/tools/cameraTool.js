@@ -10,9 +10,9 @@ self.toolDraw = self.draw;
 self.name = "Camera";
 self.hold = function () {
 	const e = this.mouse.touch;
-	const start = e.pos;
+	const start = e.position;
 	const camera = this.camera;
-	const i = e.old.pos.sub(start).factor(1 / camera.zoom);
+	const i = e.old.position.subtract(start).multiply(1 / camera.zoom);
 	camera.position.inc(i);
 };
 self.draw = function () {

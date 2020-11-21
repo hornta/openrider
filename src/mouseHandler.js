@@ -8,7 +8,7 @@ function getTouchObject() {
 		down: false,
 		press: false,
 		release: false,
-		pos: new Vector2(0, 0),
+		position: new Vector2(0, 0),
 		real: new Vector2(0, 0),
 		type: 1,
 	};
@@ -96,22 +96,22 @@ class MouseHandler extends EventEmitter {
 	updatePosition(event, e) {
 		e.id = event.pointerID;
 		e.type = event.nativeEvent.button;
-		const p = e.pos;
+		const p = e.position;
 		p.x = event.stageX;
 		p.y = event.stageY;
 		this.updateRealPosition(e);
 	}
 
 	updateRealPosition(item) {
-		const b = (item.old, item.pos);
+		const b = item.position;
 		const options = item.real;
-		const game = (item.down, this.scene);
+		const game = this.scene;
 		let s = game.screen;
 		const camera = game.camera;
 		const c = s.center;
-		const pos = camera.position;
-		const r = (b.x - c.x) / camera.zoom + pos.x;
-		const arg = (b.y - c.y) / camera.zoom + pos.y;
+		const position = camera.position;
+		const r = (b.x - c.x) / camera.zoom + position.x;
+		const arg = (b.y - c.y) / camera.zoom + position.y;
 		options.x = Math.round(r);
 		options.y = Math.round(arg);
 		const app = this.scene.settings;
@@ -149,11 +149,11 @@ class MouseHandler extends EventEmitter {
 
 	updateTouch(data) {
 		const self = data.old;
-		const position = data.pos;
+		const position = data.position;
 		const b = data.real;
 		const payload = data.down;
-		self.pos.x = position.x;
-		self.pos.y = position.y;
+		self.position.x = position.x;
+		self.position.y = position.y;
 		self.real.x = b.x;
 		self.real.y = b.y;
 		if (!self.down && payload) {

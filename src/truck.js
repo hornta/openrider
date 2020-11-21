@@ -5,7 +5,7 @@ import Vehicle from "./vehicle";
 import Wheel from "./wheel";
 import inventoryManager from "./inventoryManager";
 
-function drawTire(ctx, radius, y, offset, scale, pos) {
+function drawTire(ctx, radius, y, offset, scale, position) {
 	ctx.beginPath();
 	ctx.arc(radius, y, 10 * scale, 0, 2 * Math.PI, false);
 	ctx.fillStyle = "#888888";
@@ -21,12 +21,12 @@ function drawTire(ctx, radius, y, offset, scale, pos) {
 	offset += 3 * scale;
 	for (let a = 0; a++ < 8; ) {
 		ctx.moveTo(
-			radius + offset * Math.cos(pos + (6.283 * a) / 8),
-			y + offset * Math.sin(pos + (6.283 * a) / 8)
+			radius + offset * Math.cos(position + (6.283 * a) / 8),
+			y + offset * Math.sin(position + (6.283 * a) / 8)
 		);
 		ctx.lineTo(
-			radius + offset * Math.cos(pos + (6.283 * (a + 0.5)) / 8),
-			y + offset * Math.sin(pos + (6.283 * (a + 0.5)) / 8)
+			radius + offset * Math.cos(position + (6.283 * (a + 0.5)) / 8),
+			y + offset * Math.sin(position + (6.283 * (a + 0.5)) / 8)
 		);
 	}
 	ctx.stroke();
@@ -37,12 +37,12 @@ function drawTire(ctx, radius, y, offset, scale, pos) {
 	offset += -9 * scale;
 	for (let a = 0; a++ < 5; ) {
 		ctx.moveTo(
-			radius + offset * Math.cos(pos + (6.283 * a) / 5),
-			y + offset * Math.sin(pos + (6.283 * a) / 5)
+			radius + offset * Math.cos(position + (6.283 * a) / 5),
+			y + offset * Math.sin(position + (6.283 * a) / 5)
 		);
 		ctx.lineTo(
-			radius + offset * Math.cos(pos + (6.283 * (a + 0.2)) / 5),
-			y + offset * Math.sin(pos + (6.283 * (a + 0.2)) / 5)
+			radius + offset * Math.cos(position + (6.283 * (a + 0.2)) / 5),
+			y + offset * Math.sin(position + (6.283 * (a + 0.2)) / 5)
 		);
 	}
 	ctx.closePath();
@@ -179,10 +179,10 @@ class Truck extends Vehicle {
 	}
 
 	updateDrawHeadAngle() {
-		const { pos } = this.frontWheel;
-		const left = this.rearWheel.pos;
-		const { x } = pos;
-		const start = pos.y;
+		const { position } = this.frontWheel;
+		const left = this.rearWheel.position;
+		const { x } = position;
+		const start = position.y;
 		const a = left.x;
 		const max = left.y;
 		const t = x - a;
@@ -254,19 +254,19 @@ class Truck extends Vehicle {
 		const layer = inventoryManager.getItem(to.head);
 		const callback = this.drawHeadAngle;
 		const h = this.dir;
-		const pointerAbs = this.frontWheel.pos.toScreen(e);
-		const absoluteMousePosition = this.rearWheel.pos.toScreen(e);
-		const p = this.head.pos.toScreen(e);
-		const drop = this.backMass.pos.toScreen(e);
-		const i = (this.masses[1].pos.x - this.masses[0].pos.x) * z;
-		const ratio = (this.masses[1].pos.y - this.masses[0].pos.y) * z;
+		const pointerAbs = this.frontWheel.position.toScreen(e);
+		const absoluteMousePosition = this.rearWheel.position.toScreen(e);
+		const p = this.head.position.toScreen(e);
+		const drop = this.backMass.position.toScreen(e);
+		const i = (this.masses[1].position.x - this.masses[0].position.x) * z;
+		const ratio = (this.masses[1].position.y - this.masses[0].position.y) * z;
 		const Z =
-			(0.5 * (this.masses[0].pos.x + this.masses[1].pos.x) -
-				0.5 * (this.masses[2].pos.x + this.masses[3].pos.x)) *
+			(0.5 * (this.masses[0].position.x + this.masses[1].position.x) -
+				0.5 * (this.masses[2].position.x + this.masses[3].position.x)) *
 			z;
 		const z2 =
-			(0.5 * (this.masses[0].pos.y + this.masses[1].pos.y) -
-				0.5 * (this.masses[2].pos.y + this.masses[3].pos.y)) *
+			(0.5 * (this.masses[0].position.y + this.masses[1].position.y) -
+				0.5 * (this.masses[2].position.y + this.masses[3].position.y)) *
 			z;
 		ctx.strokeStyle = "#000000";
 		ctx.lineWidth = 3 * z;

@@ -22,11 +22,11 @@ class Balloon extends Vehicle {
 		this.focalPoint = this.head;
 	}
 
-	createMasses(pos) {
+	createMasses(position) {
 		this.masses = [];
-		const t = new Canopy(pos.x, pos.y - 10, this);
+		const t = new Canopy(position.x, position.y - 10, this);
 		t.radius = 30;
-		const o = new Mass(new Vector2(pos.x, pos.y + 35), this);
+		const o = new Mass(new Vector2(position.x, position.y + 35), this);
 		o.friction = 0.1;
 		this.masses.push(t);
 		this.masses.push(o);
@@ -118,8 +118,8 @@ class Balloon extends Vehicle {
 
 	drawBalloon(ctx) {
 		const s = this.scene;
-		const style = this.basket.pos.toScreen(s);
-		const center = this.head.pos.toScreen(s);
+		const style = this.basket.position.toScreen(s);
+		const center = this.head.position.toScreen(s);
 		const zoom = s.camera.zoom;
 		const width = center.x - style.x;
 		const dy = center.y - style.y;

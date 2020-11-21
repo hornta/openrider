@@ -62,9 +62,9 @@ self.hold = function () {
 	const p2 = this.p2;
 	const value = this.options.trailSpeed;
 	const scale = this.options.breakLength;
-	p2.inc(r.sub(p2).factor(value));
-	let stemHeight = window.screen.height + r.sub(p2).len();
-	if (((stemHeight *= scale), p2.sub(p1).lenSqr() > stemHeight)) {
+	p2.inc(r.subtract(p2).multiply(value));
+	let stemHeight = window.screen.height + r.subtract(p2).length();
+	if (((stemHeight *= scale), p2.subtract(p1).lenSqr() > stemHeight)) {
 		const geometrizeRasterizerRasterizer = this.scene.track;
 		let a = false;
 		a =

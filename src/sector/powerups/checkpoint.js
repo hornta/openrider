@@ -118,8 +118,8 @@ self.drawCircle = function (e, r, scale, ctx) {
 self.collide = function (target) {
 	const resolved = target.parent;
 	const player = resolved.player;
-	const x = target.pos.x - this.x;
-	const y = target.pos.y - this.y;
+	const x = target.position.x - this.x;
+	const y = target.position.y - this.y;
 	const sqrt8 = sqrt(x ** 2 + y ** 2);
 	const nodesOnScreen = player._powerupsConsumed.checkpoints;
 	if (sqrt8 < 26 && player.isAlive() && !nodesOnScreen.includes(this.id)) {

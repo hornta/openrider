@@ -14,19 +14,19 @@ class Prop extends Mass {
 	update() {
 		let args = this.velocity;
 		const zoom = this.angle;
-		const pos = this.pos;
-		const a = this.old;
+		const position = this.position;
+		const a = this.prevPosition;
 		const zoomRatio = this.motor;
 		args.y += 0;
-		args.inc(zoom.factor(2 * zoomRatio));
-		args = args.factor(0.99);
-		pos.inc(args);
+		args.inc(zoom.multiply(2 * zoomRatio));
+		args = args.multiply(0.99);
+		position.inc(args);
 		this.contact = false;
 		if (this.collide) {
 			this.scene.track.collide(this);
 		}
-		this.velocity = pos.sub(a);
-		a.equ(pos);
+		this.velocity = position.subtract(a);
+		a.equ(position);
 	}
 }
 

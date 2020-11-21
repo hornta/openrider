@@ -15,12 +15,12 @@ class Spring {
 		const r = new Vector2();
 		const self = this.mass1;
 		const obj = this.mass2;
-		r.equ(self.pos);
-		self.pos.equ(obj.pos);
-		obj.pos.equ(r);
-		r.equ(self.old);
-		self.old.equ(obj.old);
-		obj.old.equ(r);
+		r.equ(self.position);
+		self.position.equ(obj.position);
+		obj.position.equ(r);
+		r.equ(self.prevPosition);
+		self.prevPosition.equ(obj.prevPosition);
+		obj.prevPosition.equ(r);
 		r.equ(self.velocity);
 		self.velocity.equ(obj.velocity);
 		obj.velocity.equ(r);
@@ -33,13 +33,13 @@ class Spring {
 		const attr = new Vector2(0, 0);
 		const mass1 = this.mass1;
 		const mass2 = this.mass2;
-		const p = mass1.pos;
-		const { pos } = mass2;
+		const p = mass1.position;
+		const { position } = mass2;
 		const bounds = mass1.velocity;
 		const rect = mass2.velocity;
-		attr.x = pos.x - p.x;
-		attr.y = pos.y - p.y;
-		const sizeThreshold = attr.len();
+		attr.x = position.x - p.x;
+		attr.y = position.y - p.y;
+		const sizeThreshold = attr.length();
 		if (!(sizeThreshold < 1)) {
 			const ratio = 1 / sizeThreshold;
 			attr.x *= ratio;
@@ -67,14 +67,14 @@ class Spring {
 	rotate(i) {
 		const prevLevelVitorc = this.mass1;
 		const owningPlayer = this.mass2;
-		const newMax = owningPlayer.pos.x - prevLevelVitorc.pos.x;
-		const n = owningPlayer.pos.y - prevLevelVitorc.pos.y;
+		const newMax = owningPlayer.position.x - prevLevelVitorc.position.x;
+		const n = owningPlayer.position.y - prevLevelVitorc.position.y;
 		const rate = -n / this.leff;
 		const m = newMax / this.leff;
-		prevLevelVitorc.pos.x += rate * i;
-		prevLevelVitorc.pos.y += m * i;
-		owningPlayer.pos.x += rate * -i;
-		owningPlayer.pos.y += m * -i;
+		prevLevelVitorc.position.x += rate * i;
+		prevLevelVitorc.position.y += m * i;
+		owningPlayer.position.x += rate * -i;
+		owningPlayer.position.y += m * -i;
 	}
 
 	contract(value, args) {

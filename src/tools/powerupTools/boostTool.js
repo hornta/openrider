@@ -50,7 +50,7 @@ self.release = function () {
 };
 self.draw = function (x) {
 	const node = this.mouse.touch;
-	const r = (node.pos, this.camera.zoom);
+	const r = this.camera.zoom;
 	const camera = this.scene.screen;
 	const device = this.scene.settings.device;
 	if (this.active === true) {

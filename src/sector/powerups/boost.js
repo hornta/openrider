@@ -104,8 +104,8 @@ me.drawCircle = function (x, r, scale, ctx) {
 me.collide = function (other) {
 	const context = other.parent;
 	const player = context.player;
-	const dx = other.pos.x - this.x;
-	const dy = other.pos.y - this.y;
+	const dx = other.position.x - this.x;
+	const dy = other.position.y - this.y;
 	const o = dx ** 2 + dy ** 2;
 	const attributes = context.masses;
 	const length = attributes.length;
@@ -114,7 +114,7 @@ me.collide = function (other) {
 	if (o < 1000 && player.isAlive()) {
 		let i = length - 1;
 		for (; i >= 0; i--) {
-			const p = attributes[i].pos;
+			const p = attributes[i].position;
 			p.x += shiftX;
 			p.y += shiftY;
 		}

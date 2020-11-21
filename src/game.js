@@ -85,7 +85,7 @@ class Game {
 		createjs.Ticker.on("tick", this.update.bind(this));
 	}
 
-	update(e) {
+	update() {
 		this.currentScene.update();
 		this.tickCount++;
 	}
@@ -106,6 +106,7 @@ class Game {
 	}
 
 	close() {
+		this.ticker.stop();
 		createjs.Ticker.reset();
 		createjs.Ticker.removeAllEventListeners();
 		this.currentScene.close();

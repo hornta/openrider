@@ -37,8 +37,8 @@ c.removeAllReferences = function () {
 	this.scene.track.cleanPowerups();
 };
 c.collide = function (other) {
-	const dx = other.pos.x - this.x;
-	const dy = other.pos.y - this.y;
+	const dx = other.position.x - this.x;
+	const dy = other.position.y - this.y;
 	const expected = Math.sqrt(dx ** 2 + dy ** 2);
 	if (!this.hit && expected < 26) {
 		this.hit = true;

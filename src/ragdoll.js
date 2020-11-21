@@ -65,19 +65,19 @@ class Ragdoll {
 		this.lFoot = value;
 		this.rFoot = f;
 		for (const i in val) {
-			this[i].pos.equ(val[i]);
+			this[i].position.equ(val[i]);
 		}
 	}
 
 	zero(v, a) {
-		v = v.factor(0.7);
-		a = a.factor(0.7);
+		v = v.multiply(0.7);
+		a = a.multiply(0.7);
 		const newEventHandlers = this.springs;
 		const teleports = this.masses;
 		for (const i in newEventHandlers) {
-			const r = newEventHandlers[i].mass2.pos
-				.sub(newEventHandlers[i].mass1.pos)
-				.len();
+			const r = newEventHandlers[i].mass2.position
+				.subtract(newEventHandlers[i].mass1.position)
+				.length();
 			newEventHandlers[i].lrest = r;
 			newEventHandlers[i].leff = r;
 		}
@@ -100,13 +100,15 @@ class Ragdoll {
 		];
 		const d = [this.waist, this.lKnee, this.rKnee, this.lFoot, this.rFoot];
 		for (const i in gamestate) {
-			gamestate[i].old = gamestate[i].pos.sub(v);
+			gamestate[i].prevPosition = gamestate[i].position.subtract(v);
 		}
 		for (const i in d) {
-			d[i].old = d[i].pos.sub(a);
+			d[i].prevPosition = d[i].position.subtract(a);
 		}
 		for (const i in teleports) {
-			teleports[i].velocity.equ(teleports[i].pos.sub(teleports[i].old));
+			teleports[i].velocity.equ(
+				teleports[i].position.subtract(teleports[i].prevPosition)
+			);
 			teleports[i].velocity.x += 1 * (Math.random() - Math.random());
 			teleports[i].velocity.y += 1 * (Math.random() - Math.random());
 		}
@@ -132,38 +134,38 @@ class Ragdoll {
 		ctx.lineWidth = 5 * dpr;
 		ctx.lineCap = "round";
 		ctx.lineJoin = "round";
-		const point = node.pos.toScreen(data);
+		const point = node.position.toScreen(data);
 		ctx.beginPath();
 		ctx.moveTo(point.x, point.y);
-		const dest = precomps.pos.toScreen(data);
+		const dest = precomps.position.toScreen(data);
 		ctx.lineTo(dest.x, dest.y);
-		const b = healthBorderBtn.pos.toScreen(data);
+		const b = healthBorderBtn.position.toScreen(data);
 		ctx.lineTo(b.x, b.y);
 		ctx.stroke();
 		ctx.strokeStyle = `rgba(0,0,0,${0.5 * f})`;
 		ctx.beginPath();
 		ctx.moveTo(point.x, point.y);
-		const xMax2d = subsynset.pos.toScreen(data);
+		const xMax2d = subsynset.position.toScreen(data);
 		ctx.lineTo(xMax2d.x, xMax2d.y);
-		const buttFrom = xCumPos.pos.toScreen(data);
+		const buttFrom = xCumPos.position.toScreen(data);
 		ctx.lineTo(buttFrom.x, buttFrom.y);
 		ctx.stroke();
 		ctx.strokeStyle = `rgba(0,0,0,${f})`;
 		ctx.lineWidth = 8 * dpr;
 		ctx.beginPath();
 		ctx.moveTo(point.x, point.y);
-		const center = edge.pos.toScreen(data);
+		const center = edge.position.toScreen(data);
 		ctx.lineTo(center.x, center.y);
 		ctx.stroke();
 		ctx.lineWidth = 5 * dpr;
 		ctx.beginPath();
 		ctx.moveTo(center.x, center.y);
-		const buttTo = settings.pos.toScreen(data);
+		const buttTo = settings.position.toScreen(data);
 		ctx.lineTo(buttTo.x, buttTo.y);
-		const item = resultbm.pos.toScreen(data);
+		const item = resultbm.position.toScreen(data);
 		ctx.lineTo(item.x, item.y);
-		let opt = settings.pos.sub(edge.pos).normalize();
-		opt = opt.factor(4).add(resultbm.pos);
+		let opt = settings.position.subtract(edge.position).normalize();
+		opt = Vector2.add(opt.multiply(4), resultbm.position);
 		const to = opt.toScreen(data);
 		ctx.lineTo(to.x, to.y);
 		ctx.stroke();
@@ -171,16 +173,16 @@ class Ragdoll {
 		ctx.lineWidth = 5 * dpr;
 		ctx.beginPath();
 		ctx.moveTo(center.x, center.y);
-		const ip = self.pos.toScreen(data);
+		const ip = self.position.toScreen(data);
 		ctx.lineTo(ip.x, ip.y);
-		let options = self.pos.sub(edge.pos).normalize();
-		options = options.factor(4).add(body.pos);
-		const code = body.pos.toScreen(data);
+		let options = self.position.subtract(edge.position).normalize();
+		options = Vector2.add(options.multiply(4), body.position);
+		const code = body.position.toScreen(data);
 		ctx.lineTo(code.x, code.y);
 		const p1 = options.toScreen(data);
 		ctx.lineTo(p1.x, p1.y);
 		ctx.stroke();
-		point.inc(point.sub(center).factor(0.25));
+		point.inc(point.subtract(center).multiply(0.25));
 		ctx.lineWidth = Number(dpr);
 		ctx.strokeStyle = `rgba(0,0,0,${f})`;
 		ctx.fillStyle = `rgba(255,255,255,${f})`;
@@ -213,11 +215,11 @@ class Ragdoll {
 		let s = "";
 		let pos = "";
 		if (this.dir < 0) {
-			pos = this.head.pos;
-			s = this.waist.pos;
+			pos = this.head.position;
+			s = this.waist.position;
 		} else {
-			s = this.head.pos;
-			pos = this.waist.pos;
+			s = this.head.position;
+			pos = this.waist.position;
 		}
 		const p = s.x;
 		const cy = s.y;

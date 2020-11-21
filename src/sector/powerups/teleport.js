@@ -888,8 +888,8 @@ self.collide = function (other) {
 	const player = ctx.player;
 	const nodesOnScreen = player._powerupsConsumed.misc;
 	if (!nodesOnScreen.includes(this.id)) {
-		const dx = other.pos.x - this.x;
-		const dy = other.pos.y - this.y;
+		const dx = other.position.x - this.x;
+		const dy = other.position.y - this.y;
 		const a = dx ** 2 + dy ** 2;
 		if (a < 1000 && player.isAlive()) {
 			nodesOnScreen.push(this.id);

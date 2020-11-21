@@ -200,14 +200,14 @@ class Helicopter extends Vehicle {
 		const target = new Vector2(0, 0);
 		const r = new Vector2(0, 0);
 		const v = new Vector2(0, 0);
-		target.equ(d[3].pos);
-		r.equ(d[3].old);
+		target.equ(d[3].position);
+		r.equ(d[3].prevPosition);
 		v.equ(d[3].velocity);
-		d[3].pos.equ(d[4].pos);
-		d[3].old.equ(d[4].old);
+		d[3].position.equ(d[4].position);
+		d[3].prevPosition.equ(d[4].prevPosition);
 		d[3].velocity.equ(d[4].velocity);
-		d[4].pos.equ(target);
-		d[4].old.equ(r);
+		d[4].position.equ(target);
+		d[4].prevPosition.equ(r);
 		d[4].velocity.equ(v);
 		this.dir = dir;
 	}
@@ -228,9 +228,9 @@ class Helicopter extends Vehicle {
 		if (!flagZ) {
 			this.swapped = false;
 		}
-		let b = list[1].pos.add(list[2].pos).factor(0.5);
-		b = list[0].pos.sub(b);
-		b = b.factor(1 / b.len());
+		let b = Vector2.add(list[1].position, list[2].position).multiply(0.5);
+		b = list[0].position.subtract(b);
+		b = b.multiply(1 / b.length());
 		list[0].angle.equ(b);
 		const method = result ? 1 : 0;
 		list[0].motor += (method - list[0].motor) / 10;
@@ -244,8 +244,8 @@ class Helicopter extends Vehicle {
 
 	updateCockpitAngle() {
 		const t = this.masses;
-		const pos = t[0].pos;
-		const xy = t[3].pos;
+		const pos = t[0].position;
+		const xy = t[3].position;
 		const p = pos.x;
 		const offset = pos.y;
 		const x = xy.x;
@@ -270,10 +270,12 @@ class Helicopter extends Vehicle {
 			let theta = this.rotor2;
 			const s = this.scene;
 			const scale = s.camera.zoom;
-			let size = shapes[1].pos.add(shapes[2].pos).factor(0.5);
-			size = shapes[0].pos.sub(size).factor(scale);
+			let size = Vector2.add(shapes[1].position, shapes[2].position).multiply(
+				0.5
+			);
+			size = shapes[0].position.subtract(size).multiply(scale);
 			const slopeV = new Vector2(-size.y * y, size.x * y);
-			const line = shapes[0].pos.toScreen(s);
+			const line = shapes[0].position.toScreen(s);
 			argpp += 0.5 * shapes[0].motor + 0.05;
 			if (argpp > 6.2831) {
 				argpp -= 6.2831;
@@ -302,8 +304,8 @@ class Helicopter extends Vehicle {
 				line.y + 0.8 * size.y - slopeV.y * aMag
 			);
 			ctx.stroke();
-			const parse = shapes[1].pos.toScreen(s);
-			const r = shapes[2].pos.toScreen(s);
+			const parse = shapes[1].position.toScreen(s);
+			const r = shapes[2].position.toScreen(s);
 			ctx.lineWidth = 4 * scale;
 			ctx.stokeStyle = "#666666";
 			ctx.beginPath();
@@ -327,7 +329,7 @@ class Helicopter extends Vehicle {
 			ctx.lineWidth = 6 * scale;
 			ctx.stokeStyle = "#000000";
 			ctx.beginPath();
-			const data = shapes[3].pos.toScreen(s);
+			const data = shapes[3].position.toScreen(s);
 			ctx.moveTo(line.x, line.y);
 			ctx.lineTo(data.x, data.y);
 			ctx.lineTo(line.x - 0.1 * size.x, line.y - 0.3 * size.y);

@@ -6,10 +6,10 @@ class Debris extends Mass {
 		super(obj, arg);
 
 		this.color = data;
-		this.pos.x = obj.x + 5 * (Math.random() - Math.random());
-		this.pos.y = obj.y + 5 * (Math.random() - Math.random());
-		this.old.x = this.pos.x;
-		this.old.y = this.pos.y;
+		this.position.x = obj.x + 5 * (Math.random() - Math.random());
+		this.position.y = obj.y + 5 * (Math.random() - Math.random());
+		this.prevPosition.x = this.position.x;
+		this.prevPosition.y = this.position.y;
 		this.velocity.y = 11 * (Math.random() - Math.random());
 		this.velocity.x = 11 * (Math.random() - Math.random());
 		this.radius = 2 * Math.random() * 5;
@@ -20,19 +20,19 @@ class Debris extends Mass {
 
 	drive(x, y) {
 		const intrinsicDim = this.velocity;
-		const { pos } = this;
+		const { position } = this;
 		this.speed = (x * intrinsicDim.x + y * intrinsicDim.y) / this.radius;
 		this.angle += this.speed;
 		const speed = -(x * intrinsicDim.x + y * intrinsicDim.y) * this.friction;
-		pos.x += x * speed;
-		pos.y += y * speed;
+		position.x += x * speed;
+		position.y += y * speed;
 		const scale = Math.sqrt(x ** 2 + y ** 2);
 		if (scale > 0) {
 			const width = -y / scale;
 			const height = x / scale;
 			const delta = 0.8 * (width * intrinsicDim.x + height * intrinsicDim.y);
-			this.old.x += width * delta;
-			this.old.y += height * delta;
+			this.prevPosition.x += width * delta;
+			this.prevPosition.y += height * delta;
 		}
 	}
 
@@ -44,8 +44,8 @@ class Debris extends Mass {
 	draw() {
 		const point = this.scene.screen;
 		const { camera } = this.scene;
-		const x = point.realToScreen(this.pos.x, "x");
-		const y = point.realToScreen(this.pos.y, "y");
+		const x = point.realToScreen(this.position.x, "x");
+		const y = point.realToScreen(this.position.y, "y");
 		let minidx = 0;
 		const { zoom } = camera;
 		const { angle } = this;

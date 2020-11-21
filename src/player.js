@@ -28,6 +28,28 @@ function vehicleStringifyReplacer(key, value) {
 	}
 }
 
+const types = {};
+types.BMX = BMX;
+types.MTB = MTB;
+types.HELI = Helicopter;
+types.TRUCK = Truck;
+types.BALLOON = Balloon;
+types.BLOB = Blob;
+function equals(result, value) {
+	for (const name in value) {
+		try {
+			result[name] =
+				value[name].constructor == Object
+					? equals(result[name], value[name])
+					: value[name];
+		} catch {
+			result[name] = value[name];
+		}
+	}
+	return result;
+}
+const googleImageSize = equals;
+
 class Player {
 	constructor(options, value) {
 		this.id = nextProfileItemId++;
@@ -134,15 +156,15 @@ class Player {
 		this.reset();
 	}
 
-	createBaseVehicle(clickRepeater, e, islongclick) {
+	createBaseVehicle(position, facing, velocity) {
 		if (this._tempVehicle) {
 			this._tempVehicle.stopSounds();
 		}
 		this._baseVehicle = new types[this._baseVehicleType](
 			this,
-			clickRepeater,
-			e,
-			islongclick
+			position,
+			facing,
+			velocity
 		);
 		this._tempVehicle = false;
 		this._tempVehicleType = false;
@@ -196,11 +218,11 @@ class Player {
 				if (this._tempVehicleTicks <= 0 && this._crashed === false) {
 					this.explosionTicks = 45;
 					this.explosion = new Explosion(
-						this._tempVehicle.focalPoint.pos,
+						this._tempVehicle.focalPoint.position,
 						this._scene
 					);
 					this.createBaseVehicle(
-						this._tempVehicle.focalPoint.pos,
+						this._tempVehicle.focalPoint.position,
 						this._tempVehicle.dir,
 						this._tempVehicle.masses[0].velocity
 					);
@@ -222,7 +244,9 @@ class Player {
 	isInFocus() {
 		const camera = this._scene.camera;
 		let e = false;
-		camera.playerFocus && camera.playerFocus === this && (e = true);
+		if (camera.playerFocus && camera.playerFocus === this) {
+			e = true;
+		}
 		return e;
 	}
 
@@ -249,7 +273,7 @@ class Player {
 		const ctx = canvas.getContext("2d");
 		const opacity = this._opacity;
 		const model = this.getActiveVehicle();
-		const center = model.focalPoint.pos.toScreen(s);
+		const center = model.focalPoint.position.toScreen(s);
 		ctx.globalAlpha = opacity;
 		ctx.beginPath();
 		ctx.fillStyle = parBgColor;
@@ -308,14 +332,17 @@ class Player {
 	getDistanceBetweenPlayers(posnum) {
 		const childCard = posnum.getActiveVehicle();
 		const model = this.getActiveVehicle();
-		const base = childCard.focalPoint.pos.x - model.focalPoint.pos.x;
-		const height = childCard.focalPoint.pos.y - model.focalPoint.pos.y;
+		const base = childCard.focalPoint.position.x - model.focalPoint.position.x;
+		const height =
+			childCard.focalPoint.position.y - model.focalPoint.position.y;
 		return Math.sqrt(base ** 2 + height ** 2);
 	}
 
 	getActiveVehicle() {
 		let t = this._baseVehicle;
-		this._tempVehicleTicks > 0 && (t = this._tempVehicle);
+		if (this._tempVehicleTicks > 0) {
+			t = this._tempVehicle;
+		}
 		return t;
 	}
 
@@ -464,27 +491,5 @@ class Player {
 		this._scene.state.playerAlive = this.isAlive();
 	}
 }
-
-const types = {};
-types.BMX = BMX;
-types.MTB = MTB;
-types.HELI = Helicopter;
-types.TRUCK = Truck;
-types.BALLOON = Balloon;
-types.BLOB = Blob;
-function equals(result, value) {
-	for (const name in value) {
-		try {
-			result[name] =
-				value[name].constructor == Object
-					? equals(result[name], value[name])
-					: value[name];
-		} catch {
-			result[name] = value[name];
-		}
-	}
-	return result;
-}
-const googleImageSize = equals;
 
 export default Player;

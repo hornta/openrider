@@ -53,8 +53,8 @@ me.draw = function (x, y, scale, context) {
 me.collide = function (other) {
 	const parent = other.parent;
 	const player = parent.player;
-	const x = other.pos.x - this.x;
-	const y = other.pos.y - this.y;
+	const x = other.position.x - this.x;
+	const y = other.position.y - this.y;
 	const sqrt8 = sqrt(x ** 2 + y ** 2);
 	if (!this.hit && sqrt8 < 26 && player.isAlive()) {
 		parent.slow = true;

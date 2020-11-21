@@ -1,12 +1,10 @@
-function Path() {
-	this.start = null;
-	this.end = null;
-	this.verticies = [];
-}
-Path.prototype = {
-	start: null,
-	end: null,
-	verticies: [],
+class Path {
+	constructor() {
+		this.start = null;
+		this.end = null;
+		this.verticies = [];
+	}
+
 	build(inputs) {
 		let input = inputs.pop();
 		this.start = input.p1;
@@ -28,7 +26,6 @@ Path.prototype = {
 				inputs.splice(i, 1);
 			}
 		}
-	},
-};
-
+	}
+}
 export default Path;

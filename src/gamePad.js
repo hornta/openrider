@@ -16,17 +16,20 @@ class GamePad {
 		this.records = {};
 		this.numberOfKeysDown = 0;
 		this.tickNumberOfKeysDown = 0;
+
+		this.boundButtonDownHandler = this.handleButtonDown.bind(this);
+		this.boundButtonUpHandler = this.handleButtonUp.bind(this);
 	}
 
 	listen() {
-		document.addEventListener("keydown", this.handleButtonDown.bind(this));
-		document.addEventListener("keyup", this.handleButtonUp.bind(this));
+		document.addEventListener("keydown", this.boundButtonDownHandler);
+		document.addEventListener("keyup", this.boundButtonUpHandler);
 	}
 
 	unlisten() {
 		this.downButtons = {};
-		document.addEventListener("keydown", function () {});
-		document.addEventListener("keyup", function () {});
+		document.removeEventListener("keydown", this.boundButtonDownHandler);
+		document.removeEventListener("keyup", this.boundButtonUpHandler);
 	}
 
 	pause() {
@@ -115,7 +118,9 @@ class GamePad {
 	isButtonDown(key) {
 		let e = false;
 		const i = this.tickDownButtons[key];
-		(i > 0 || i == 1) && (e = true);
+		if (i > 0 || i == 1) {
+			e = true;
+		}
 		return e;
 	}
 

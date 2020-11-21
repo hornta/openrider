@@ -2,8 +2,8 @@ import Vector2 from "./math/vector2";
 
 class Mass {
 	constructor(target, node) {
-		this.pos = new Vector2();
-		this.old = new Vector2();
+		this.position = new Vector2();
+		this.prevPosition = new Vector2();
 		this.velocity = new Vector2(0, 0);
 		this.drawPos = new Vector2(0, 0);
 		this.radius = 10;
@@ -12,8 +12,8 @@ class Mass {
 		this.collide = true;
 		this.contact = false;
 		this.scene = node.scene;
-		this.pos.equ(target);
-		this.old.equ(target);
+		this.position.equ(target);
+		this.prevPosition.equ(target);
 	}
 
 	drive(x, y) {
@@ -22,31 +22,32 @@ class Mass {
 			-(x * this.velocity.x + y * this.velocity.y) * friction;
 		x *= resolutionScale;
 		y *= resolutionScale;
-		this.pos.x += x;
-		this.pos.y += y;
+		this.position.x += x;
+		this.position.y += y;
 		this.contact = true;
 	}
 
 	update() {
-		const args = this.velocity;
-		args.inc(this.parent.gravity);
-		const pt = this.parent.gravity;
-		if (pt.x != 0 || pt.y != 0) {
-			args.x *= 0.99;
-			args.y *= 0.99;
+		const velocity = this.velocity;
+		velocity.inc(this.parent.gravity);
+		const gravity = this.parent.gravity;
+		if (gravity.x !== 0 || gravity.y !== 0) {
+			velocity.x *= 0.99;
+			velocity.y *= 0.99;
 		}
-		this.pos.inc(this.velocity);
+		this.position.x += this.velocity.x;
+		this.position.y += this.velocity.y;
 		this.contact = false;
 		if (this.collide) {
 			this.scene.track.collide(this);
 		}
-		args.x = this.pos.x - this.old.x;
-		args.y = this.pos.y - this.old.y;
-		this.old.equ(this.pos);
+		velocity.x = this.position.x - this.prevPosition.x;
+		velocity.y = this.position.y - this.prevPosition.y;
+		this.prevPosition.equ(this.position);
 	}
 
 	draw() {
-		const obj = this.pos.toScreen(this.scene);
+		const obj = this.position.toScreen(this.scene);
 		const ctx = this.scene.game.canvas.getContext("2d");
 		const SCALE = this.scene.camera.zoom;
 		ctx.beginPath();

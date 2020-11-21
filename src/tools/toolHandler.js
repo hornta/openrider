@@ -176,8 +176,8 @@ ToolHandler.prototype = {
 			const c = container.center;
 			const camera = this.camera;
 			const org = this.mouse.touch;
-			const right = org.pos.x;
-			const max = org.pos.y;
+			const right = org.position.x;
+			const max = org.position.y;
 			const meshSizeX = 0.8 * (right - c.x);
 			const j = max - c.y;
 			if (

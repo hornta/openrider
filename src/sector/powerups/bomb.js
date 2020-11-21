@@ -174,8 +174,8 @@ me.drawCircle = function (e, r, scale, ctx) {
 me.collide = function (other) {
 	const e = other.parent;
 	const target = e.player;
-	const dx = other.pos.x - this.x;
-	const dy = other.pos.y - this.y;
+	const dx = other.position.x - this.x;
+	const dy = other.position.y - this.y;
 	const sqrt8 = sqrt(dx ** 2 + dy ** 2);
 	if (sqrt8 < 20 && target.isAlive()) {
 		e.explode();

@@ -97,15 +97,15 @@ self.drawArrow = function (to, path, scale, ctx) {
 self.collide = function (other) {
 	const e = other.parent;
 	const target = e.player;
-	const dx = other.pos.x - this.x;
-	const dy = other.pos.y - this.y;
+	const dx = other.position.x - this.x;
+	const dy = other.position.y - this.y;
 	const o = dx ** 2 + dy ** 2;
 	const allKids = e.masses;
 	const xSpeedIncrease = (allKids.length, this.directionX);
-	const defaultYPos = this.directionY;
+	const defaultYPosition = this.directionY;
 	if (o < 1000 && target.isAlive()) {
 		e.gravity.x = xSpeedIncrease;
-		e.gravity.y = defaultYPos;
+		e.gravity.y = defaultYPosition;
 		if (target.isGhost() === false) {
 			this.scene.message.show("Gravity Changed", 50, "#1F80C3", "#FFFFFF");
 			this.scene.sound.play("gravity_down_sound");

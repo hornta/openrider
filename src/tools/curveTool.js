@@ -1,6 +1,6 @@
 import Tool from "./tool";
 import Vector2 from "../math/vector2";
-import curvedDivision from "../curvedDivision";
+import curvedDivision from "../beizerToPolyLine";
 
 const CurveTool = function (value) {
 	this.toolInit(value);
@@ -101,8 +101,8 @@ self.updateAnchor = function () {
 	this.midpoint.y = b.y;
 };
 self.splitAndAddCurve = function () {
-	const result =
-		(performance.now(), curvedDivision(this.p1, this.midpoint, this.p2));
+	performance.now();
+	const result = curvedDivision(this.p1, this.midpoint, this.p2);
 	const console = this.scene.track;
 	const l = result.length;
 	const serverIds = [];

@@ -1,36 +1,37 @@
 import Vector2 from "./math/vector2";
 
-function SceneryLine(x, y, i, j) {
-	this.p1 = new Vector2(x, y);
-	this.p2 = new Vector2(i, j);
-	this.pp = this.p2.sub(this.p1);
-	this.len = this.pp.len();
-	this.sectors = [];
-}
-SceneryLine.prototype = {
-	sectors: null,
-	p1: null,
-	p2: null,
-	pp: null,
-	len: 0,
-	collided: false,
-	remove: false,
-	recorded: false,
+class SceneryLine {
+	constructor(x1, y1, x2, y2) {
+		this.collided = false;
+		this.remove = false;
+		this.recorded = false;
+		this.p1 = new Vector2(x1, y1);
+		this.p2 = new Vector2(x2, y2);
+		this.pp = this.p2.subtract(this.p1);
+		this.len = this.pp.length();
+		this.sectors = [];
+	}
+
 	getCode(e) {
 		this.recorded = true;
 		const p = this.p2;
 		let msg = ` ${p.x.toString(32)} ${p.y.toString(32)}`;
 		const x = this.checkForConnectedLine(e, p);
-		x && (msg += x.getCode(e));
+		if (x) {
+			msg += x.getCode(e);
+		}
 		return msg;
-	},
+	}
+
+	// eslint-disable-next-line class-methods-use-this
 	checkForConnectedLine(c, e) {
 		const h = c.settings.drawSectorSize;
 		const HuffTab = c.sectors.drawSectors;
 		const i = Math.floor(e.x / h);
 		const j = Math.floor(e.y / h);
 		return HuffTab[i][j].searchForLine("sceneryLines", e);
-	},
+	}
+
 	erase(s, start) {
 		let instance = false;
 		if (!this.remove) {
@@ -38,8 +39,8 @@ SceneryLine.prototype = {
 			const p2 = this.p2;
 			const d = s;
 			const tca = start;
-			const u = p2.sub(p1);
-			const v1 = p1.sub(d);
+			const u = p2.subtract(p1);
+			const v1 = p1.subtract(d);
 			const a = u.dot(u);
 			const roundDistance = 2 * v1.dot(u);
 			const sampleWidth = v1.dot(v1) - tca * tca;
@@ -66,15 +67,19 @@ SceneryLine.prototype = {
 			}
 		}
 		return instance;
-	},
+	}
+
+	// eslint-disable-next-line class-methods-use-this
 	intersects(height, top, width, y, left) {
 		const lightI = height - width;
 		const lightJ = top - y;
 		return left * left >= lightI * lightI + lightJ * lightJ;
-	},
+	}
+
 	addSectorReference(t) {
 		this.sectors.push(t);
-	},
+	}
+
 	removeAllReferences() {
 		this.remove = true;
 		const objects = this.sectors;
@@ -85,7 +90,7 @@ SceneryLine.prototype = {
 			objects[i].dirty = true;
 		}
 		this.sectors = [];
-	},
-};
+	}
+}
 
 export default SceneryLine;

@@ -119,9 +119,15 @@ const E = function (input, val, name) {
 				expected = expected[expectedKeys[i]];
 			}
 		}
-		typeof e == "boolean" && (n = e);
+		if (typeof e == "boolean") {
+			n = e;
+		}
 		e = null;
-		n ? callback(expected, e) : s(expected, e);
+		if (n) {
+			callback(expected, e);
+		} else {
+			s(expected, e);
+		}
 	};
 };
 
@@ -171,7 +177,9 @@ const n = {
 	getParentUrl() {
 		const t = window.parent !== window;
 		let e = null;
-		t && (e = document.referrer);
+		if (t) {
+			e = document.referrer;
+		}
 		return e;
 	},
 };
