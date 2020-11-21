@@ -891,7 +891,7 @@ self.collide = function (other) {
 		const dx = other.pos.x - this.x;
 		const dy = other.pos.y - this.y;
 		const a = dx ** 2 + dy ** 2;
-		if (a < 1e3 && player.isAlive()) {
+		if (a < 1000 && player.isAlive()) {
 			nodesOnScreen.push(this.id);
 			nodesOnScreen.push(this.otherPortal.id);
 			ctx.moveVehicle(this.otherPortal.x - this.x, this.otherPortal.y - this.y);

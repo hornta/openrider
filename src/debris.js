@@ -10,8 +10,8 @@ class Debris extends Mass {
 		this.pos.y = obj.y + 5 * (Math.random() - Math.random());
 		this.old.x = this.pos.x;
 		this.old.y = this.pos.y;
-		this.vel.y = 11 * (Math.random() - Math.random());
-		this.vel.x = 11 * (Math.random() - Math.random());
+		this.velocity.y = 11 * (Math.random() - Math.random());
+		this.velocity.x = 11 * (Math.random() - Math.random());
 		this.radius = 2 * Math.random() * 5;
 		this.angle = 6.2 * Math.random();
 		this.speed = Number(Math.random()) - Number(Math.random());
@@ -19,7 +19,7 @@ class Debris extends Mass {
 	}
 
 	drive(x, y) {
-		const intrinsicDim = this.vel;
+		const intrinsicDim = this.velocity;
 		const { pos } = this;
 		this.speed = (x * intrinsicDim.x + y * intrinsicDim.y) / this.radius;
 		this.angle += this.speed;

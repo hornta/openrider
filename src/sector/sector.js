@@ -217,20 +217,20 @@ Sector.prototype = {
 		canvas.height = height;
 		const ctx = canvas.getContext("2d");
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		const centerLineWidth = 2 * width > 0.5 ? 2 * width : 0.5;
-		const centerLineColor = this.settings.sceneryLineColor;
-		const aligningLineColor = this.settings.physicsLineColor;
+		const lineWidth = 2 * width > 0.5 ? 2 * width : 0.5;
+		const sceneryLineColor = "#AAA";
+		const physicsLineColor = "#000";
 		ctx.save();
 		ctx.beginPath();
-		ctx.lineWidth = centerLineWidth;
+		ctx.lineWidth = lineWidth;
 		ctx.lineCap = "round";
-		ctx.strokeStyle = centerLineColor;
+		ctx.strokeStyle = sceneryLineColor;
 		this.drawLines(c, width, ctx);
 		ctx.stroke();
 		ctx.beginPath();
-		ctx.lineWidth = centerLineWidth;
+		ctx.lineWidth = lineWidth;
 		ctx.lineCap = "round";
-		ctx.strokeStyle = aligningLineColor;
+		ctx.strokeStyle = physicsLineColor;
 		this.drawLines(newEdges, width, ctx);
 		ctx.stroke();
 		if (this.settings.developerMode) {

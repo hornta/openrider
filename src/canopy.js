@@ -10,12 +10,12 @@ function Canopy(name, target, id) {
 Canopy.prototype = Object.create(Mass.prototype);
 Canopy.prototype.drive = function (uv1u, uv1v) {
 	const pos = this.pos;
-	const xhair = this.vel;
+	const xhair = this.velocity;
 	pos.x += 0.05 * uv1u * -uv1u * (uv1u * xhair.x + uv1v * xhair.y);
 	this.contact = true;
 };
 Canopy.prototype.update = function () {
-	const outerPos = (this.parent, this.vel);
+	const outerPos = (this.parent, this.velocity);
 	const pos = this.pos;
 	const sprite = this.old;
 	const pt = this.parent.gravity;

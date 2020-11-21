@@ -12,7 +12,7 @@ class Prop extends Mass {
 	}
 
 	update() {
-		let args = this.vel;
+		let args = this.velocity;
 		const zoom = this.angle;
 		const pos = this.pos;
 		const a = this.old;
@@ -25,7 +25,7 @@ class Prop extends Mass {
 		if (this.collide) {
 			this.scene.track.collide(this);
 		}
-		this.vel = pos.sub(a);
+		this.velocity = pos.sub(a);
 		a.equ(pos);
 	}
 }

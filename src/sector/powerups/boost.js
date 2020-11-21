@@ -111,7 +111,7 @@ me.collide = function (other) {
 	const length = attributes.length;
 	const shiftX = this.directionX;
 	const shiftY = this.directionY;
-	if (o < 1e3 && player.isAlive()) {
+	if (o < 1000 && player.isAlive()) {
 		let i = length - 1;
 		for (; i >= 0; i--) {
 			const p = attributes[i].pos;

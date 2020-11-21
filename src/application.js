@@ -146,7 +146,7 @@ const n = {
 		let i = "";
 		if (t) {
 			const e = new Date();
-			e.setTime(e.getTime() + 24 * t * 60 * 60 * 1e3);
+			e.setTime(e.getTime() + 24 * t * 60 * 60 * 1000);
 			i = `; expires=${e.toGMTString()}`;
 		} else {
 			i = "";

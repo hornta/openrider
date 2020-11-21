@@ -99,7 +99,7 @@ PhysicsLine.prototype = {
 		if (!this.collided) {
 			this.collided = true;
 			const pos = obj.pos;
-			const scale = obj.vel;
+			const scale = obj.velocity;
 			const h = obj.radius;
 			let x = 0;
 			let y = 0;

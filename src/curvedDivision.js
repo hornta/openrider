@@ -15,7 +15,8 @@ function curvedDivision(props, a, val) {
 			let a2 = e - d;
 			let b2 = v - start;
 			const rr = Math.abs((f - e) * b2 - (value - v) * a2);
-			if (rr > MAX_INT32) {
+			// MAX_INT32
+			if (rr > Number.EPSILON) {
 				if (PCdotN * (a2 * a2 + b2 * b2) >= rr * rr) {
 					if (mY > pY) {
 						result.push(x, i);
@@ -50,7 +51,7 @@ function curvedDivision(props, a, val) {
 	const result = [];
 	const PCdotN = 0.25;
 	const MIN_HEIGHT = 10;
-	const MAX_INT32 = 1e-30;
+	// const MAX_INT32 = 1e-30;
 	const pY = 0;
 	const mY = 0.01;
 	b(value, n, x2, y2, x, y);

@@ -639,7 +639,7 @@ Main.prototype = {
 	sortByRunTicksIterator(q) {
 		const s = this.settings;
 		const i = Number.parseInt(q.race.run_ticks, 10);
-		const n = formatNumber((i / s.drawFPS) * 1e3);
+		const n = formatNumber((i / s.drawFPS) * 1000);
 		q.runTime = n;
 		return i;
 	},
@@ -668,7 +668,7 @@ Main.prototype = {
 			const aerisCode = applyViewModelsSpy.getReplayString();
 			const metadata = this.settings;
 			const encoderPadding = this.ticks;
-			const time = formatNumber((encoderPadding / metadata.drawFPS) * 1e3);
+			const time = formatNumber((encoderPadding / metadata.drawFPS) * 1000);
 			const trackId = document.querySelector("#track-data").dataset.t_id;
 			const data = {
 				t_id: trackId,

@@ -4,18 +4,14 @@ class PlayerManager {
 	constructor(data) {
 		this.scene = data;
 		this.game = data.game;
-		this.settings = data.settings;
 		this.firstPlayer = null;
 		this.players = [];
 		this.playerLookup = {};
 	}
 
 	update() {
-		const chYxis = this.players;
-		const len = chYxis.length;
-		let i = 0;
-		for (; len > i; i++) {
-			chYxis[i].update();
+		for (const player of this.players) {
+			player.update();
 		}
 	}
 
@@ -90,7 +86,6 @@ class PlayerManager {
 		this.playerLookup = null;
 		this.scene = null;
 		this.game = null;
-		this.settings = null;
 	}
 }
 

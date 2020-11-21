@@ -313,7 +313,7 @@ me.collide = function (other) {
 	const dx = other.pos.x - this.x;
 	const dy = other.pos.y - this.y;
 	const o = dx ** 2 + dy ** 2;
-	if (o < 1e3 && target.isAlive()) {
+	if (o < 1000 && target.isAlive()) {
 		if (target.isGhost() === false) {
 			if (e.gravity.x != 0 || e.gravity.y != 0) {
 				this.scene.sound.play("antigravity_sound", 0.3);

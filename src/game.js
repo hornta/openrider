@@ -59,13 +59,7 @@ class Game {
 			const c = this.currentScene.getCanvasOffset();
 			h -= c.height;
 		}
-		let ratio = 1;
-		if (undefined !== window.devicePixelRatio) {
-			ratio = window.devicePixelRatio;
-		}
-		if (this.settings.lowQualityMode) {
-			ratio = 1;
-		}
+		const ratio = window.devicePixelRatio;
 		const width = w * ratio;
 		const height = h * ratio;
 		if (width !== this.width || height !== this.height) {

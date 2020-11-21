@@ -77,7 +77,7 @@ options.update = function () {
 		this.cache_fixed_text();
 	}
 	const xStride = width / data.drawFPS;
-	this.time.text = formatNumber(1e3 * xStride);
+	this.time.text = formatNumber(1000 * xStride);
 	const key = el.targetCount;
 	const _cur = r.getTargetsHit();
 	this.goals.text = `${_cur}/${key}`;

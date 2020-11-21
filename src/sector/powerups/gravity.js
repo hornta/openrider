@@ -103,7 +103,7 @@ self.collide = function (other) {
 	const allKids = e.masses;
 	const xSpeedIncrease = (allKids.length, this.directionX);
 	const defaultYPos = this.directionY;
-	if (o < 1e3 && target.isAlive()) {
+	if (o < 1000 && target.isAlive()) {
 		e.gravity.x = xSpeedIncrease;
 		e.gravity.y = defaultYPos;
 		if (target.isGhost() === false) {

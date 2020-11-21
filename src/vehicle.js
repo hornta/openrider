@@ -22,7 +22,7 @@ class Vehicle {
 
 	explode() {
 		this.scene.sound.play("bomb_sound", 1);
-		this.explosion = new Explosion(this.masses[0].pos, this.scene)();
+		this.explosion = new Explosion(this.masses[0].pos, this.scene);
 		this.dead();
 	}
 
@@ -34,7 +34,7 @@ class Vehicle {
 
 	updateSpeed() {
 		this.speed = Math.abs(
-			Math.round(this.focalPoint.vel.x + this.focalPoint.vel.y)
+			Math.round(this.focalPoint.velocity.x + this.focalPoint.velocity.y)
 		);
 	}
 
@@ -43,7 +43,6 @@ class Vehicle {
 		this.settings = null;
 		this.gravity = null;
 		this.speed = null;
-		this.cosmetics = null;
 		this.explosion = null;
 		this.ragdoll = null;
 		this.ghost = null;

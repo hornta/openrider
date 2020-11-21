@@ -4,7 +4,7 @@ class Mass {
 	constructor(target, node) {
 		this.pos = new Vector2();
 		this.old = new Vector2();
-		this.vel = new Vector2(0, 0);
+		this.velocity = new Vector2(0, 0);
 		this.drawPos = new Vector2(0, 0);
 		this.radius = 10;
 		this.friction = 0;
@@ -18,7 +18,8 @@ class Mass {
 
 	drive(x, y) {
 		const { friction } = this;
-		const resolutionScale = -(x * this.vel.x + y * this.vel.y) * friction;
+		const resolutionScale =
+			-(x * this.velocity.x + y * this.velocity.y) * friction;
 		x *= resolutionScale;
 		y *= resolutionScale;
 		this.pos.x += x;
@@ -27,14 +28,14 @@ class Mass {
 	}
 
 	update() {
-		const args = this.vel;
+		const args = this.velocity;
 		args.inc(this.parent.gravity);
 		const pt = this.parent.gravity;
 		if (pt.x != 0 || pt.y != 0) {
 			args.x *= 0.99;
 			args.y *= 0.99;
 		}
-		this.pos.inc(this.vel);
+		this.pos.inc(this.velocity);
 		this.contact = false;
 		if (this.collide) {
 			this.scene.track.collide(this);

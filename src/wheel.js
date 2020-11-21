@@ -3,7 +3,6 @@ import Mass from "./mass";
 class Wheel extends Mass {
 	constructor(element, id) {
 		super(element, id);
-
 		this.motor = 0;
 		this.brake = false;
 		this.angle = 0;
@@ -16,14 +15,17 @@ class Wheel extends Mass {
 		const width = this.motor * this.parent.dir;
 		const x = width * amount;
 		const yOffset = width * size;
-		if (((pos.x += x), (pos.y += yOffset), this.brake)) {
-			const scale = 0.3 * -(amount * this.vel.x + size * this.vel.y);
+		pos.x += x;
+		pos.y += yOffset;
+		if (this.brake) {
+			const scale = 0.3 * -(amount * this.velocity.x + size * this.velocity.y);
 			const count = amount * scale;
 			const lineHeight = size * scale;
 			pos.x += count;
 			pos.y += lineHeight;
 		}
-		this.speed = (amount * this.vel.x + size * this.vel.y) / this.radius;
+		this.speed =
+			(amount * this.velocity.x + size * this.velocity.y) / this.radius;
 		this.rotationSpeed = this.speed;
 		this.angle += this.speed;
 		this.contact = true;
@@ -33,7 +35,7 @@ class Wheel extends Mass {
 		const rect = this.parent.gravity;
 		const { pos } = this;
 		const elpos = this.old;
-		const offset = this.vel;
+		const offset = this.velocity;
 		offset.x += rect.x;
 		offset.y += rect.y;
 		if (rect.x != 0 || rect.y != 0) {

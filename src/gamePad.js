@@ -1,53 +1,53 @@
 import _ from "lodash";
 
-function GamePad(data) {
-	this.scene = data;
-	this.tickDownButtons = {};
-	this.previousTickDownButtons = {};
-	this.downButtons = {};
-	this.keymap = {};
-	this.records = {};
-	this.numberOfKeysDown = 0;
-	this.tickNumberOfKeysDown = 0;
-}
-GamePad.prototype = {
-	tickDownButtons: null,
-	previousTickDownButtons: null,
-	downButtons: null,
-	paused: false,
-	keymap: null,
-	records: null,
-	keysToRecord: null,
-	keysToPlay: null,
-	recording: false,
-	playback: null,
-	numberOfKeysDown: 0,
-	tickNumberOfKeysDown: 0,
-	replaying: false,
+class GamePad {
+	constructor(data) {
+		this.paused = false;
+		this.keysToRecord = null;
+		this.keysToPlay = null;
+		this.recording = false;
+		this.playback = null;
+		this.replaying = false;
+		this.scene = data;
+		this.tickDownButtons = {};
+		this.previousTickDownButtons = {};
+		this.downButtons = {};
+		this.keymap = {};
+		this.records = {};
+		this.numberOfKeysDown = 0;
+		this.tickNumberOfKeysDown = 0;
+	}
+
 	listen() {
 		document.addEventListener("keydown", this.handleButtonDown.bind(this));
 		document.addEventListener("keyup", this.handleButtonUp.bind(this));
-	},
+	}
+
 	unlisten() {
 		this.downButtons = {};
 		document.addEventListener("keydown", function () {});
 		document.addEventListener("keyup", function () {});
-	},
+	}
+
 	pause() {
 		this.paused = true;
-	},
+	}
+
 	unpause() {
 		this.paused = false;
-	},
+	}
+
 	recordKeys(canCreateDiscussions) {
 		this.keysToRecord = canCreateDiscussions;
 		this.recording = true;
-	},
+	}
+
 	loadPlayback(index, eachIndex) {
 		this.keysToPlay = eachIndex;
 		this.playback = index;
 		this.replaying = true;
-	},
+	}
+
 	setKeyMap(array) {
 		const keys = {};
 
@@ -61,32 +61,37 @@ GamePad.prototype = {
 			}
 		}
 		this.keymap = keys;
-	},
+	}
+
 	handleButtonDown(event) {
 		const code = this.getInternalCode(event.keyCode);
 		if (typeof code == "string") {
 			event.preventDefault();
 		}
 		this.setButtonDown(code);
-	},
+	}
+
 	handleButtonUp(event) {
 		const code = this.getInternalCode(event.keyCode);
 		if (typeof code == "string") {
 			event.preventDefault();
 		}
 		this.setButtonUp(code);
-	},
+	}
+
 	getInternalCode(name) {
 		const attrToProp = this.keymap;
 		return attrToProp[name] || name;
-	},
+	}
+
 	setButtonsDown(array) {
 		let i = 0;
 		const length = array.length;
 		for (; length > i; i++) {
 			this.setButtonDown(array[i]);
 		}
-	},
+	}
+
 	setButtonUp(code) {
 		if (this.downButtons[code]) {
 			if (this.onButtonUp) {
@@ -95,7 +100,8 @@ GamePad.prototype = {
 			this.downButtons[code] = false;
 			this.numberOfKeysDown--;
 		}
-	},
+	}
+
 	setButtonDown(code, f) {
 		if (!this.downButtons[code]) {
 			if (this.onButtonDown) {
@@ -104,13 +110,15 @@ GamePad.prototype = {
 			this.downButtons[code] = f ? f : true;
 			this.numberOfKeysDown++;
 		}
-	},
+	}
+
 	isButtonDown(key) {
 		let e = false;
 		const i = this.tickDownButtons[key];
 		(i > 0 || i == 1) && (e = true);
 		return e;
-	},
+	}
+
 	getButtonDownOccurances(key) {
 		let entryToSend = 0;
 		if (this.isButtonDown(key)) {
@@ -121,7 +129,8 @@ GamePad.prototype = {
 			}
 		}
 		return entryToSend;
-	},
+	}
+
 	getDownButtons() {
 		const btns = [];
 
@@ -131,7 +140,8 @@ GamePad.prototype = {
 			}
 		}
 		return btns;
-	},
+	}
+
 	reset(noalert) {
 		if (this.replaying || noalert) {
 			this.downButtons = {};
@@ -139,7 +149,8 @@ GamePad.prototype = {
 		this.tickDownButtons = {};
 		this.previousTickDownButtons = {};
 		this.records = {};
-	},
+	}
+
 	update() {
 		if (this.replaying) {
 			this.updatePlayback();
@@ -150,7 +161,8 @@ GamePad.prototype = {
 		if (this.recording) {
 			this.updateRecording();
 		}
-	},
+	}
+
 	areKeysDown() {
 		for (const n in this.downButtons) {
 			if (this.downButtons[n] === true) {
@@ -158,7 +170,8 @@ GamePad.prototype = {
 			}
 		}
 		return false;
-	},
+	}
+
 	updatePlayback() {
 		const indices = this.keysToPlay;
 		const res = this.playback;
@@ -182,7 +195,8 @@ GamePad.prototype = {
 				this.setButtonUp(code);
 			}
 		}
-	},
+	}
+
 	updateRecording() {
 		let s = this.scene.ticks;
 		const result = this.records;
@@ -215,7 +229,8 @@ GamePad.prototype = {
 				}
 			}
 		}
-	},
+	}
+
 	buttonWasRecentlyDown(animation) {
 		let result = this.records;
 		if (this.replaying) {
@@ -234,10 +249,12 @@ GamePad.prototype = {
 			}
 		}
 		return s;
-	},
+	}
+
 	getReplayString() {
 		return JSON.stringify(this.records);
-	},
+	}
+
 	encodeReplayString(importedPages) {
 		const o = this.scene.settings;
 		const markupClasses = {
@@ -252,7 +269,8 @@ GamePad.prototype = {
 			}
 		}
 		return markupClasses;
-	},
+	}
+
 	close() {
 		this.unlisten();
 		this.handleButtonUp = null;
@@ -265,6 +283,7 @@ GamePad.prototype = {
 		this.keymap = null;
 		this.records = null;
 		this.keysToRecord = null;
-	},
-};
+	}
+}
+
 export default GamePad;

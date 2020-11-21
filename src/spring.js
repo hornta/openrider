@@ -1,47 +1,42 @@
 import Vector2 from "./math/vector2";
 
-const Spring = function (e, str, value) {
-	this.m1 = e;
-	this.m2 = str;
-	this.parent = value;
-	this.lrest = 40;
-	this.leff = 40;
-	this.dampConstant = 0.5;
-	this.springConstant = 0.7;
-};
-Spring.prototype = {
-	m1: null,
-	m2: null,
-	parent: null,
-	lrest: 40,
-	leff: 40,
-	dampConstant: 0,
-	springConstant: 0,
+class Spring {
+	constructor(mass1, mass2, parent) {
+		this.mass1 = mass1;
+		this.mass2 = mass2;
+		this.parent = parent;
+		this.lrest = 40;
+		this.leff = 40;
+		this.dampConstant = 0.5;
+		this.springConstant = 0.7;
+	}
+
 	swap() {
 		const r = new Vector2();
-		const self = this.m1;
-		const obj = this.m2;
+		const self = this.mass1;
+		const obj = this.mass2;
 		r.equ(self.pos);
 		self.pos.equ(obj.pos);
 		obj.pos.equ(r);
 		r.equ(self.old);
 		self.old.equ(obj.old);
 		obj.old.equ(r);
-		r.equ(self.vel);
-		self.vel.equ(obj.vel);
-		obj.vel.equ(r);
+		r.equ(self.velocity);
+		self.velocity.equ(obj.velocity);
+		obj.velocity.equ(r);
 		const { angle } = self;
 		self.angle = obj.angle;
 		obj.angle = angle;
-	},
+	}
+
 	update() {
 		const attr = new Vector2(0, 0);
-		const node = this.m1;
-		const self = this.m2;
-		const p = node.pos;
-		const { pos } = self;
-		const bounds = node.vel;
-		const rect = self.vel;
+		const mass1 = this.mass1;
+		const mass2 = this.mass2;
+		const p = mass1.pos;
+		const { pos } = mass2;
+		const bounds = mass1.velocity;
+		const rect = mass2.velocity;
 		attr.x = pos.x - p.x;
 		attr.y = pos.y - p.y;
 		const sizeThreshold = attr.len();
@@ -67,10 +62,11 @@ Spring.prototype = {
 			bounds.x += transform.x;
 			bounds.y += transform.y;
 		}
-	},
+	}
+
 	rotate(i) {
-		const prevLevelVitorc = this.m1;
-		const owningPlayer = this.m2;
+		const prevLevelVitorc = this.mass1;
+		const owningPlayer = this.mass2;
 		const newMax = owningPlayer.pos.x - prevLevelVitorc.pos.x;
 		const n = owningPlayer.pos.y - prevLevelVitorc.pos.y;
 		const rate = -n / this.leff;
@@ -79,14 +75,16 @@ Spring.prototype = {
 		prevLevelVitorc.pos.y += m * i;
 		owningPlayer.pos.x += rate * -i;
 		owningPlayer.pos.y += m * -i;
-	},
+	}
+
 	contract(value, args) {
 		this.leff += (this.lrest - value - this.leff) / args;
-	},
+	}
+
 	setMasses(formatters, customFormatters) {
-		this.m1 = formatters;
-		this.m2 = customFormatters;
-	},
-};
+		this.mass1 = formatters;
+		this.mass2 = customFormatters;
+	}
+}
 
 export default Spring;
