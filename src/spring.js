@@ -81,9 +81,9 @@ class Spring {
 		this.leff += (this.lrest - value - this.leff) / args;
 	}
 
-	setMasses(formatters, customFormatters) {
-		this.mass1 = formatters;
-		this.mass2 = customFormatters;
+	setMasses(mass1, mass2) {
+		this.mass1 = mass1;
+		this.mass2 = mass2;
 	}
 }
 

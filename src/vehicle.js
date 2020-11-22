@@ -58,14 +58,11 @@ class Vehicle {
 	}
 
 	moveVehicle(left, top) {
-		const d = this.masses;
-		const numActivities = d.length;
-		let i = numActivities - 1;
-		for (; i >= 0; i--) {
-			d[i].position.x += left;
-			d[i].position.y += top;
-			d[i].prevPosition.x += left;
-			d[i].prevPosition.y += top;
+		for (const mass of this.masses) {
+			mass.position.x += left;
+			mass.position.y += top;
+			mass.prevPosition.x += left;
+			mass.prevPosition.y += top;
 		}
 	}
 }

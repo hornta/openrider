@@ -206,12 +206,12 @@ class Player {
 
 	update() {
 		if (this.complete === false) {
-			let prevPageButtonSprite = this._baseVehicle;
+			let vehicle = this._baseVehicle;
 			if (this._tempVehicleOptions) {
 				this.createTempVehicle();
 			}
 			if (this._tempVehicleTicks > 0) {
-				prevPageButtonSprite = this._tempVehicle;
+				vehicle = this._tempVehicle;
 				if (this._crashed === false) {
 					this._tempVehicleTicks--;
 				}
@@ -226,14 +226,14 @@ class Player {
 						this._tempVehicle.dir,
 						this._tempVehicle.masses[0].velocity
 					);
-					prevPageButtonSprite = this._baseVehicle;
+					vehicle = this._baseVehicle;
 				}
 			}
 			if (this.explosionTicks > 0) {
 				this.explosionTicks--;
 				this.explosion.update();
 			}
-			prevPageButtonSprite.update();
+			vehicle.update();
 			if (this._addCheckpoint) {
 				this._createCheckpoint();
 				this._addCheckpoint = false;

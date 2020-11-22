@@ -1,3 +1,4 @@
+import { use60 } from "./gameSettings";
 import Vector2 from "./math/vector2";
 
 class Mass {
@@ -22,18 +23,19 @@ class Mass {
 			-(x * this.velocity.x + y * this.velocity.y) * friction;
 		x *= resolutionScale;
 		y *= resolutionScale;
-		this.position.x += x;
-		this.position.y += y;
+		this.position.x += x * (use60 ? 0.5 : 1);
+		this.position.y += y * (use60 ? 0.5 : 1);
 		this.contact = true;
 	}
 
 	update() {
 		const velocity = this.velocity;
-		velocity.inc(this.parent.gravity);
 		const gravity = this.parent.gravity;
+		velocity.x += gravity.x * (use60 ? 0.5 : 1);
+		velocity.y += gravity.y * (use60 ? 0.5 : 1);
 		if (gravity.x !== 0 || gravity.y !== 0) {
-			velocity.x *= 0.99;
-			velocity.y *= 0.99;
+			velocity.x *= use60 ? 0.994987 : 0.99;
+			velocity.y *= use60 ? 0.994987 : 0.99;
 		}
 		this.position.x += this.velocity.x;
 		this.position.y += this.velocity.y;

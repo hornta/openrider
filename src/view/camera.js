@@ -1,31 +1,26 @@
 import Vector2 from "../math/vector2";
 
-function Camera(data) {
-	const { settings } = data;
-	this.settings = settings;
-	this.scene = data;
-	this.zoom = settings.cameraStartZoom * data.game.pixelRatio;
-	this.desiredZoom = settings.cameraStartZoom * data.game.pixelRatio;
-	this.zooming = false;
-	this.position = new Vector2(0, 0);
-	this.zoomPercentage = this.getZoomAsPercentage();
-	this.zoomPoint = false;
-}
+class Camera {
+	constructor(data) {
+		this.focusIndex = 0;
+		this.playerFocus = null;
+		const { settings } = data;
+		this.settings = settings;
+		this.scene = data;
+		this.zoom = settings.cameraStartZoom * data.game.pixelRatio;
+		this.desiredZoom = settings.cameraStartZoom * data.game.pixelRatio;
+		this.zooming = false;
+		this.position = new Vector2(0, 0);
+		this.zoomPercentage = this.getZoomAsPercentage();
+		this.zoomPoint = false;
+	}
 
-Camera.prototype = {
-	settings: null,
-	scene: null,
-	zoom: 1,
-	position: null,
-	desiredZoom: 1,
-	zoomPercentage: 0,
-	focusIndex: 0,
-	playerFocus: null,
 	focusOnNextPlayer() {
 		const t = this.scene.playerManager.getPlayerCount();
 		this.focusIndex = (this.focusIndex + 1) % t;
 		this.focusOnPlayer();
-	},
+	}
+
 	focusOnPlayer() {
 		const self = this.scene;
 		const session = self.playerManager;
@@ -47,13 +42,15 @@ Camera.prototype = {
 				this.fastforward();
 			}
 		}
-	},
+	}
+
 	focusOnMainPlayer() {
 		if (!(this.focusIndex === 0 && this.playerFocus)) {
 			this.focusIndex = 0;
 			this.focusOnPlayer();
 		}
-	},
+	}
+
 	update() {
 		if (this.playerFocus) {
 			const model = this.playerFocus.getActiveVehicle();
@@ -69,7 +66,8 @@ Camera.prototype = {
 			bounds.x += (prevLevelVitorc.position.x - bounds.x) / factor;
 			bounds.y += (prevLevelVitorc.position.y - bounds.y) / factor;
 		}
-	},
+	}
+
 	updateZoom() {
 		const z = this.zoom;
 		const currentZoom = this.desiredZoom;
@@ -80,7 +78,8 @@ Camera.prototype = {
 				this.zoomComplete();
 			}
 		}
-	},
+	}
+
 	zoomToPoint(pixelRatio) {
 		const _ref = (this.zoom, this.scene);
 		const image = _ref.screen;
@@ -94,7 +93,8 @@ Camera.prototype = {
 		const height = image.height / pixelRatio;
 		currentPosition.x = y - h * ratio + h / 2;
 		currentPosition.y = top - height * gridUnit + height / 2;
-	},
+	}
+
 	_performZoom() {
 		const { scene } = this;
 		let zoom = (scene.screen, this.position, this.zoom);
@@ -109,12 +109,14 @@ Camera.prototype = {
 			this.zoomToPoint(zoom);
 		}
 		this.zoom = zoom;
-	},
+	}
+
 	zoomComplete() {
 		this.scene.redraw();
 		this.zooming = false;
 		this.scene.loading = false;
-	},
+	}
+
 	setZoom(pZoom, pAnimation) {
 		const { scene } = this;
 		this.desiredZoom = Math.round(pZoom * scene.game.pixelRatio * 10) / 10;
@@ -129,11 +131,13 @@ Camera.prototype = {
 		}
 		this.zoomPercentage = this.getZoomAsPercentage();
 		scene.stateChanged();
-	},
+	}
+
 	resetZoom() {
 		const zoom = this.settings.cameraStartZoom;
 		this.setZoom(zoom);
-	},
+	}
+
 	getZoomAsPercentage() {
 		const { settings } = this.scene;
 		const e =
@@ -142,7 +146,8 @@ Camera.prototype = {
 				settings.cameraStartZoom) *
 			100;
 		return 0 | e;
-	},
+	}
+
 	increaseZoom() {
 		const { settings } = this.scene;
 		const leftGripSelector = settings.cameraSensitivity;
@@ -154,7 +159,8 @@ Camera.prototype = {
 		if (this.desiredZoom > newWidth) {
 			this.setZoom(zoom);
 		}
-	},
+	}
+
 	decreaseZoom() {
 		const { settings } = this.scene;
 		const leftGripSelector = settings.cameraSensitivity;
@@ -166,11 +172,13 @@ Camera.prototype = {
 		if (this.desiredZoom < newWidth) {
 			this.setZoom(zoom);
 		}
-	},
+	}
+
 	unfocus() {
 		this.playerFocus = null;
 		this.scene.vehicleTimer.removePlayer();
-	},
+	}
+
 	fastforward() {
 		if (this.playerFocus) {
 			const model = this.playerFocus.getActiveVehicle();
@@ -178,13 +186,14 @@ Camera.prototype = {
 			this.position.x = prevLevelVitorc.position.x;
 			this.position.y = prevLevelVitorc.position.y;
 		}
-	},
+	}
+
 	close() {
 		this.zoom = null;
 		this.scene = null;
 		this.position = null;
 		this.playerFocus = null;
-	},
-};
+	}
+}
 
 export default Camera;

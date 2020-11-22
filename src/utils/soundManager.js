@@ -1,22 +1,24 @@
-const SoundManager = function (data) {
-	this.scene = data;
-	this.sounds = {};
-};
-SoundManager.prototype = {
-	sounds: null,
+class SoundManager {
+	constructor(data) {
+		this.scene = data;
+		this.sounds = {};
+		this.muted = false;
+	}
+
 	update() {
 		const s = this.scene;
 		const ss = s.settings;
 		createjs.Sound.muted = Boolean(
 			s.state.paused || ss.soundsEnabled === false
 		);
-	},
+	}
+
 	setVolume(sound, vol) {
 		if (this.sounds[sound]) {
 			this.sounds[sound].volume = vol;
 		}
-	},
-	muted: false,
+	}
+
 	mute_all() {
 		const sounds = this.sounds;
 		let i;
@@ -26,7 +28,8 @@ SoundManager.prototype = {
 			}
 		}
 		this.muted = true;
-	},
+	}
+
 	stop_all() {
 		const sounds = this.sounds;
 		let i;
@@ -36,7 +39,8 @@ SoundManager.prototype = {
 				sounds[i].stop();
 			}
 		}
-	},
+	}
+
 	play(name, value) {
 		if (
 			((value === null || typeof value == "undefined") && (value = 1),
@@ -52,15 +56,18 @@ SoundManager.prototype = {
 			});
 			this.sounds[name] = sound;
 		}
-	},
+	}
+
 	stop(id) {
 		if (this.sounds[id]) {
 			this.sounds[id].stop();
 			this.sounds[id] = null;
 		}
-	},
+	}
+
 	close() {
 		this.sounds = null;
-	},
-};
+	}
+}
+
 export default SoundManager;

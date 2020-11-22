@@ -1,3 +1,4 @@
+import { use60 } from "./gameSettings";
 import Mass from "./mass";
 import Vector2 from "./math/vector2";
 
@@ -19,7 +20,7 @@ class Prop extends Mass {
 		const zoomRatio = this.motor;
 		args.y += 0;
 		args.inc(zoom.multiply(2 * zoomRatio));
-		args = args.multiply(0.99);
+		args = args.multiply(use60 ? 0.994987 : 0.99);
 		position.inc(args);
 		this.contact = false;
 		if (this.collide) {

@@ -1,6 +1,7 @@
 import Editor from "./scenes/editor";
 import Main from "./scenes/main";
 import { Ticker } from "@pixi/ticker";
+import GameSettings, { use60 } from "./gameSettings";
 
 const scenes = {
 	Editor,
@@ -77,15 +78,21 @@ class Game {
 	}
 
 	startTicker() {
-		this.ticker = new Ticker();
-		this.ticker.start();
-		this.ticker.add(this.render.bind(this));
-		createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCED;
-		createjs.Ticker.framerate = this.settings.drawFPS;
-		createjs.Ticker.on("tick", this.update.bind(this));
+		this.renderTicker = new Ticker();
+		this.renderTicker.add(this.render.bind(this));
+		this.renderTicker.start();
+
+		this.updateObject = {};
+		this.updateTicker = new Ticker();
+		this.updateTicker.minFPS = use60 ? 60 : GameSettings.drawFPS;
+		this.updateTicker.maxFPS = use60 ? 60 : GameSettings.drawFPS;
+		this.updateTicker.add(this.update.bind(this));
+		this.updateTicker.start();
 	}
 
-	update() {
+	update(deltaTime) {
+		this.updateObject.deltaTime = deltaTime;
+		this.updateObject.tick += 1;
 		this.currentScene.update();
 		this.tickCount++;
 	}
@@ -106,9 +113,8 @@ class Game {
 	}
 
 	close() {
-		this.ticker.stop();
-		createjs.Ticker.reset();
-		createjs.Ticker.removeAllEventListeners();
+		this.renderTicker.stop();
+		this.updateTicker.stop();
 		this.currentScene.close();
 		this.currentScene = null;
 		this.assets = null;

@@ -535,9 +535,6 @@ Editor.prototype = {
 		const comm = controller.getGamepad();
 		comm.unlisten();
 	},
-	stopAudio() {
-		createjs.Sound.stop();
-	},
 	close() {
 		this.pauseControls = null;
 		this.mouse.close();
@@ -560,7 +557,7 @@ Editor.prototype = {
 		this.stage = null;
 		this.track = null;
 		this.state = null;
-		this.stopAudio();
+		createjs.Sound.stop();
 	},
 };
 

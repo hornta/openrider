@@ -7,8 +7,10 @@ import Wheel from "../wheel";
 import inventoryManager from "../inventoryManager";
 
 class BMX extends Vehicle {
-	constructor(a, i, e, s) {
-		super(a);
+	constructor(player, i, e, s) {
+		super(player);
+
+		this.player = player;
 		this.vehicleName = "BMX";
 		this.masses = null;
 		this.springs = null;
@@ -27,26 +29,27 @@ class BMX extends Vehicle {
 		if (e === -1) {
 			this.swap();
 		}
+		this.ticks = 0;
 	}
 
 	createMasses(d, e) {
 		this.masses = [];
-		const p = new Mass(new Vector2(d.x, d.y - 36), this);
-		const f = new Wheel(new Vector2(d.x + 21, d.y + 3), this);
-		const obj = new Wheel(new Vector2(d.x + -21, d.y + 3), this);
-		p.drive = this.createRagdoll.bind(this);
-		obj.radius = 11.7;
-		f.radius = 11.7;
-		p.radius = 14;
-		p.velocity.equ(e);
-		obj.velocity.equ(e);
-		f.velocity.equ(e);
-		this.masses.push(p);
-		this.masses.push(obj);
-		this.masses.push(f);
-		this.head = p;
-		this.frontWheel = f;
-		this.rearWheel = obj;
+		const head = new Mass(new Vector2(d.x, d.y - 36), this);
+		const frontWheel = new Wheel(new Vector2(d.x + 21, d.y + 3), this);
+		const rearWheel = new Wheel(new Vector2(d.x + -21, d.y + 3), this);
+		head.drive = this.createRagdoll.bind(this);
+		rearWheel.radius = 11.7;
+		frontWheel.radius = 11.7;
+		head.radius = 14;
+		head.velocity.equ(e);
+		rearWheel.velocity.equ(e);
+		frontWheel.velocity.equ(e);
+		this.masses.push(rearWheel);
+		this.masses.push(frontWheel);
+		this.masses.push(head);
+		this.head = head;
+		this.frontWheel = frontWheel;
+		this.rearWheel = rearWheel;
 	}
 
 	createSprings() {
@@ -182,40 +185,32 @@ class BMX extends Vehicle {
 	}
 
 	update() {
-		if (
-			(this.crashed === false && (this.updateSound(), this.control()),
-			this.explosion)
-		) {
+		this.ticks += 1;
+		if (!this.crashed) {
+			this.updateSound();
+			this.control();
+		}
+		if (this.explosion) {
 			this.explosion.update();
 		} else {
-			const springs = this.springs;
-			const numClasses = springs.length;
-			let i = numClasses - 1;
-			for (; i >= 0; i--) {
-				springs[i].update();
+			for (let i = this.springs.length - 1; i >= 0; i--) {
+				this.springs[i].update();
 			}
-			const _volumes = this.masses;
-			const len = _volumes.length;
-			let j = len - 1;
-			for (; j >= 0; j--) {
-				_volumes[j].update();
+			for (let i = this.masses.length - 1; i >= 0; i--) {
+				this.masses[i].update();
 			}
-			if (
-				(this.rearWheel.contact &&
-					this.frontWheel.contact &&
-					(this.slow = false),
-				this.slow === false)
-			) {
-				if (this.crashed === false) {
+			if (this.rearWheel.contact && this.frontWheel.contact) {
+				this.slow = false;
+			}
+			if (!this.slow) {
+				if (!this.crashed) {
 					this.control();
 				}
-				i = numClasses - 1;
-				for (; i >= 0; i--) {
-					springs[i].update();
+				for (let i = this.springs.length - 1; i >= 0; i--) {
+					this.springs[i].update();
 				}
-				j = len - 1;
-				for (; j >= 0; j--) {
-					_volumes[j].update();
+				for (let i = this.masses.length - 1; i >= 0; i--) {
+					this.masses[i].update();
 				}
 			}
 			if (this.ragdoll) {
@@ -225,6 +220,10 @@ class BMX extends Vehicle {
 			}
 		}
 		this.updateCameraFocalPoint();
+
+		if (this.ticks < 10) {
+			console.log(this.ticks, this.masses[0].velocity.y);
+		}
 	}
 
 	updateSound() {
@@ -295,17 +294,12 @@ class BMX extends Vehicle {
 			this.explosion.draw();
 		} else {
 			const ctx2 = this.scene.game.canvas.getContext("2d");
-			if (
-				((ctx2.imageSmoothingEnabled = true),
-				(ctx2.webkitImageSmoothingEnabled = true),
-				(ctx2.mozImageSmoothingEnabled = true),
-				this.settings.developerMode)
-			) {
-				const s = this.masses;
-				const i = s.length;
-				let l = i - 1;
-				for (; l >= 0; l--) {
-					s[l].draw();
+			ctx2.imageSmoothingEnabled = true;
+			ctx2.webkitImageSmoothingEnabled = true;
+			ctx2.mozImageSmoothingEnabled = true;
+			if (this.settings.developerMode) {
+				for (const mass of this.masses) {
+					mass.draw();
 				}
 			}
 			this.drawBikeFrame();

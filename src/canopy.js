@@ -1,3 +1,4 @@
+import { use60 } from "./gameSettings";
 import Mass from "./mass";
 import Vector2 from "./math/vector2";
 
@@ -24,8 +25,8 @@ Canopy.prototype.update = function () {
 	const leftExp = editor.isButtonDown("left");
 	const isRightArray = editor.isButtonDown("right");
 	if (pt.x !== 0 || pt.y !== 0) {
-		outerPos.x *= 0.9;
-		outerPos.y *= 0.99;
+		outerPos.x *= use60 ? 0.912966 : 0.9;
+		outerPos.y *= use60 ? 0.994987 : 0.99;
 	}
 	if (leftExp) {
 		position.x += -0.05;

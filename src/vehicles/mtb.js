@@ -10,9 +10,10 @@ import "../cosmetics/heads/head";
 import "../cosmetics/heads/forwardCap";
 
 class MTB extends Vehicle {
-	constructor(v, position, facing, velocity) {
-		super(v);
+	constructor(player, position, facing, velocity) {
+		super(player);
 
+		this.player = player;
 		this.vehicleName = "MTB";
 		this.masses = null;
 		this.springs = null;
@@ -168,10 +169,11 @@ class MTB extends Vehicle {
 	}
 
 	update() {
-		if (
-			(this.crashed === false && (this.updateSound(), this.control()),
-			this.explosion)
-		) {
+		if (this.crashed === false) {
+			this.updateSound();
+		}
+		this.control();
+		if (this.explosion) {
 			this.explosion.update();
 		} else {
 			const springs = this.springs;
@@ -256,17 +258,16 @@ class MTB extends Vehicle {
 		const gamePad = this.gamepad;
 		const holdUp = gamePad.isButtonDown("up");
 		const holdDown = gamePad.isButtonDown("down");
-		const isBigEndian =
-			(gamePad.isButtonDown("back"), gamePad.isButtonDown("left"));
-		const up = gamePad.isButtonDown("right");
-		const flagZ = gamePad.isButtonDown("z");
+		const leanBack = gamePad.isButtonDown("left");
+		const leanForward = gamePad.isButtonDown("right");
+		const swap = gamePad.isButtonDown("z");
 		const newPos = holdUp ? 1 : 0;
 		this.rearWheel.motor += (newPos - this.rearWheel.motor) / 10;
-		if (flagZ && !this.swapped) {
+		if (swap && !this.swapped) {
 			this.swap();
 			this.swapped = true;
 		}
-		if (!flagZ) {
+		if (!swap) {
 			this.swapped = false;
 		}
 		if (holdUp) {
@@ -274,11 +275,11 @@ class MTB extends Vehicle {
 		}
 		this.rearWheel.brake = holdDown;
 		this.frontWheel.brake =
-			this.dir > 0 && up && holdDown
+			this.dir > 0 && leanForward && holdDown
 				? true
-				: Boolean(this.dir < 0 && isBigEndian && holdDown);
-		let iInteger = isBigEndian ? 1 : 0;
-		iInteger += up ? -1 : 0;
+				: Boolean(this.dir < 0 && leanBack && holdDown);
+		let iInteger = leanBack ? 1 : 0;
+		iInteger += leanForward ? -1 : 0;
 		this.rearSpring.contract(5 * iInteger * this.dir, 5);
 		this.frontSpring.contract(5 * -iInteger * this.dir, 5);
 		this.chasse.rotate(iInteger / 8);

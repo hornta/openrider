@@ -64,7 +64,8 @@ self.hold = function () {
 	const scale = this.options.breakLength;
 	p2.inc(r.subtract(p2).multiply(value));
 	let stemHeight = window.screen.height + r.subtract(p2).length();
-	if (((stemHeight *= scale), p2.subtract(p1).lenSqr() > stemHeight)) {
+	stemHeight *= scale;
+	if (p2.subtract(p1).lenSqr() > stemHeight) {
 		const geometrizeRasterizerRasterizer = this.scene.track;
 		let a = false;
 		a =

@@ -22,79 +22,81 @@ import _ from "lodash";
 import formatNumber from "../utils/formatNumber";
 import inventoryManager from "../inventoryManager";
 
-function Main(options) {
-	this.game = options;
-	this.assets = options.assets;
-	this.stage = options.stage;
-	this.settings = options.settings;
-	this.sound = new SoundManager(this);
-	this.mouse = new MouseHandler(this);
-	this.initalizeCamera();
-	this.screen = new Screen(this);
-	this.createTrack();
-	this.score = new Score(this);
-	this.raceTimes = new RaceTimes(this);
-	this.message = new MessageManager(this);
-	if (this.settings.isCampaign) {
-		this.campaignScore = new CampaignScore(this);
+class Main {
+	constructor(options) {
+		this.analytics = null;
+		this.game = null;
+		this.assets = null;
+		this.stage = null;
+		this.settings = null;
+		this.camera = null;
+		this.score = null;
+		this.screen = null;
+		this.mouse = null;
+		this.track = null;
+		this.player = null;
+		this.players = null;
+		this.ticks = 0;
+		this.stateDirty = true;
+		this.onStateChange = null;
+		this.playing = false;
+		this.ready = false;
+		this.vehicle = "Mtb";
+		this.showDialog = false;
+		this.importCode = false;
+		this.preloading = true;
+		this.loading = true;
+		this.pauseControls = null;
+		this.fullscreenControls = null;
+		this.settingsControls = null;
+		this.controls = null;
+		this.message = null;
+		this.showSkip = false;
+
+		this.game = options;
+		this.assets = options.assets;
+		this.stage = options.stage;
+		this.settings = options.settings;
+		this.sound = new SoundManager(this);
+		this.mouse = new MouseHandler(this);
+		this.initalizeCamera();
+		this.screen = new Screen(this);
+		this.createTrack();
+		this.score = new Score(this);
+		this.raceTimes = new RaceTimes(this);
+		this.message = new MessageManager(this);
+		if (this.settings.isCampaign) {
+			this.campaignScore = new CampaignScore(this);
+		}
+		this.loadingcircle = new LoadingCircle(this);
+		this.loading = false;
+		this.ready = false;
+		this.playerManager = new PlayerManager(this);
+		this.vehicleTimer = new VehicleTimer(this);
+		this.races = [];
+		this.state = this.setStateDefaults();
+		this.oldState = this.setStateDefaults();
+		this.createMainPlayer();
+		this.createControls();
+		this.registerTools();
+		this.setStartingVehicle();
+		this.restart();
+		this.initializeAnalytics();
+		this.stage.addEventListener(
+			"stagemousedown",
+			this.tapToStartOrRestart.bind(this)
+		);
 	}
-	this.loadingcircle = new LoadingCircle(this);
-	this.loading = false;
-	this.ready = false;
-	this.playerManager = new PlayerManager(this);
-	this.vehicleTimer = new VehicleTimer(this);
-	this.races = [];
-	this.state = this.setStateDefaults();
-	this.oldState = this.setStateDefaults();
-	this.createMainPlayer();
-	this.createControls();
-	this.registerTools();
-	this.setStartingVehicle();
-	this.restart();
-	this.initializeAnalytics();
-	this.stage.addEventListener(
-		"stagemousedown",
-		this.tapToStartOrRestart.bind(this)
-	);
-}
-Main.prototype = {
-	game: null,
-	assets: null,
-	stage: null,
-	settings: null,
-	camera: null,
-	score: null,
-	screen: null,
-	mouse: null,
-	track: null,
-	player: null,
-	players: null,
-	ticks: 0,
-	races: null,
-	state: null,
-	oldState: null,
-	stateDirty: true,
-	onStateChange: null,
-	playing: false,
-	ready: false,
-	vehicle: "Mtb",
-	showDialog: false,
-	importCode: false,
-	preloading: true,
-	loading: true,
-	pauseControls: null,
-	fullscreenControls: null,
-	settingsControls: null,
-	controls: null,
-	message: null,
-	showSkip: false,
+
+	// eslint-disable-next-line class-methods-use-this
 	getCanvasOffset() {
 		const finalSizeCropProperties = {
 			height: 0,
 			width: 0,
 		};
 		return finalSizeCropProperties;
-	},
+	}
+
 	tapToStartOrRestart() {
 		if (this.settings.mobile) {
 			const ctrl = this.playerManager.firstPlayer;
@@ -105,13 +107,14 @@ Main.prototype = {
 				this.play();
 			}
 		}
-	},
-	analytics: null,
+	}
+
 	initializeAnalytics() {
 		this.analytics = {
 			deaths: 0,
 		};
-	},
+	}
+
 	createControls() {
 		if (this.settings.controls === "tablet") {
 			this.controls = new Tablet(this);
@@ -126,13 +129,15 @@ Main.prototype = {
 			this.fullscreenControls = new Fullscreen(this);
 		}
 		this.settingsControls = new Settings(this);
-	},
+	}
+
 	play() {
 		if (!this.state.playing) {
 			this.state.playing = true;
 			this.hideControlPlanel();
 		}
-	},
+	}
+
 	buttonDown(type) {
 		if (!this.state.showDialog) {
 			const camera = this.camera;
@@ -164,13 +169,15 @@ Main.prototype = {
 				default:
 			}
 		}
-	},
+	}
+
 	exitFullscreen() {
 		if (this.settings.fullscreenAvailable) {
 			this.settings.fullscreen = false;
 			this.state.fullscreen = false;
 		}
-	},
+	}
+
 	toggleFullscreen() {
 		if (this.settings.embedded) {
 			const options = this.settings;
@@ -180,7 +187,8 @@ Main.prototype = {
 			this.settings.fullscreen = !this.settings.fullscreen;
 			this.state.fullscreen = !this.settings.fullscreen;
 		}
-	},
+	}
+
 	getAvailableTrackCode() {
 		const attrs = this.settings;
 		let isoOptions = false;
@@ -191,7 +199,8 @@ Main.prototype = {
 				  ((isoOptions = this.importCode), (this.importCode = null)),
 			isoOptions
 		);
-	},
+	}
+
 	createMainPlayer() {
 		const self = this.playerManager;
 		const p3 = self.createPlayer(this, this.settings.user);
@@ -202,7 +211,8 @@ Main.prototype = {
 		action.listen();
 		this.playerManager.firstPlayer = p3;
 		this.playerManager.addPlayer(p3);
-	},
+	}
+
 	createTrack() {
 		if (this.track) {
 			this.track.close();
@@ -210,7 +220,9 @@ Main.prototype = {
 		const track = new Track(this);
 		const partial = this.getAvailableTrackCode();
 		if (partial != 0) {
-			track.read(partial);
+			track.read(
+				GameSettings.trackOverride ? GameSettings.trackOverride : partial
+			);
 			this.track = track;
 			this.setTrackAllowedVehicles();
 			this.state.preloading = false;
@@ -219,17 +231,20 @@ Main.prototype = {
 			this.ready = true;
 		}
 		this.track = track;
-	},
+	}
+
 	setTrackAllowedVehicles() {
 		const vehicleObj = this.track;
 		const data = this.settings.track;
 		if (data) {
 			vehicleObj.allowedVehicles = data.vehicles;
 		}
-	},
+	}
+
 	initalizeCamera() {
 		this.camera = new Camera(this);
-	},
+	}
+
 	updateControls() {
 		if (this.controls) {
 			const value = this.state.paused;
@@ -249,18 +264,21 @@ Main.prototype = {
 		if (this.settings.fullscreenAvailable) {
 			this.fullscreenControls.update();
 		}
-	},
+	}
+
 	registerTools() {
 		const self = new ToolHandler(this);
 		this.toolHandler = self;
 		self.registerTool(CameraTool);
 		self.setTool("Camera");
-	},
+	}
+
 	updateToolHandler() {
 		if (!(this.controls && this.controls.isVisible() !== false)) {
 			this.toolHandler.update();
 		}
-	},
+	}
+
 	update() {
 		if (this.ready) {
 			this.updateToolHandler();
@@ -294,14 +312,16 @@ Main.prototype = {
 		} else if (this.importCode) {
 			this.createTrack();
 		}
-	},
+	}
+
 	render() {
 		if (this.ready) {
 			this.stage.clear();
 			this.draw();
 			this.stage.update();
 		}
-	},
+	}
+
 	isStateDirty() {
 		const evalContextV1 = this.oldState;
 		const state = this.state;
@@ -317,14 +337,16 @@ Main.prototype = {
 			}
 		}
 		return i;
-	},
+	}
+
 	updateScore() {
 		this.score.update();
 		if (this.campaignScore) {
 			this.campaignScore.update();
 		}
 		this.raceTimes.update();
-	},
+	}
+
 	restart() {
 		if (this.settings.mobile) {
 			this.message.show("Press Any Button To Start", 1, "#333333");
@@ -343,20 +365,20 @@ Main.prototype = {
 		this.camera.focusOnPlayer();
 		this.camera.fastforward();
 		this.showControlPlanel("main");
-	},
+	}
+
 	listen() {
 		const controller = this.playerManager.firstPlayer;
 		const destServer = controller.getGamepad();
 		destServer.listen();
-	},
+	}
+
 	unlisten() {
 		const controller = this.playerManager.firstPlayer;
 		const comm = controller.getGamepad();
 		comm.unlisten();
-	},
-	stopAudio() {
-		createjs.Sound.stop();
-	},
+	}
+
 	setStartingVehicle() {
 		const data = this.settings;
 		let vehicles = data.startVehicle;
@@ -364,19 +386,24 @@ Main.prototype = {
 			vehicles = data.track.vehicle;
 		}
 		this.vehicle = vehicles;
-	},
+	}
+
 	updateGamepads() {
 		this.playerManager.updateGamepads();
-	},
+	}
+
 	checkGamepads() {
 		this.playerManager.checkKeys();
-	},
+	}
+
 	updatePlayers() {
 		this.playerManager.update();
-	},
+	}
+
 	drawPlayers() {
 		this.playerManager.draw();
-	},
+	}
+
 	hideControlPlanel() {
 		if (this.state.showSkip) {
 			this.state.showSkip = false;
@@ -384,7 +411,8 @@ Main.prototype = {
 		if (this.state.showControls !== false) {
 			this.state.showControls = false;
 		}
-	},
+	}
+
 	showControlPlanel(val) {
 		if (
 			this.settings.isCampaign &&
@@ -398,7 +426,8 @@ Main.prototype = {
 		if (this.stateshowControls !== val && this.settings.showHelpControls) {
 			this.state.showControls = val;
 		}
-	},
+	}
+
 	draw() {
 		this.toolHandler.drawGrid();
 		this.track.draw();
@@ -410,12 +439,14 @@ Main.prototype = {
 			this.loadingcircle.draw();
 		}
 		this.message.draw();
-	},
+	}
+
 	redraw() {
 		this.track.undraw();
 		inventoryManager.redraw();
 		this.toolHandler.resize();
-	},
+	}
+
 	resize() {
 		this.pauseControls.resize();
 		if (this.settings.fullscreenAvailable) {
@@ -425,15 +456,18 @@ Main.prototype = {
 		if (this.controls) {
 			this.controls.resize();
 		}
-	},
+	}
+
 	updateState() {
 		if (this.game.onStateChange !== null) {
 			this.game.onStateChange(this.state);
 		}
-	},
+	}
+
 	stateChanged() {
 		this.updateState();
-	},
+	}
+
 	setStateDefaults() {
 		const settings = {};
 		return (
@@ -449,7 +483,8 @@ Main.prototype = {
 			(settings.dialogOptions = false),
 			settings
 		);
-	},
+	}
+
 	toggleVehicle() {
 		const format = this.track.allowedVehicles;
 		const l = format.length;
@@ -461,7 +496,8 @@ Main.prototype = {
 		}
 		separator = format[separatorIndex];
 		this.selectVehicle(separator);
-	},
+	}
+
 	selectVehicle(separator) {
 		const element = this.track.allowedVehicles;
 		const separtorDimension = element.indexOf(separator);
@@ -471,11 +507,13 @@ Main.prototype = {
 			this.playerManager.firstPlayer.setBaseVehicle(separator);
 			this.restartTrack = true;
 		}
-	},
+	}
+
 	openDialog(name) {
 		this.state.playing = false;
 		this.state.showDialog = name;
-	},
+	}
+
 	command() {
 		const v = Array.prototype.slice.call(arguments, 0);
 		const type = v.shift();
@@ -549,7 +587,8 @@ Main.prototype = {
 				break;
 			default:
 		}
-	},
+	}
+
 	addRaces(type) {
 		this.mergeRaces(type);
 		this.sortRaces();
@@ -557,7 +596,8 @@ Main.prototype = {
 		this.addRaceTimes();
 		this.addPlayers();
 		this.restartTrack = true;
-	},
+	}
+
 	addRaceTimes() {
 		const pieBackgroundColor = this.settings.raceColors;
 		const pBCL = pieBackgroundColor.length;
@@ -570,7 +610,8 @@ Main.prototype = {
 			val.user.color = pieBackgroundColor[i % pBCL];
 			s.addRace(val, i);
 		}
-	},
+	}
+
 	addPlayers() {
 		const defined = this.races;
 		const game = this.playerManager;
@@ -592,7 +633,8 @@ Main.prototype = {
 			harParser.loadPlayback(value, i);
 			game.addPlayer(p1);
 		}
-	},
+	}
+
 	formatRaces() {
 		const bookIDs = this.races;
 		let bookIdIndex;
@@ -610,19 +652,21 @@ Main.prototype = {
 				msg.code = data;
 			}
 		}
-	},
+	}
+
 	removeDuplicateRaces() {
-		const t = _.uniq(this.races, this.uniqesByUserIdIterator.bind(this));
+		const t = _.uniq(this.races, (htmlAndUser) => {
+			const user = htmlAndUser.user;
+			return user.u_id;
+		});
 		this.races = t;
-	},
-	uniqesByUserIdIterator(htmlAndUser) {
-		const user = htmlAndUser.user;
-		return user.u_id;
-	},
+	}
+
 	sortRaces() {
 		const t = _.sortBy(this.races, this.sortByRunTicksIterator.bind(this));
 		this.races = t;
-	},
+	}
+
 	mergeRaces(attrValues) {
 		const e = this.races;
 		_.each(attrValues, function (object) {
@@ -635,14 +679,16 @@ Main.prototype = {
 				e.push(object);
 			}
 		});
-	},
+	}
+
 	sortByRunTicksIterator(q) {
 		const s = this.settings;
 		const i = Number.parseInt(q.race.run_ticks, 10);
 		const n = formatNumber((i / s.drawFPS) * 1000);
 		q.runTime = n;
 		return i;
-	},
+	}
+
 	verifyComplete() {
 		const THIS = this.playerManager.firstPlayer;
 		const targets = THIS._powerupsConsumed.targets;
@@ -657,7 +703,8 @@ Main.prototype = {
 			}
 		}
 		return s;
-	},
+	}
+
 	trackComplete() {
 		if (this.verifyComplete()) {
 			this.sound.play("victory_sound");
@@ -708,7 +755,8 @@ Main.prototype = {
 			applyViewModelsSpy.reset(true);
 			this.listen();
 		}
-	},
+	}
+
 	close() {
 		this.fullscreenControls = null;
 		this.settingsControls = null;
@@ -736,7 +784,8 @@ Main.prototype = {
 		this.stage = null;
 		this.track = null;
 		this.state = null;
-		this.stopAudio();
-	},
-};
+		createjs.Sound.stop();
+	}
+}
+
 export default Main;
