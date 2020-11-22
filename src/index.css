@@ -22,3 +22,74 @@ body {
 .app {
 	height: calc(100vh - 3rem);
 }
+
+.icon {
+	background-image: url('./images/editorgui_icons_v7.png')
+}
+
+/* 32x32 */
+.icon-32x32 { width: 32px; height: 32px; }
+.icon-clear { background-position: -316px -120px }
+.icon-clear:hover { background-position: -308px -88px }
+.icon-camera-lock-off:hover {background-position: -188px -132px}
+.icon-camera-lock-off {background-position: -220px -132px}
+.icon-camera-lock-on:hover {background-position: -252px -132px}
+.icon-camera-lock-on {background-position: -284px -132px}
+.icon-clear-track:hover {background-position: -308px -88px}
+.icon-clear-track {background-position: -316px -120px}
+.icon-controls {background-position: -340px -88px}
+.icon-exit-fullscreen:hover {background-position: -348px -120px}
+.icon-exit-fullscreen {background-position: -352px 0}
+.icon-enter-fullscreen:hover {background-position: -384px 0}
+.icon-enter-fullscreen {background-position: -384px -32px}
+.icon-export:hover {background-position: -352px -32px}
+.icon-export {background-position: -372px -64px}
+.icon-import:hover {background-position: -436px -64px}
+.icon-import {background-position: -412px -128px}
+.icon-grid-off:hover {background-position: -380px -96px}
+.icon-grid-off {background-position: -404px -64px}
+.icon-grid-on:hover {background-position: -380px -128px}
+.icon-grid-on {background-position: -416px 0}
+.icon-hotkeys:hover {background-position: -416px -32px}
+.icon-hotkeys {background-position: -412px -96px}
+.icon-offline_editor:hover {background-position: -448px 0}
+.icon-offline_editor {background-position: -448px -32px}
+.icon-upload:hover {background-position: -444px -96px}
+.icon-upload {background-position: -468px -64px}
+.icon-zoom-in:hover {background-position: -444px -128px}
+.icon-zoom-in {background-position: -480px 0}
+.icon-zoom-out:hover {background-position: -480px -32px}
+.icon-zoom-out {background-position: -476px -96px}
+
+/* 47x32 */
+.icon-47x32 {width: 47px; height: 32px; }
+.icon-bmx:hover {background-position: 0 -132px}
+.icon-bmx { background-position: -47px -132px }
+.icon-mtb:hover {background-position: -94px -132px }
+.icon-mtb { background-position: -141px -132px }
+
+/* 44x44 */
+.icon-44x44 { width: 44px; height: 44px;  }
+.icon-antigravity { background-position: 0 0 }
+.icon-balloon {background-position: 0 -44px}
+.icon-blob {	background-position: 0 -88px}
+.icon-bomb {background-position: -44px 0}
+.icon-checkpoint {background-position: -44px -44px}
+.icon-goal {background-position: -44px -88px}
+.icon-gravity {background-position: -88px 0}
+.icon-helicopter {background-position: -88px -44px}
+.icon-brush {background-position: -88px -88px}
+.icon-camera {background-position: -132px 0}
+.icon-curve {width: 44px;height: 44px;background-position: -132px -44px}
+.icon-eraser {background-position: -132px -88px}
+.icon-line {background-position: -176px 0}
+.icon-physics {background-position: -176px -44px}
+.icon-powerups {background-position: -176px -88px}
+.icon-scenery {background-position: -220px 0}
+.icon-snap-off {background-position: -220px -44px}
+.icon-snap-on {background-position: -220px -88px}
+.icon-vehicle-swap {background-position: -264px 0}
+.icon-portal {background-position: -264px -44px}
+.icon-slowmotion {background-position: -264px -88px}
+.icon-boost {background-position: -308px 0}
+.icon-truck {background-position: -308px -44px}
