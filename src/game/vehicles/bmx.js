@@ -1,9 +1,9 @@
-import Mass from "../mass";
-import Ragdoll from "../ragdoll";
-import Spring from "../spring";
+import Mass from "./mass";
+import Ragdoll from "./ragdoll";
+import Spring from "./spring";
 import Vector2 from "../math/vector2";
-import Vehicle from "../vehicle";
-import Wheel from "../wheel";
+import Vehicle from "./vehicle";
+import Wheel from "./wheel";
 import inventoryManager from "../inventoryManager";
 
 class BMX extends Vehicle {
@@ -29,7 +29,6 @@ class BMX extends Vehicle {
 		if (e === -1) {
 			this.swap();
 		}
-		this.ticks = 0;
 	}
 
 	createMasses(d, e) {
@@ -185,7 +184,6 @@ class BMX extends Vehicle {
 	}
 
 	update() {
-		this.ticks += 1;
 		if (!this.crashed) {
 			this.updateSound();
 			this.control();
@@ -220,10 +218,6 @@ class BMX extends Vehicle {
 			}
 		}
 		this.updateCameraFocalPoint();
-
-		if (this.ticks < 10) {
-			console.log(this.ticks, this.masses[0].velocity.y);
-		}
 	}
 
 	updateSound() {

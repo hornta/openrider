@@ -1,30 +1,21 @@
-import Vector2 from "./math/vector2";
+import Vector2 from "../math/vector2";
 
-function PhysicsLine(value, data, options, name) {
-	const u = new Vector2(value, data);
-	const t = new Vector2(options, name);
-	const b = t.subtract(u);
-	this.p1 = u;
-	this.p2 = t;
-	this.pp = b;
-	this.len = b.length();
-	this.sectors = [];
-	this.collided = false;
-	this.remove = false;
-	this.highlight = false;
-	this.recorded = false;
-}
+class PhysicsLine {
+	constructor(value, data, options, name) {
+		const u = new Vector2(value, data);
+		const t = new Vector2(options, name);
+		const b = t.subtract(u);
+		this.p1 = u;
+		this.p2 = t;
+		this.pp = b;
+		this.len = b.length();
+		this.sectors = [];
+		this.collided = false;
+		this.remove = false;
+		this.highlight = false;
+		this.recorded = false;
+	}
 
-PhysicsLine.prototype = {
-	sectors: null,
-	p1: null,
-	p2: null,
-	pp: null,
-	len: 0,
-	collided: false,
-	remove: false,
-	highlight: false,
-	recorded: false,
 	getCode(e) {
 		this.recorded = true;
 		const p = this.p2;
@@ -34,17 +25,20 @@ PhysicsLine.prototype = {
 			msg += x.getCode(e);
 		}
 		return msg;
-	},
+	}
+
 	checkForConnectedLine(c, e) {
 		const h = c.settings.physicsSectorSize;
 		const HuffTab = c.sectors.physicsSectors;
 		const i = Math.floor(e.x / h);
 		const j = Math.floor(e.y / h);
 		return HuffTab[i][j].searchForLine("physicsLines", e);
-	},
+	}
+
 	addSectorReference(t) {
 		this.sectors.push(t);
-	},
+	}
+
 	removeAllReferences() {
 		this.remove = true;
 		const objects = this.sectors;
@@ -55,7 +49,8 @@ PhysicsLine.prototype = {
 			objects[i].dirty = true;
 		}
 		this.sectors = [];
-	},
+	}
+
 	erase(s, start) {
 		let instance = false;
 		if (!this.remove) {
@@ -91,12 +86,14 @@ PhysicsLine.prototype = {
 			}
 		}
 		return instance;
-	},
+	}
+
 	intersects(height, top, width, y, left) {
 		const lightI = height - width;
 		const lightJ = top - y;
 		return left * left >= lightI * lightI + lightJ * lightJ;
-	},
+	}
+
 	collide(obj) {
 		if (!this.collided) {
 			this.collided = true;
@@ -149,7 +146,7 @@ PhysicsLine.prototype = {
 				}
 			}
 		}
-	},
-};
+	}
+}
 
 export default PhysicsLine;

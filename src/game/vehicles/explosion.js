@@ -1,5 +1,5 @@
 import Debris from "./debris";
-import Vector2 from "./math/vector2";
+import Vector2 from "../math/vector2";
 
 class Explosion {
 	constructor(options, data) {

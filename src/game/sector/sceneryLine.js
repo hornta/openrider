@@ -1,4 +1,4 @@
-import Vector2 from "./math/vector2";
+import Vector2 from "../math/vector2";
 
 class SceneryLine {
 	constructor(x1, y1, x2, y2) {

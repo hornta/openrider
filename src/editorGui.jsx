@@ -1,8 +1,11 @@
 import "tippy.js/dist/tippy.css";
+import Dialog from "./dialog";
 import PropTypes from "prop-types";
 import React from "react";
 import Tippy from "@tippyjs/react";
-import Dialog from "./dialog";
+import { useDispatch, useSelector } from "react-redux";
+import { changePrimaryEditorTool, changeSecondaryEditorTool } from "./actions";
+import { selectHasSecondaryToolsMenu } from "./selectors";
 
 const EditorGui = ({
 	onClear,
@@ -11,9 +14,16 @@ const EditorGui = ({
 	onResetZoom,
 	onToggleFullscreen,
 }) => {
+	const dispatch = useDispatch();
+	const tools = useSelector((state) => state.editor.tools);
+	const hasSubMenu = useSelector(selectHasSecondaryToolsMenu);
 	return (
 		<>
-			<div className="flex h-12 absolute ml-12 left-0 right-0">
+			<div
+				className={`flex h-12 absolute left-0 right-0 ${
+					hasSubMenu ? "ml-24" : "ml-12"
+				}`}
+			>
 				<button
 					className="focus:outline-none h-full px-3 flex items-center space-x-1 cursor-pointer hover:bg-green-200"
 					title="Clear track"
@@ -22,7 +32,6 @@ const EditorGui = ({
 					<div className="icon icon-32x32 icon-clear"></div>
 					<div className="hidden lg:block">Clear</div>
 				</button>
-
 				<button
 					className="focus:outline-none h-full px-2 flex items-center space-x-1 cursor-pointer hover:bg-green-200"
 					title="Import track"
@@ -30,7 +39,6 @@ const EditorGui = ({
 					<div className="icon icon-32x32 icon-import"></div>
 					<div className="hidden lg:block">Import</div>
 				</button>
-
 				<button
 					className="focus:outline-none h-full px-2 flex items-center space-x-1 cursor-pointer hover:bg-green-200"
 					title="Export track"
@@ -38,7 +46,6 @@ const EditorGui = ({
 					<div className="icon icon-32x32 icon-export"></div>
 					<div className="hidden lg:block">Export</div>
 				</button>
-
 				<button
 					className="focus:outline-none h-full px-2 flex items-center space-x-1 cursor-pointer hover:bg-green-200"
 					title="Upload track"
@@ -46,7 +53,6 @@ const EditorGui = ({
 					<div className="icon icon-32x32 icon-upload"></div>
 					<div className="hidden lg:block">Upload</div>
 				</button>
-
 				<button
 					className="focus:outline-none h-full px-2 flex items-center space-x-1 cursor-pointer hover:bg-green-200"
 					title="Hotkeys"
@@ -54,7 +60,6 @@ const EditorGui = ({
 					<div className="icon icon-32x32 icon-hotkeys"></div>
 					<div className="hidden lg:block">Hotkeys</div>
 				</button>
-
 				<button
 					className="focus:outline-none h-full px-2 flex items-center space-x-1 cursor-pointer hover:bg-green-200"
 					title="Controls"
@@ -62,7 +67,6 @@ const EditorGui = ({
 					<div className="icon icon-32x32 icon-controls"></div>
 					<div className="hidden lg:block">Controls</div>
 				</button>
-
 				<div className="focus:outline-none flex flex-grow justify-end">
 					<button
 						onClick={onZoomOut}
@@ -92,28 +96,64 @@ const EditorGui = ({
 				</div>
 			</div>
 			<div className="flex flex-col bg-green-100 w-12 absolute h-full justify-center">
-				<button className="focus:outline-none sideButton sideButton-top sideButton_straightLineTool">
-					<div className="icon icon-44x44 icon-line"></div>
-				</button>
-				<button className="focus:outline-none sideButton sideButton_curvedLineTool">
-					<div className="icon icon-44x44 icon-curve"></div>
-				</button>
-				<button className="focus:outline-none sideButton sideButton_brushTool">
-					<div className="icon icon-44x44 icon-brush"></div>
-				</button>
-				<button className="focus:outline-none sideButton sideButton_eraserTool">
-					<div className="icon icon-44x44 icon-eraser"></div>
-				</button>
-				<button className="focus:outline-none sideButton sideButton_powerupTool active">
-					<div className="icon icon-44x44 icon-powerups"></div>
-				</button>
-				<button className="focus:outline-none sideButton sideButton_powerupTool">
-					<div className="icon icon-44x44 icon-vehicle-swap"></div>
-				</button>
-				<button className="focus:outline-none sideButton sideButton-bottom sideButton_cameraTool">
-					<div className="icon icon-44x44 icon-camera"></div>
-				</button>
+				{tools.map(({ icon, name, description, selected }) => {
+					return (
+						<Tippy key={name} content={description} placement="right">
+							<button
+								className={`flex justify-center items-center focus:outline-none ${
+									selected ? "bg-green-500" : "hover:bg-green-300"
+								}`}
+								onClick={() => dispatch(changePrimaryEditorTool(name))}
+							>
+								<div className={`icon icon-44x44 ${icon}`}></div>
+							</button>
+						</Tippy>
+					);
+				})}
 			</div>
+			{tools.map((tool) => {
+				if (tool.selected && tool.items.length > 0) {
+					return (
+						<div
+							key={tool.name}
+							className="flex flex-col bg-green-100 w-12 absolute h-full justify-center ml-12"
+						>
+							{tool.items.map(
+								({ icon, name, description, selected, selectedIcon }) => {
+									return (
+										<Tippy key={name} content={description} placement="right">
+											<button
+												className={`flex justify-center items-center justify-center items-center focus:outline-none ${
+													selected ? "bg-green-500" : "hover:bg-green-300"
+												}`}
+												onClick={() =>
+													dispatch(
+														changeSecondaryEditorTool({
+															primaryTool: tool.name,
+															tool: name,
+														})
+													)
+												}
+											>
+												<div
+													className={`icon icon-44x44 ${
+														selectedIcon
+															? selected
+																? selectedIcon
+																: icon
+															: icon
+													}`}
+												></div>
+											</button>
+										</Tippy>
+									);
+								}
+							)}
+						</div>
+					);
+				}
+				return null;
+			})}
 		</>
 	);
 };

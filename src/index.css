@@ -19,8 +19,12 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.app {
+.relative .app {
 	height: calc(100vh - 3rem);
+}
+
+.fixed .app {
+	height: 100vh;
 }
 
 .icon {
@@ -80,7 +84,7 @@ body {
 .icon-helicopter {background-position: -88px -44px}
 .icon-brush {background-position: -88px -88px}
 .icon-camera {background-position: -132px 0}
-.icon-curve {width: 44px;height: 44px;background-position: -132px -44px}
+.icon-curve {background-position: -132px -44px}
 .icon-eraser {background-position: -132px -88px}
 .icon-line {background-position: -176px 0}
 .icon-physics {background-position: -176px -44px}

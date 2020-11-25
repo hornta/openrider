@@ -1,4 +1,4 @@
-import Vector2 from "./math/vector2";
+import Vector2 from "../math/vector2";
 
 class Spring {
 	constructor(mass1, mass2, parent) {

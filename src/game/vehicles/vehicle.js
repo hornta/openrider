@@ -1,5 +1,5 @@
 import Explosion from "./explosion";
-import Vector2 from "./math/vector2";
+import Vector2 from "../math/vector2";
 
 class Vehicle {
 	constructor(player) {

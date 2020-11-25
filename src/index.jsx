@@ -1,8 +1,8 @@
 import "./index.css";
 import { BrowserRouter, Route } from "react-router-dom";
 import Editor from "./editor.jsx";
-import Game from "./game.jsx";
 import Header from "./header.jsx";
+import Main from "./main.jsx";
 import { Provider } from "react-redux";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -13,7 +13,7 @@ ReactDOM.render(
 		<Provider store={store}>
 			<BrowserRouter>
 				<Header />
-				<Route exact path="/" component={Game} />
+				<Route exact path="/" component={Main} />
 				<Route path="/editor" component={Editor} />
 			</BrowserRouter>
 		</Provider>

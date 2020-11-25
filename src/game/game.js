@@ -1,5 +1,5 @@
-import GameSettings, { use60 } from "./gameSettings";
 import Editor from "./scenes/editor";
+import GameSettings from "./gameSettings";
 import Main from "./scenes/main";
 import { Ticker } from "@pixi/ticker";
 
@@ -17,7 +17,6 @@ class Game {
 		this.stats = null;
 		this.width = 0;
 		this.height = 0;
-		this.fullscreen = false;
 		this.onStateChange = null;
 
 		this.assets = assets;
@@ -51,14 +50,10 @@ class Game {
 	setSize() {
 		let h = window.innerHeight;
 		let w = window.innerWidth;
-		if (!this.settings.fullscreen && !this.settings.isStandalone) {
+		if (!this.settings.isStandalone) {
 			const scrollRoot = this.gameContainer;
 			h = scrollRoot.clientHeight;
 			w = scrollRoot.clientWidth;
-		}
-		if (this.currentScene) {
-			const c = this.currentScene.getCanvasOffset();
-			h -= c.height;
 		}
 		const ratio = window.devicePixelRatio;
 		const width = w * ratio;
@@ -84,8 +79,8 @@ class Game {
 
 		this.updateObject = {};
 		this.updateTicker = new Ticker();
-		this.updateTicker.minFPS = use60 ? 60 : GameSettings.drawFPS;
-		this.updateTicker.maxFPS = use60 ? 60 : GameSettings.drawFPS;
+		this.updateTicker.minFPS = GameSettings.drawFPS;
+		this.updateTicker.maxFPS = GameSettings.drawFPS;
 		this.updateTicker.add(this.update.bind(this));
 		this.updateTicker.start();
 	}

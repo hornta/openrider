@@ -1,14 +1,14 @@
 import Vector2 from "../math/vector2";
 
 class Camera {
-	constructor(data) {
+	constructor(scene) {
 		this.focusIndex = 0;
 		this.playerFocus = null;
-		const { settings } = data;
+		const { settings } = scene;
 		this.settings = settings;
-		this.scene = data;
-		this.zoom = settings.cameraStartZoom * data.game.pixelRatio;
-		this.desiredZoom = settings.cameraStartZoom * data.game.pixelRatio;
+		this.scene = scene;
+		this.zoom = settings.cameraStartZoom * scene.game.pixelRatio;
+		this.desiredZoom = settings.cameraStartZoom * scene.game.pixelRatio;
 		this.zooming = false;
 		this.position = new Vector2(0, 0);
 		this.zoomPercentage = this.getZoomAsPercentage();

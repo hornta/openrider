@@ -1,6 +1,6 @@
 import Tool from "./tool";
 import Vector2 from "../math/vector2";
-import curvedDivision from "../beizerToPolyLine";
+import beizerToPolyLine from "../math/beizerToPolyLine";
 
 class CurveTool extends Tool {
 	constructor(value) {
@@ -104,7 +104,7 @@ class CurveTool extends Tool {
 
 	splitAndAddCurve() {
 		performance.now();
-		const result = curvedDivision(this.p1, this.midpoint, this.p2);
+		const result = beizerToPolyLine(this.p1, this.midpoint, this.p2);
 		const console = this.scene.track;
 		const l = result.length;
 		const serverIds = [];

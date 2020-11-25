@@ -1,3 +1,5 @@
+import store from "../../store";
+
 class SoundManager {
 	constructor(data) {
 		this.scene = data;
@@ -6,10 +8,10 @@ class SoundManager {
 	}
 
 	update() {
-		const s = this.scene;
-		const ss = s.settings;
+		const scene = this.scene;
+		const ss = scene.settings;
 		createjs.Sound.muted = Boolean(
-			s.state.paused || ss.soundsEnabled === false
+			store.getState().game.paused || ss.soundsEnabled === false
 		);
 	}
 

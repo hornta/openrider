@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Dialog from "./dialog.jsx";
 import EditorGui from "./editorGui.jsx";
-import GameManager from "./game/gameManager";
-import GameSettings from "./game/gameSettings";
-import { useDispatch, useSelector } from "react-redux";
+import Game from "./game.jsx";
 import { toggleFullscreen } from "./actions.js";
+import { useDispatch, useSelector } from "react-redux";
+import { selectHasSecondaryToolsMenu } from "./selectors.js";
 
 const dialogs = {
 	clear: {
@@ -17,24 +17,6 @@ const Editor = () => {
 	const gameManager = useRef(null);
 	const [dialog, setDialog] = useState();
 	const dispatch = useDispatch();
-
-	useEffect(() => {
-		gameManager.current = new GameManager();
-		gameManager.current.addListener("stateChange", (e) => {
-			console.log(e);
-		});
-		gameManager.current.init("Editor", GameSettings);
-		const onResize = () => {
-			gameManager.current.resize();
-		};
-		window.addEventListener("resize", onResize);
-
-		return () => {
-			gameManager.current.close();
-			gameManager.current = null;
-			window.removeEventListener("resize", onResize);
-		};
-	}, []);
 
 	const handleClear = () => {
 		setDialog(dialogs.clear);
@@ -68,23 +50,13 @@ const Editor = () => {
 		dispatch(toggleFullscreen());
 	};
 
-	const fullscreen = useSelector((state) => state.game.fullscreen);
-
-	const gameContainer = useRef();
-	useEffect(() => {
-		const classList = gameContainer.current.classList;
-		if (fullscreen) {
-			classList.add("fixed", "left-0", "right-0", "bottom-0", "top-0");
-			classList.remove("relative");
-		} else {
-			classList.remove("fixed", "left-0", "right-0", "bottom-0", "top-0");
-			classList.add("relative");
-		}
-		gameManager.current.resize();
-	}, [fullscreen]);
+	const hasSubMenu = useSelector(selectHasSecondaryToolsMenu);
 
 	return (
-		<div className="relative" ref={gameContainer}>
+		<Game
+			scene="Editor"
+			containerClassName={`pt-12 ${hasSubMenu ? "ml-24" : "ml-12"}`}
+		>
 			<EditorGui
 				onClear={handleClear}
 				onZoomIn={handleZoomIn}
@@ -95,8 +67,7 @@ const Editor = () => {
 			<Dialog title="Clear track" onAccept={() => {}} onRequestClose={() => {}}>
 				Are you sure you want to clear the track?
 			</Dialog>
-			<div className="app ml-12 pt-12 bg-white" id="canvas"></div>
-		</div>
+		</Game>
 	);
 };
 

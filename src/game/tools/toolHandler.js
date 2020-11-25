@@ -1,5 +1,5 @@
-import PhysicsLine from "../physicsLine";
-import SceneryLine from "../sceneryLine";
+import PhysicsLine from "../sector/physicsLine";
+import SceneryLine from "../sector/sceneryLine";
 import Target from "../sector/powerups/target";
 import Vector2 from "../math/vector2";
 

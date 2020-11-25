@@ -1,7 +1,7 @@
 import Canopy from "./canopy";
 import Mass from "./mass";
 import Spring from "./spring";
-import Vector2 from "./math/vector2";
+import Vector2 from "../math/vector2";
 import Vehicle from "./vehicle";
 
 class Balloon extends Vehicle {

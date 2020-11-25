@@ -1,7 +1,7 @@
 import Mass from "./mass";
 import Spring from "./spring";
-import Vector2 from "./math/vector2";
-import inventoryManager from "./inventoryManager";
+import Vector2 from "../math/vector2";
+import inventoryManager from "../inventoryManager";
 
 class Ragdoll {
 	constructor(val, data) {

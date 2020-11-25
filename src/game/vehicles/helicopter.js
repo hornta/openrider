@@ -1,9 +1,9 @@
 import Mass from "./mass";
 import Prop from "./prop";
 import Spring from "./spring";
-import Vector2 from "./math/vector2";
+import Vector2 from "../math/vector2";
 import Vehicle from "./vehicle";
-import inventoryManager from "./inventoryManager";
+import inventoryManager from "../inventoryManager";
 
 class Helicopter extends Vehicle {
 	constructor(a, e, i) {

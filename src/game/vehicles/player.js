@@ -1,11 +1,11 @@
-import BMX from "./vehicles/bmx";
+import BMX from "./bmx";
 import Balloon from "./balloon";
 import Explosion from "./explosion";
-import GamePad from "./gamePad";
+import GamePad from "../utils/gamePad";
 import Helicopter from "./helicopter";
-import MTB from "./vehicles/mtb";
+import MTB from "./mtb";
 import Truck from "./truck";
-import Vector2 from "./math/vector2";
+import Vector2 from "../math/vector2";
 
 let nextProfileItemId = 0;
 

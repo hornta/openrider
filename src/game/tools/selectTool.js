@@ -1,5 +1,5 @@
-import PhysicsLine from "../physicsLine";
-import SceneryLine from "../sceneryLine";
+import PhysicsLine from "../sector/physicsLine";
+import SceneryLine from "../sector/sceneryLine";
 import Tool from "./tool";
 import Vector2 from "../math/vector2";
 

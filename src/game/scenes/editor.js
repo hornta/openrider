@@ -5,7 +5,7 @@ import CurveTool from "../tools/curveTool";
 import EraserTool from "../tools/eraserTool";
 import LoadingCircle from "../utils/loadingCircle";
 import MessageManager from "../utils/messageManager";
-import MouseHandler from "../mouseHandler";
+import MouseHandler from "../utils/mouseHandler";
 import Pause from "../controls/pause";
 import Phone from "../controls/phone";
 import PlayerManager from "../vehicles/playerManager";
@@ -22,6 +22,7 @@ import Track from "../tracks/track";
 import VehiclePowerupTool from "../tools/vehiclePowerupTool";
 import VehicleTimer from "../utils/vehicleTimer";
 import inventoryManager from "../inventoryManager";
+import store from "../../store";
 
 class Editor {
 	constructor(options) {
@@ -72,25 +73,11 @@ class Editor {
 		);
 	}
 
-	getCanvasOffset() {
-		let myConfig = {
-			height: 90,
-			width: 0,
-		};
-		return (
-			this.settings.isStandalone &&
-				(myConfig = {
-					height: 202,
-					width: 0,
-				}),
-			myConfig
-		);
-	}
-
 	tapToStartOrRestart() {
+		const isPaused = store.getState().game.paused;
 		if (this.settings.mobile) {
 			const ctrl = this.playerManager.firstPlayer;
-			if (ctrl && ctrl._crashed && !this.state.paused) {
+			if (ctrl && ctrl._crashed && !isPaused) {
 				const player = ctrl.getGamepad();
 				player.setButtonDown("enter");
 			} else {
@@ -145,19 +132,18 @@ class Editor {
 
 	updateControls() {
 		if (this.controls) {
-			const visible = this.state.paused;
-			if (this.controls.isVisible() === visible) {
-				if (!visible) {
+			const isPaused = store.getState().game.paused;
+			if (this.controls.isVisible() === isPaused) {
+				if (!isPaused) {
 					this.state.playing = false;
 					this.camera.focusOnMainPlayer();
 					this.toolHandler.setTool("camera");
 				}
-				this.controls.setVisibility(!visible);
+				this.controls.setVisibility(!isPaused);
 				this.updateState();
 			}
 			this.controls.update();
 		}
-		this.pauseControls.update();
 	}
 
 	registerTools() {
@@ -199,7 +185,7 @@ class Editor {
 		if (this.restartTrack) {
 			this.restart();
 		}
-		if (!this.state.paused && this.state.playing) {
+		if (!store.getState().game.paused && this.state.playing) {
 			this.message.update();
 			this.updatePlayers();
 			this.score.update();
@@ -273,9 +259,6 @@ class Editor {
 			case "change_camera":
 				camera.focusOnNextPlayer();
 				break;
-			case "pause":
-				this.state.paused = !this.state.paused;
-				break;
 			case "settings":
 				this.command("dialog", "settings");
 				break;
@@ -291,22 +274,7 @@ class Editor {
 				camera.decreaseZoom();
 				this.stateChanged();
 				break;
-			case "fullscreen":
-				this.toggleFullscreen();
-				this.stateChanged();
-				break;
 			default:
-		}
-	}
-
-	toggleFullscreen() {
-		if (this.settings.embedded) {
-			const options = this.settings;
-			const facebookString = `${options.basePlatformUrl}/t/${options.track.url}`;
-			window.open(facebookString);
-		} else if (this.settings.fullscreenAvailable) {
-			this.state.fullscreen = !this.settings.fullscreen;
-			this.settings.fullscreen = this.state.fullscreen;
 		}
 	}
 
@@ -376,7 +344,7 @@ class Editor {
 
 	setStateDefaults() {
 		const state = {
-			paused: this.settings.mobile ? true : this.settings.startPaused,
+			paused: Boolean(this.settings.mobile),
 			loading: false,
 			playing: this.settings.waitForKeyPress,
 			tool: this.toolHandler.currentTool,
@@ -388,7 +356,6 @@ class Editor {
 			showDialog: false,
 			dialogOptions: false,
 			preloading: false,
-			fullscreen: this.settings.fullscreen,
 			inFocus: true,
 		};
 		if (this.controls) {
@@ -452,8 +419,8 @@ class Editor {
 
 	command() {
 		const m = Array.prototype.slice.call(arguments, 0);
-		const key = m.shift();
-		switch (key) {
+		const action = m.shift();
+		switch (action) {
 			case "change tool": {
 				const type = m[0];
 				this.toolHandler.setTool(type);
@@ -474,10 +441,6 @@ class Editor {
 				break;
 			case "redraw":
 				this.redraw();
-				break;
-			case "fullscreen":
-				this.state.fullscreen = !this.settings.fullscreen;
-				this.settings.fullscreen = this.state.fullscreen;
 				break;
 			case "grid":
 				this.toolHandler.toggleGrid();

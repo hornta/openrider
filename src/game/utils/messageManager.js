@@ -1,3 +1,5 @@
+import store from "../../store";
+
 class MessageManager {
 	constructor(data) {
 		this.scene = data;
@@ -11,17 +13,21 @@ class MessageManager {
 		const prevTimeout = this.timeout;
 		let color = this.color;
 		let centerLineColor = this.outline;
-		if (
-			(prevTimeout !== false && prevTimeout <= 0 && (text = false),
-			this.scene.state.paused &&
-				((color = false),
-				(centerLineColor = false),
-				(text = this.scene.settings.mobile
-					? "Paused"
-					: "Paused - Press Spacebar to Continue")),
-			color === false && (color = "#333333"),
-			text)
-		) {
+		if (prevTimeout !== false && prevTimeout <= 0) {
+			text = false;
+		}
+
+		if (store.getState().game.paused) {
+			color = false;
+			centerLineColor = false;
+			text = this.scene.settings.mobile
+				? "Paused"
+				: "Paused - Press Spacebar to Continue";
+		}
+		if (color === false) {
+			color = "#333333";
+		}
+		if (text) {
 			const game = this.scene.game;
 			const $scope = this.scene;
 			const size = game.pixelRatio;

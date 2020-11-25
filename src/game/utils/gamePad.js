@@ -2,7 +2,6 @@ import _ from "lodash";
 
 class GamePad {
 	constructor(data) {
-		this.paused = false;
 		this.keysToRecord = null;
 		this.keysToPlay = null;
 		this.recording = false;
@@ -30,14 +29,6 @@ class GamePad {
 		this.downButtons = {};
 		document.removeEventListener("keydown", this.boundButtonDownHandler);
 		document.removeEventListener("keyup", this.boundButtonUpHandler);
-	}
-
-	pause() {
-		this.paused = true;
-	}
-
-	unpause() {
-		this.paused = false;
 	}
 
 	recordKeys(canCreateDiscussions) {

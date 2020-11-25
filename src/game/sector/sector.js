@@ -1,69 +1,50 @@
-import PhysicsLine from "../physicsLine";
-import SceneryLine from "../sceneryLine";
+import PhysicsLine from "./physicsLine";
+import SceneryLine from "./sceneryLine";
 
-function Sector(x, y, options) {
-	this.track = options;
-	this.scene = options.scene;
-	this.settings = options.settings;
-	this.drawSectorSize = this.settings.drawSectorSize;
-	this.row = y;
-	this.column = x;
-	this.camera = options.camera;
-	this.zoom = options.camera.zoom;
-	this.canvasPool = options.canvasPool;
-	this.x = x * this.drawSectorSize;
-	this.y = y * this.drawSectorSize;
-	this.realX = this.x * this.zoom;
-	this.realY = this.y * this.zoom;
-	this.lineCount = 0;
-	this.powerupsCount = 0;
-	this.drawn = false;
-	this.dirty = false;
-	this.physicsLines = [];
-	this.sceneryLines = [];
-	this.hasPowerups = false;
-	this.powerups = {
-		all: [],
-		goals: [],
-		gravitys: [],
-		boosts: [],
-		slowmos: [],
-		checkpoints: [],
-		bombs: [],
-		antigravitys: [],
-		teleports: [],
-		helicopters: [],
-		trucks: [],
-		balloons: [],
-		blobs: [],
-	};
-}
+class Sector {
+	constructor(x, y, options) {
+		this.image = false;
+		this.canvas = null;
+		this.powerupCanvas = null;
+		this.powerupCanvasOffset = 30;
+		this.powerupCanvasDrawn = false;
+		this.track = options;
+		this.scene = options.scene;
+		this.settings = options.settings;
+		this.drawSectorSize = this.settings.drawSectorSize;
+		this.row = y;
+		this.column = x;
+		this.camera = options.camera;
+		this.zoom = options.camera.zoom;
+		this.canvasPool = options.canvasPool;
+		this.x = x * this.drawSectorSize;
+		this.y = y * this.drawSectorSize;
+		this.realX = this.x * this.zoom;
+		this.realY = this.y * this.zoom;
+		this.lineCount = 0;
+		this.powerupsCount = 0;
+		this.drawn = false;
+		this.dirty = false;
+		this.physicsLines = [];
+		this.sceneryLines = [];
+		this.hasPowerups = false;
+		this.powerups = {
+			all: [],
+			goals: [],
+			gravitys: [],
+			boosts: [],
+			slowmos: [],
+			checkpoints: [],
+			bombs: [],
+			antigravitys: [],
+			teleports: [],
+			helicopters: [],
+			trucks: [],
+			balloons: [],
+			blobs: [],
+		};
+	}
 
-Sector.prototype = {
-	image: false,
-	scene: null,
-	settings: null,
-	drawSectorSize: null,
-	row: 0,
-	column: 0,
-	camera: null,
-	zoom: 0,
-	x: 0,
-	y: 0,
-	realX: 0,
-	realY: 0,
-	lineCount: 0,
-	powerupsCount: 0,
-	drawn: false,
-	physicsLines: [],
-	sceneryLines: [],
-	powerups: [],
-	canvasPool: null,
-	canvas: null,
-	powerupCanvas: null,
-	powerupCanvasOffset: 30,
-	powerupCanvasDrawn: false,
-	dirty: false,
 	addLine(value) {
 		if (value instanceof PhysicsLine) {
 			this.physicsLines.push(value);
@@ -73,7 +54,8 @@ Sector.prototype = {
 		}
 		this.lineCount++;
 		this.drawn = false;
-	},
+	}
+
 	searchForLine(name, head) {
 		const result = this[name];
 		let longestMatchedRule = false;
@@ -90,7 +72,8 @@ Sector.prototype = {
 			}
 		}
 		return longestMatchedRule;
-	},
+	}
+
 	addPowerup(type) {
 		const $scope = this.powerups;
 		let _ref = null;
@@ -138,7 +121,8 @@ Sector.prototype = {
 		this.powerupsCount++;
 		this.hasPowerups = true;
 		this.powerupCanvasDrawn = false;
-	},
+	}
+
 	erase(id, index, prop) {
 		const thato = [];
 		if (prop.physics === true) {
@@ -176,7 +160,8 @@ Sector.prototype = {
 			}
 		}
 		return thato;
-	},
+	}
+
 	cleanSector() {
 		this.cleanSectorType("physicsLines");
 		this.cleanSectorType("sceneryLines");
@@ -191,7 +176,8 @@ Sector.prototype = {
 			this.hasPowerups = true;
 		}
 		this.dirty = false;
-	},
+	}
+
 	cleanSectorType(repeaterId, type) {
 		let data = this[repeaterId];
 		if (type) {
@@ -205,7 +191,8 @@ Sector.prototype = {
 				data.splice(i, 1);
 			}
 		}
-	},
+	}
+
 	draw() {
 		const camera = this.scene.camera;
 		const width = camera.zoom;
@@ -241,7 +228,8 @@ Sector.prototype = {
 		}
 		this.canvas = canvas;
 		this.drawn = true;
-	},
+	}
+
 	drawLine(line, text) {
 		let canvas = this.canvas;
 		const camera = this.scene.camera;
@@ -274,7 +262,8 @@ Sector.prototype = {
 		ctx.moveTo(value, h);
 		ctx.lineTo(dx, height);
 		ctx.stroke();
-	},
+	}
+
 	cachePowerupSector() {
 		this.powerupCanvasDrawn = true;
 		const allItems = this.powerups.all;
@@ -308,13 +297,15 @@ Sector.prototype = {
 				ctx.stroke();
 			}
 		}
-	},
+	}
+
 	update() {
 		const zoom = this.camera.zoom;
 		this.realX = Math.trunc(this.x * zoom);
 		this.realY = Math.trunc(this.y * zoom);
 		this.zoom = zoom;
-	},
+	}
+
 	resetCollided() {
 		const tempActivities = this.physicsLines;
 		const numActivities = tempActivities.length;
@@ -324,7 +315,8 @@ Sector.prototype = {
 				tempActivities[i].collided = false;
 			}
 		}
-	},
+	}
+
 	collide(a) {
 		const p = a.parent;
 		const checks = this.physicsLines;
@@ -353,7 +345,8 @@ Sector.prototype = {
 				}
 			}
 		}
-	},
+	}
+
 	drawLines(c, width, ctx) {
 		let value;
 		let step;
@@ -381,7 +374,8 @@ Sector.prototype = {
 				ctx.lineTo(size, d);
 			}
 		}
-	},
+	}
+
 	drawPowerups(obj, val, callback) {
 		const prev = obj.length;
 		const x = this.x;
@@ -398,14 +392,16 @@ Sector.prototype = {
 				self.draw(url, offset, val, callback);
 			}
 		}
-	},
+	}
+
 	drawBackground(ctx, color, canvas) {
 		const width = Math.trunc(this.drawSectorSize * color);
 		ctx.beginPath();
 		ctx.rect(0, 0, width, width);
 		ctx.fillStyle = canvas;
 		ctx.fill();
-	},
+	}
+
 	clear() {
 		this.drawn = false;
 		this.powerupCanvasDrawn = false;
@@ -417,7 +413,8 @@ Sector.prototype = {
 			this.canvasPool.releaseCanvas(this.powerupCanvas);
 			this.powerupCanvas = null;
 		}
-	},
+	}
+
 	close() {
 		this.track = null;
 		this.scene = null;
@@ -437,6 +434,7 @@ Sector.prototype = {
 		this.physicsLines = null;
 		this.sceneryLines = null;
 		this.canvas = null;
-	},
-};
+	}
+}
+
 export default Sector;

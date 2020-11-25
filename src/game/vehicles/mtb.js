@@ -1,9 +1,9 @@
-import Mass from "../mass";
-import Ragdoll from "../ragdoll";
-import Spring from "../spring";
+import Mass from "./mass";
+import Ragdoll from "./ragdoll";
+import Spring from "./spring";
 import Vector2 from "../math/vector2";
-import Vehicle from "../vehicle";
-import Wheel from "../wheel";
+import Vehicle from "./vehicle";
+import Wheel from "./wheel";
 import inventoryManager from "../inventoryManager";
 // eslint-disable-next-line sort-imports
 import "../cosmetics/heads/head";

@@ -1,39 +1,36 @@
 import Controls from "./controls";
 
-function Settings(obj) {
-	const settings = obj.settings;
-	if (settings.fullscreenAvailable === false) {
-		const horizonMargin = this.controlData["settings_btn-hover"];
+class Settings extends Controls {
+	constructor(scene) {
+		const controlData = {
+			"settings_btn-hover": {
+				top: 60,
+				right: 230,
+				key: "settings",
+			},
+		};
+		super(scene, "settings_controls", controlData, {
+			frames: [
+				[78, 2, 76, 76],
+				[2, 2, 76, 76],
+			],
+			animations: {
+				"settings_btn-hover": [0],
+				settings_btn: [1],
+			},
+		});
+
+		const horizonMargin = controlData["settings_btn-hover"];
 		horizonMargin.top = 60;
 		horizonMargin.right = 150;
 	}
-	this.initialize(obj);
+
+	addControls() {
+		const top = new createjs.Container();
+		top.addChild(this.createControl("settings_btn-hover"));
+		this.controlsContainer = top;
+		this.stage.addChild(top);
+	}
 }
-Settings.prototype = new Controls();
-const self = Settings.prototype;
-self.name = "settings_controls";
-self.controlsSpriteSheetData = {
-	frames: [
-		[78, 2, 76, 76],
-		[2, 2, 76, 76],
-	],
-	animations: {
-		"settings_btn-hover": [0],
-		settings_btn: [1],
-	},
-};
-self.controlData = {
-	"settings_btn-hover": {
-		top: 60,
-		right: 230,
-		key: "settings",
-	},
-};
-self.update = function () {};
-self.addControls = function () {
-	const top = new createjs.Container();
-	top.addChild(this.createControl("settings_btn-hover"));
-	this.controlsContainer = top;
-	this.stage.addChild(top);
-};
+
 export default Settings;

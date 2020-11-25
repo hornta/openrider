@@ -1,3 +1,4 @@
+import { toggleFullscreen, togglePaused } from "../../actions";
 import Camera from "../view/camera";
 import CameraTool from "../tools/cameraTool";
 import CampaignScore from "../utils/campaignScore";
@@ -5,7 +6,7 @@ import Fullscreen from "../controls/fullscreen";
 import GameSettings from "../gameSettings";
 import LoadingCircle from "../utils/loadingCircle";
 import MessageManager from "../utils/messageManager";
-import MouseHandler from "../mouseHandler";
+import MouseHandler from "../utils/mouseHandler";
 import Pause from "../controls/pause";
 import Phone from "../controls/phone";
 import PlayerManager from "../vehicles/playerManager";
@@ -21,6 +22,7 @@ import VehicleTimer from "../utils/vehicleTimer";
 import _ from "lodash";
 import formatNumber from "../utils/formatNumber";
 import inventoryManager from "../inventoryManager";
+import store from "../../store";
 
 class Main {
 	constructor(options) {
@@ -88,19 +90,11 @@ class Main {
 		);
 	}
 
-	// eslint-disable-next-line class-methods-use-this
-	getCanvasOffset() {
-		const finalSizeCropProperties = {
-			height: 0,
-			width: 0,
-		};
-		return finalSizeCropProperties;
-	}
-
 	tapToStartOrRestart() {
+		const isPaused = store.getState().game.paused;
 		if (this.settings.mobile) {
 			const ctrl = this.playerManager.firstPlayer;
-			if (ctrl && ctrl._crashed && !this.state.paused) {
+			if (ctrl && ctrl._crashed && !isPaused) {
 				const player = ctrl.getGamepad();
 				player.setButtonDown("enter");
 			} else {
@@ -125,9 +119,7 @@ class Main {
 			this.controls.hide();
 		}
 		this.pauseControls = new Pause(this);
-		if (this.settings.fullscreenAvailable) {
-			this.fullscreenControls = new Fullscreen(this);
-		}
+		this.fullscreenControls = new Fullscreen(this);
 		this.settingsControls = new Settings(this);
 	}
 
@@ -146,13 +138,10 @@ class Main {
 					camera.focusOnNextPlayer();
 					break;
 				case "pause":
-					this.state.paused = !this.state.paused;
+					store.dispatch(togglePaused());
 					break;
 				case "settings":
 					this.openDialog("settings");
-					break;
-				case "exit_fullscreen":
-					this.exitFullscreen();
 					break;
 				case "change_vehicle":
 					this.toggleVehicle();
@@ -164,28 +153,13 @@ class Main {
 					camera.decreaseZoom();
 					break;
 				case "fullscreen":
-					this.toggleFullscreen();
+					store.dispatch(toggleFullscreen());
+					break;
+				case "exit_fullscreen":
+					store.dispatch(toggleFullscreen());
 					break;
 				default:
 			}
-		}
-	}
-
-	exitFullscreen() {
-		if (this.settings.fullscreenAvailable) {
-			this.settings.fullscreen = false;
-			this.state.fullscreen = false;
-		}
-	}
-
-	toggleFullscreen() {
-		if (this.settings.embedded) {
-			const options = this.settings;
-			const facebookString = `${options.basePlatformUrl}/t/${options.track.url}`;
-			window.open(facebookString);
-		} else if (this.settings.fullscreenAvailable) {
-			this.settings.fullscreen = !this.settings.fullscreen;
-			this.state.fullscreen = !this.settings.fullscreen;
 		}
 	}
 
@@ -247,22 +221,18 @@ class Main {
 
 	updateControls() {
 		if (this.controls) {
-			const value = this.state.paused;
-			if (this.controls.isVisible() === value) {
-				if (!value) {
+			const isPaused = store.getState().game.paused;
+			if (this.controls.isVisible() === isPaused) {
+				if (!isPaused) {
 					this.state.playing = false;
 					this.camera.focusOnMainPlayer();
 					this.toolHandler.setTool("camera");
 				}
-				this.controls.setVisibility(!value);
-				this.controls.setZoomControlsVisibilty(value);
+				this.controls.setVisibility(!isPaused);
+				this.controls.setZoomControlsVisibilty(isPaused);
 				this.updateState();
 			}
 			this.controls.update();
-		}
-		this.pauseControls.update();
-		if (this.settings.fullscreenAvailable) {
-			this.fullscreenControls.update();
 		}
 	}
 
@@ -281,9 +251,10 @@ class Main {
 
 	update() {
 		if (this.ready) {
+			const isPaused = store.getState().game.paused;
 			this.updateToolHandler();
 			this.mouse.update();
-			if (!(this.state.paused || this.state.showDialog)) {
+			if (!(isPaused || this.state.showDialog)) {
 				this.updateGamepads();
 				this.checkGamepads();
 			}
@@ -294,7 +265,7 @@ class Main {
 			if (this.restartTrack) {
 				this.restart();
 			}
-			if (!this.state.paused && this.state.playing) {
+			if (!isPaused && this.state.playing) {
 				this.message.update();
 				this.updatePlayers();
 				if (this.playerManager.firstPlayer.complete) {
@@ -325,9 +296,6 @@ class Main {
 	isStateDirty() {
 		const evalContextV1 = this.oldState;
 		const state = this.state;
-		if (state.fullscreen != GameSettings.fullscreen) {
-			state.fullscreen = GameSettings.fullscreen;
-		}
 		let i = false;
 		let prop;
 		for (prop in state) {
@@ -355,7 +323,7 @@ class Main {
 		}
 		this.track.resetPowerups();
 		this.restartTrack = false;
-		this.state.paused = false;
+		store.dispatch(togglePaused(false));
 		this.state.playing = !this.settings.waitForKeyPress;
 		this.ticks = 0;
 		this.playerManager.reset();
@@ -449,9 +417,7 @@ class Main {
 
 	resize() {
 		this.pauseControls.resize();
-		if (this.settings.fullscreenAvailable) {
-			this.fullscreenControls.resize();
-		}
+		this.fullscreenControls.resize();
 		this.settingsControls.resize();
 		if (this.controls) {
 			this.controls.resize();
@@ -472,11 +438,9 @@ class Main {
 		const settings = {};
 		return (
 			(settings.playing = !this.settings.waitForKeyPress),
-			(settings.paused = false),
 			(settings.playerAlive = true),
 			(settings.inFocus = true),
 			(settings.preloading = true),
-			(settings.fullscreen = this.settings.fullscreen),
 			(settings.showControls = false),
 			(settings.showSkip = false),
 			(settings.showDialog = false),
@@ -575,15 +539,6 @@ class Main {
 			case "restart":
 				this.command("dialog", false);
 				this.restartTrack = true;
-				break;
-			case "resume":
-				this.state.paused = false;
-				break;
-			case "fullscreen":
-				this.toggleFullscreen();
-				break;
-			case "exit_fullscreen":
-				this.exitFullscreen();
 				break;
 			default:
 		}
