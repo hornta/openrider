@@ -97,3 +97,20 @@ body {
 .icon-slowmotion {background-position: -264px -88px}
 .icon-boost {background-position: -308px 0}
 .icon-truck {background-position: -308px -44px}
+
+@font-face {
+	font-family: helsinki;
+	src: url('./fonts/helsinki.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	-webkit-font-smoothing:antialiased;
+	font-smooth:never;
+	-webkit-font-smoothing:none
+}
+
+@font-face {
+	font-family: riffic;
+	src: url('./fonts/riffic-bold.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}

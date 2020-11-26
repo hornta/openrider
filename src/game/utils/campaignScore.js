@@ -11,21 +11,20 @@ class CampaignScore {
 		this.sprite_sheet = this.create_sprite_sheet();
 		const referenceWidth = this.scene.game.pixelRatio;
 		const block = new createjs.Container();
-		const i = "helsinki";
 		const options = this.settings.campaignData;
 		const data = options.goals;
 		let label = data.third;
 		const o = new createjs.Container();
 		const a = this.get_sprite("bronze_medal");
-		label = new createjs.Text(label, `30px ${i}`, "#000000");
+		label = new createjs.Text(label, `30px helsinki`, "#000000");
 		let msg = data.second;
 		const container = new createjs.Container();
 		const spec = this.get_sprite("silver_medal");
-		msg = new createjs.Text(msg, `30px ${i}`, "#000000");
+		msg = new createjs.Text(msg, `30px helsinki`, "#000000");
 		let item = data.first;
 		const p = new createjs.Container();
 		const d = this.get_sprite("gold_medal");
-		item = new createjs.Text(item, `30px ${i}`, "#000000");
+		item = new createjs.Text(item, `30px helsinki`, "#000000");
 		let scale = referenceWidth / 2.5;
 		if (this.settings.controls === "phone") {
 			scale = referenceWidth / 2.5;

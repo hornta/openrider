@@ -54,27 +54,25 @@ class RaceTimes {
 	addRace(options2, x) {
 		if (this.raceCount < this.maxRaces) {
 			const self = this.scene;
-			const sel = self.game;
-			const attrs = (sel.pixelRatio, options2.user);
+			const attrs = options2.user;
 			const z = options2.race;
 			const o = self.settings;
 			const fps = o.drawFPS;
 			const color = attrs.color;
-			const COIN = "helsinki";
 			const group = new createjs.Container();
-			const shape = (self.camera, new createjs.Shape());
+			const shape = new createjs.Shape();
 			const g = shape.graphics;
 			g.setStrokeStyle(4, "round");
 			g.beginFill(color).drawCircle(0, 0, 20);
 			shape.x = 25;
 			shape.y = 25;
 			const str = formatNumber((Number.parseInt(z.run_ticks, 10) / fps) * 1000);
-			const b = new createjs.Text(str, `30px ${COIN}`, "#000000");
+			const b = new createjs.Text(str, `30px helsinki`, "#000000");
 			b.x = 55;
 			b.y = 9;
 			const text = new createjs.Text(
 				attrs.d_name.charAt(0),
-				`25px ${COIN}`,
+				`25px helsinki`,
 				"#000000"
 			);
 			text.x = 17;

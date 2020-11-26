@@ -14,14 +14,13 @@ class VehicleTimer {
 	buildInterface() {
 		const scale = this.scene.game.pixelRatio;
 		const container = new createjs.Container();
-		const i = "helsinki";
 		const bar = new createjs.Shape();
 		bar.graphics
 			.setStrokeStyle(5, "round")
 			.beginStroke("rgba(242,144,66,1)")
 			.beginFill("rgba(242,144,66,0.5)")
 			.drawRoundRect(0, 0, 200, 60, 25);
-		const text = new createjs.Text("00:00", `35px ${i}`, "#000000");
+		const text = new createjs.Text("00:00", `35px helsinki`, "#000000");
 		text.textAlign = "center";
 		text.textBaseline = "middle";
 		text.x = 100;

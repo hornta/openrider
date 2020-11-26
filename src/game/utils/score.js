@@ -20,13 +20,12 @@ class Score {
 		const referenceWidth = scene.game.pixelRatio;
 		const o = scene.settings;
 		const target = new createjs.Container();
-		const n = "helsinki";
-		const text = new createjs.Text("00:00.00", `40px ${n}`, "#000000");
-		const obj = new createjs.Text("TIME:", `20px ${n}`, "#999999");
+		const text = new createjs.Text("00:00.00", `40px helsinki`, "#000000");
+		const obj = new createjs.Text("TIME:", `20px helsinki`, "#999999");
 		const a = this.get_timer_sprite();
-		const h = new createjs.Text(" -- : --.--", `35px ${n}`, "#999999");
-		const l = new createjs.Text("BEST:", `20px ${n}`, "#999999");
-		const shadow = new createjs.Text("0/0", `40px ${n}`, "#000000");
+		const h = new createjs.Text(" -- : --.--", `35px helsinki`, "#999999");
+		const l = new createjs.Text("BEST:", `20px helsinki`, "#999999");
+		const shadow = new createjs.Text("0/0", `40px helsinki`, "#000000");
 		const bitmapFontText = new createjs.Bitmap(
 			scene.assets.getResult("targets_icon")
 		);
