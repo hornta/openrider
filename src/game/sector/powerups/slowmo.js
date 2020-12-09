@@ -1,3 +1,4 @@
+import { SOUND_SLOWMO } from "../../utils/sounds";
 import Powerup from "../powerup";
 
 const options = {
@@ -60,7 +61,7 @@ class Slowmo extends Powerup {
 		if (!this.hit && sqrt8 < 26 && player.isAlive()) {
 			parent.slow = true;
 			if (player.isGhost() === false) {
-				this.scene.sound.play("slowmo_sound");
+				this.scene.soundManager.play(SOUND_SLOWMO);
 				this.scene.message.show("Slow Motion", 50, "#FFFFFF", "#000000");
 			}
 		}

@@ -194,17 +194,25 @@ class Sector {
 	}
 
 	draw() {
-		const camera = this.scene.camera;
-		const width = camera.zoom;
-		const newEdges = this.physicsLines;
-		const c = this.sceneryLines;
-		const height = Math.trunc(this.drawSectorSize * width);
-		const canvas = this.canvasPool.getCanvas();
-		canvas.width = height;
-		canvas.height = height;
+		const {
+			scene,
+			drawSectorSize,
+			sceneryLines,
+			physicsLines,
+			canvasPool,
+			settings,
+		} = this;
+		const camera = scene.camera;
+		const zoom = camera.zoom;
+		const newEdges = physicsLines;
+		const c = sceneryLines;
+		const size = Math.trunc(drawSectorSize * zoom);
+		const canvas = canvasPool.getCanvas();
+		canvas.width = size;
+		canvas.height = size;
 		const ctx = canvas.getContext("2d");
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		const lineWidth = 2 * width > 0.5 ? 2 * width : 0.5;
+		const lineWidth = 2 * zoom > 0.5 ? 2 * zoom : 0.5;
 		const sceneryLineColor = "#AAA";
 		const physicsLineColor = "#000";
 		ctx.save();
@@ -212,18 +220,18 @@ class Sector {
 		ctx.lineWidth = lineWidth;
 		ctx.lineCap = "round";
 		ctx.strokeStyle = sceneryLineColor;
-		this.drawLines(c, width, ctx);
+		this.drawLines(c, zoom, ctx);
 		ctx.stroke();
 		ctx.beginPath();
 		ctx.lineWidth = lineWidth;
 		ctx.lineCap = "round";
 		ctx.strokeStyle = physicsLineColor;
-		this.drawLines(newEdges, width, ctx);
+		this.drawLines(newEdges, zoom, ctx);
 		ctx.stroke();
-		if (this.settings.developerMode) {
+		if (settings.developerMode) {
 			ctx.beginPath();
 			ctx.strokeStyle = "blue";
-			ctx.rect(0, 0, height, height);
+			ctx.rect(0, 0, size, size);
 			ctx.stroke();
 		}
 		this.canvas = canvas;

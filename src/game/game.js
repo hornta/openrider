@@ -8,7 +8,7 @@ const scenes = {
 	Main,
 };
 class Game {
-	constructor(error, assets, options) {
+	constructor(error, assets, options, soundManager) {
 		this.gameContainer = null;
 		this.tickCount = 0;
 		this.currentScene = null;
@@ -21,6 +21,7 @@ class Game {
 
 		this.assets = assets;
 		this.settings = options;
+		this.soundManager = soundManager;
 		this.initCanvas();
 		this.initStage();
 		this.setSize();

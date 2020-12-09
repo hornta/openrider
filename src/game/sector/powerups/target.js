@@ -1,3 +1,4 @@
+import { SOUND_GOAL } from "../../utils/sounds";
 import Powerup from "../powerup";
 
 const options = {
@@ -127,16 +128,16 @@ class Target extends Powerup {
 		const y = target.position.y - this.y;
 		const sqrt8 = Math.sqrt(x ** 2 + y ** 2);
 		const targets = player._powerupsConsumed.targets;
-		const data = this.scene;
+		const scene = this.scene;
 		if (sqrt8 < 26 && player.isAlive() && !targets.includes(this.id)) {
 			targets.push(this.id);
 			const l = targets.length;
-			const r = data.track.targetCount;
+			const r = scene.track.targetCount;
 			if (player.isGhost() === false) {
 				this.hit = true;
 				this.sector.powerupCanvasDrawn = false;
-				data.sound.play("goal_sound");
-				data.message.show(`${l} of ${r} Stars`, 50, "#FAE335", "#666666");
+				scene.soundManager.play(SOUND_GOAL);
+				scene.message.show(`${l} of ${r} Stars`, 50, "#FAE335", "#666666");
 			}
 			if (l >= r) {
 				player.complete = true;

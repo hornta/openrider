@@ -1,5 +1,6 @@
 import Explosion from "./explosion";
 import Vector2 from "../math/vector2";
+import { SOUND_BOMB } from "../utils/sounds";
 
 class Vehicle {
 	constructor(player) {
@@ -21,7 +22,7 @@ class Vehicle {
 	}
 
 	explode() {
-		this.scene.sound.play("bomb_sound", 1);
+		this.scene.soundManager.play(SOUND_BOMB, 1);
 		this.explosion = new Explosion(this.masses[0].position, this.scene);
 		this.dead();
 	}

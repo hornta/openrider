@@ -1,3 +1,4 @@
+import { SOUND_TELEPORT } from "../../utils/sounds";
 import Powerup from "../powerup";
 
 const options = {
@@ -906,7 +907,7 @@ class Teleport extends Powerup {
 					this.otherPortal.hit = true;
 					this.sector.powerupCanvasDrawn = false;
 					this.otherPortal.sector.powerupCanvasDrawn = false;
-					this.scene.sound.play("teleport_sound", 0.3);
+					this.scene.soundManager.play(SOUND_TELEPORT, 0.3);
 					this.scene.message.show("Teleport Engaged", 50, "#8ac832");
 				}
 			}

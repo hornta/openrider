@@ -1,3 +1,4 @@
+import { SOUND_GRAVITY } from "../../utils/sounds";
 import Powerup from "../powerup";
 
 const options = {
@@ -109,7 +110,7 @@ class Gravity extends Powerup {
 			e.gravity.y = defaultYPosition;
 			if (target.isGhost() === false) {
 				this.scene.message.show("Gravity Changed", 50, "#1F80C3", "#FFFFFF");
-				this.scene.sound.play("gravity_down_sound");
+				this.scene.soundManager.play(SOUND_GRAVITY);
 			}
 		}
 	}

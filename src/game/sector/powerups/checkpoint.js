@@ -1,3 +1,4 @@
+import { SOUND_CHECKPOINT } from "../../utils/sounds";
 import Powerup from "../powerup";
 
 const options = {
@@ -131,7 +132,7 @@ class Checkpoint extends Powerup {
 				this.hit = true;
 				this.sector.powerupCanvasDrawn = false;
 				this.scene.message.show("Checkpoint Saved", 50, "#826cdc", "#FFFFFF");
-				this.scene.sound.play("checkpoint_sound");
+				this.scene.soundManager.play(SOUND_CHECKPOINT);
 			}
 		}
 	}

@@ -8,6 +8,13 @@ import inventoryManager from "../inventoryManager";
 // eslint-disable-next-line sort-imports
 import "../cosmetics/heads/head";
 import "../cosmetics/heads/forwardCap";
+import {
+	SOUND_BIKE_AIR,
+	SOUND_BIKE_FALL_1,
+	SOUND_BIKE_FALL_2,
+	SOUND_BIKE_FALL_3,
+	SOUND_BIKE_GROUND,
+} from "../utils/sounds";
 
 class MTB extends Vehicle {
 	constructor(player, position, facing, velocity) {
@@ -92,18 +99,18 @@ class MTB extends Vehicle {
 	}
 
 	playBailSound() {
-		const sound = this.scene.sound;
+		const sound = this.scene.soundManager;
 		const offset = Math.min(this.speed / 50, 1);
 		const i = Math.floor(3 * Math.random()) + 1;
 		switch (i) {
 			case 1:
-				sound.play("bike_fall_1", offset);
+				sound.play(SOUND_BIKE_FALL_1, offset);
 				break;
 			case 2:
-				sound.play("bike_fall_2", offset);
+				sound.play(SOUND_BIKE_FALL_2, offset);
 				break;
 			case 3:
-				sound.play("bike_fall_3", offset);
+				sound.play(SOUND_BIKE_FALL_3, offset);
 				break;
 			default:
 		}
@@ -217,21 +224,21 @@ class MTB extends Vehicle {
 		if (this.player.isInFocus()) {
 			this.updateSpeed();
 			const offset = Math.min(this.speed / 50, 1);
-			const sound = this.scene.sound;
+			const sound = this.scene.soundManager;
 			if (this.rearWheel.contact || this.frontWheel.contact) {
-				sound.play("bike_ground", offset);
-				sound.stop("bike_air");
+				sound.play(SOUND_BIKE_GROUND, offset);
+				sound.stop(SOUND_BIKE_AIR);
 			} else {
-				sound.play("bike_air", offset);
-				sound.stop("bike_ground");
+				sound.play(SOUND_BIKE_AIR, offset);
+				sound.stop(SOUND_BIKE_GROUND);
 			}
 		}
 	}
 
 	stopSounds() {
-		const sound = this.scene.sound;
-		sound.stop("bike_air");
-		sound.stop("bike_ground");
+		const sound = this.scene.soundManager;
+		sound.stop(SOUND_BIKE_AIR);
+		sound.stop(SOUND_BIKE_GROUND);
 	}
 
 	updateDrawHeadAngle() {

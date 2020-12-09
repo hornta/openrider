@@ -1,10 +1,18 @@
-import { toggleFullscreen, togglePaused } from "./actions";
+import {
+	blur,
+	focus,
+	toggleFullscreen,
+	toggleMuted,
+	togglePaused,
+} from "./actions";
 import { createReducer } from "@reduxjs/toolkit";
 
 const gameReducer = createReducer(
 	{
 		fullscreen: false,
 		paused: false,
+		muted: false,
+		focused: true,
 	},
 	(builder) => {
 		builder.addCase(toggleFullscreen, (state) => {
@@ -17,6 +25,18 @@ const gameReducer = createReducer(
 			} else {
 				state.paused = action.payload;
 			}
+		});
+
+		builder.addCase(toggleMuted, (state) => {
+			state.muted = !state.muted;
+		});
+
+		builder.addCase(focus, (state) => {
+			state.focused = true;
+		});
+
+		builder.addCase(blur, (state) => {
+			state.focused = false;
 		});
 	}
 );

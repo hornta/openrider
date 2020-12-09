@@ -4,6 +4,7 @@ import Spring from "./spring";
 import Vector2 from "../math/vector2";
 import Vehicle from "./vehicle";
 import inventoryManager from "../inventoryManager";
+import { SOUND_HELICOPTER } from "../utils/sounds";
 
 class Helicopter extends Vehicle {
 	constructor(a, e, i) {
@@ -180,15 +181,15 @@ class Helicopter extends Vehicle {
 
 	updateSound() {
 		if (this.player.isInFocus()) {
-			const sound = this.scene.sound;
-			const fn = Math.min(this.head.motor, 1);
-			sound.play("helicopter", fn);
+			const sound = this.scene.soundManager;
+			const volume = Math.min(this.head.motor, 1);
+			sound.play(SOUND_HELICOPTER, volume);
 		}
 	}
 
 	stopSounds() {
-		const sound = this.scene.sound;
-		sound.stop("helicopter");
+		const sound = this.scene.soundManager;
+		sound.stop(SOUND_HELICOPTER);
 	}
 
 	swap() {

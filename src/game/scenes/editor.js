@@ -50,10 +50,10 @@ class Editor {
 		this.assets = options.assets;
 		this.stage = options.stage;
 		this.settings = options.settings;
-		this.sound = new SoundManager(this);
-		this.mouse = new MouseHandler(this);
-		this.mouse.disableContextMenu();
-		this.message = new MessageManager(this);
+		this.soundManager = options.soundManager;
+		this.mouseHandler = new MouseHandler(this);
+		this.mouseHandler.disableContextMenu();
+		this.messageManager = new MessageManager(this);
 		this.camera = new Camera(this);
 		this.screen = new Screen(this);
 		this.createTrack();
@@ -173,7 +173,7 @@ class Editor {
 
 	update() {
 		this.updateToolHandler();
-		this.mouse.update();
+		this.mouseHandler.update();
 		if (!this.state.showDialog) {
 			this.updateGamepads();
 			this.checkGamepads();
@@ -181,12 +181,11 @@ class Editor {
 		this.screen.update();
 		this.updateControls();
 		this.camera.update();
-		this.sound.update();
 		if (this.restartTrack) {
 			this.restart();
 		}
 		if (!store.getState().game.paused && this.state.playing) {
-			this.message.update();
+			this.messageManager.update();
 			this.updatePlayers();
 			this.score.update();
 			if (this.playerManager.firstPlayer.complete) {
@@ -237,7 +236,7 @@ class Editor {
 		this.verified = !this.settings.requireTrackVerification;
 		this.track.dirty = false;
 		this.track.resetPowerups();
-		this.message.hide();
+		this.messageManager.hide();
 		this.restartTrack = false;
 		this.state.playing = false;
 		this.ticks = 0;
@@ -296,7 +295,7 @@ class Editor {
 		if (this.state.loading) {
 			this.loadingcircle.draw();
 		}
-		this.message.draw();
+		this.messageManager.draw();
 	}
 
 	getAvailableTrackCode() {
@@ -525,8 +524,8 @@ class Editor {
 
 	close() {
 		this.pauseControls = null;
-		this.mouse.close();
-		this.mouse = null;
+		this.mouseHandler.close();
+		this.mouseHandler = null;
 		this.camera.close();
 		this.camera = null;
 		this.screen.close();
@@ -535,8 +534,8 @@ class Editor {
 		this.vehicleTimer = null;
 		this.playerManager.close();
 		this.playerManager = null;
-		this.sound.close();
-		this.sound = null;
+		this.soundManager.close();
+		this.soundManager = null;
 		this.track.close();
 		this.toolHandler.close();
 		this.game = null;

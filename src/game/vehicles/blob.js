@@ -3,6 +3,7 @@ import Spring from "./spring";
 import Vector2 from "../math/vector2";
 import Vehicle from "./vehicle";
 import Wheel from "./wheel";
+import { SOUND_BLOB } from "../utils/sounds";
 
 class Blob extends Vehicle {
 	constructor(e, a) {
@@ -116,14 +117,14 @@ class Blob extends Vehicle {
 
 	updateSound() {
 		if (this.player.isInFocus()) {
-			const sound = this.scene.sound;
-			sound.play("blob_sound", 0.4);
+			const sound = this.scene.soundManager;
+			sound.play(SOUND_BLOB, 0.4);
 		}
 	}
 
 	stopSounds() {
-		const sound = this.scene.sound;
-		sound.stop("blob_sound");
+		const sound = this.scene.soundManager;
+		sound.stop(SOUND_BLOB);
 	}
 
 	control() {

@@ -1,3 +1,4 @@
+import { SOUND_BOOST } from "../../utils/sounds";
 import Powerup from "../powerup";
 
 const options = {
@@ -118,7 +119,7 @@ class Boost extends Powerup {
 				p.y += shiftY;
 			}
 			if (player.isGhost() === false) {
-				this.scene.sound.play("boost_sound");
+				this.scene.soundManager.play(SOUND_BOOST);
 				this.scene.message.show("Boost Engaged", 50, "#8ac832");
 			}
 		}

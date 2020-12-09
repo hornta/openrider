@@ -6,3 +6,6 @@ export const changePrimaryEditorTool = createAction("changePrimaryEditorTool");
 export const changeSecondaryEditorTool = createAction(
 	"changeSecondaryEditorTool"
 );
+export const toggleMuted = createAction("toggleMute");
+export const focus = createAction("focus");
+export const blur = createAction("blur");

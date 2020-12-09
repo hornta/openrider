@@ -11,6 +11,7 @@ import Pause from "../controls/pause";
 import Phone from "../controls/phone";
 import PlayerManager from "../vehicles/playerManager";
 import RaceTimes from "../utils/raceTimes";
+import { SOUND_VICTORY } from "../utils/sounds";
 import Score from "../utils/score";
 import Screen from "../view/screen";
 import Settings from "../controls/settings";
@@ -26,7 +27,6 @@ import store from "../../store";
 
 class Main {
 	constructor(options) {
-		this.analytics = null;
 		this.game = null;
 		this.assets = null;
 		this.stage = null;
@@ -59,7 +59,7 @@ class Main {
 		this.assets = options.assets;
 		this.stage = options.stage;
 		this.settings = options.settings;
-		this.sound = new SoundManager(this);
+		this.soundManager = options.soundManager;
 		this.mouse = new MouseHandler(this);
 		this.initalizeCamera();
 		this.screen = new Screen(this);
@@ -83,7 +83,6 @@ class Main {
 		this.registerTools();
 		this.setStartingVehicle();
 		this.restart();
-		this.initializeAnalytics();
 		this.stage.addEventListener(
 			"stagemousedown",
 			this.tapToStartOrRestart.bind(this)
@@ -101,12 +100,6 @@ class Main {
 				this.play();
 			}
 		}
-	}
-
-	initializeAnalytics() {
-		this.analytics = {
-			deaths: 0,
-		};
 	}
 
 	createControls() {
@@ -237,10 +230,10 @@ class Main {
 	}
 
 	registerTools() {
-		const self = new ToolHandler(this);
-		this.toolHandler = self;
-		self.registerTool(CameraTool);
-		self.setTool("Camera");
+		const toolHandler = new ToolHandler(this);
+		toolHandler.registerTool(CameraTool);
+		toolHandler.setTool("Camera");
+		this.toolHandler = toolHandler;
 	}
 
 	updateToolHandler() {
@@ -261,7 +254,6 @@ class Main {
 			this.screen.update();
 			this.updateControls();
 			this.camera.update();
-			this.sound.update();
 			if (this.restartTrack) {
 				this.restart();
 			}
@@ -385,9 +377,7 @@ class Main {
 		if (
 			this.settings.isCampaign &&
 			!this.settings.mobile &&
-			this.settings.campaignData.can_skip &&
-			this.analytics &&
-			this.analytics.deaths > 5
+			this.settings.campaignData.can_skip
 		) {
 			this.state.showSkip = true;
 		}
@@ -662,7 +652,7 @@ class Main {
 
 	trackComplete() {
 		if (this.verifyComplete()) {
-			this.sound.play("victory_sound");
+			this.soundManager.play(SOUND_VICTORY);
 			const $scope = this.playerManager;
 			$scope.mutePlayers();
 			const ctrl = $scope.firstPlayer;
@@ -700,7 +690,6 @@ class Main {
 			}
 			this.state.dialogOptions = {
 				postData: data,
-				analytics: this.analytics,
 			};
 			if (metadata.isCampaign) {
 				this.command("dialog", "campaign_complete");
@@ -729,8 +718,8 @@ class Main {
 		this.vehicleTimer = null;
 		this.playerManager.close();
 		this.playerManager = null;
-		this.sound.close();
-		this.sound = null;
+		this.soundManager.close();
+		this.soundManager = null;
 		this.track.close();
 		this.toolHandler.close();
 		this.game = null;

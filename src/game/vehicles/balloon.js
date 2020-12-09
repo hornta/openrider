@@ -3,6 +3,7 @@ import Mass from "./mass";
 import Spring from "./spring";
 import Vector2 from "../math/vector2";
 import Vehicle from "./vehicle";
+import { SOUND_BALLOON } from "../utils/sounds";
 
 class Balloon extends Vehicle {
 	constructor(e, a) {
@@ -82,19 +83,19 @@ class Balloon extends Vehicle {
 
 	updateSound() {
 		if (this.player.isInFocus()) {
-			const sound = this.scene.sound;
+			const sound = this.scene.soundManager;
 			const player = this.gamepad;
 			if (player.isButtonDown("up")) {
-				sound.play("balloon_on", 0.6);
+				sound.play(SOUND_BALLOON, 0.6);
 			} else if (!player.isButtonDown("up")) {
-				sound.stop("balloon_on");
+				sound.stop(SOUND_BALLOON);
 			}
 		}
 	}
 
 	stopSounds() {
-		const sound = this.scene.sound;
-		sound.stop("balloon_on");
+		const sound = this.scene.soundManager;
+		sound.stop(SOUND_BALLOON);
 	}
 
 	draw() {

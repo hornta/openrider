@@ -1,3 +1,4 @@
+import { SOUND_ANTIGRAVITY } from "../../utils/sounds";
 import Powerup from "../powerup";
 
 const options = {
@@ -319,7 +320,7 @@ class AntiGravity extends Powerup {
 		if (o < 1000 && target.isAlive()) {
 			if (target.isGhost() === false) {
 				if (e.gravity.x != 0 || e.gravity.y != 0) {
-					this.scene.sound.play("antigravity_sound", 0.3);
+					this.scene.soundManager.play(SOUND_ANTIGRAVITY, 0.3);
 				}
 				this.scene.message.show("Antigravity Engaged", 50, "#08faf3");
 			}

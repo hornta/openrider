@@ -1,7 +1,29 @@
+import {
+	SOUND_ANTIGRAVITY,
+	SOUND_BALLOON,
+	SOUND_BIKE_AIR,
+	SOUND_BIKE_FALL_1,
+	SOUND_BIKE_FALL_2,
+	SOUND_BIKE_FALL_3,
+	SOUND_BIKE_GROUND,
+	SOUND_BLOB,
+	SOUND_BOMB,
+	SOUND_BOOST,
+	SOUND_CHECKPOINT,
+	SOUND_GOAL,
+	SOUND_GRAVITY,
+	SOUND_HELICOPTER,
+	SOUND_SLOWMO,
+	SOUND_TELEPORT,
+	SOUND_VICTORY,
+} from "./utils/sounds";
 import $ from "jquery";
 import EventEmitter from "eventemitter3";
 import Game from "./game";
 import GameManifest from "./gameManifest";
+import SoundManager from "./utils/soundManager";
+
+const basePath = "https://www.freeriderhd.com";
 
 let loader = false;
 let res = false;
@@ -24,15 +46,20 @@ class GameManager extends EventEmitter {
 		this.pendingRaceCommands = [];
 		this.pendingCommands = [];
 		this.pendingAssetCount = 0;
+		res = new createjs.LoadQueue(false, "", "Anonymous");
+	}
+
+	loadAssets() {
 		loader = new createjs.LoadQueue(false, "", "Anonymous");
 		loader.setMaxConnections(10);
 		loader.maintainScriptOrder = true;
-		loader.installPlugin(createjs.Sound);
 		loader.loadManifest(GameManifest);
-		loader.addEventListener("fileload", this.handleFileLoad.bind(this));
-		loader.addEventListener("progress", this.handleProgress.bind(this));
-		loader.addEventListener("complete", this.handleComplete.bind(this));
-		res = new createjs.LoadQueue(false, "", "Anonymous");
+
+		return new Promise((resolve) => {
+			loader.addEventListener("complete", () => {
+				resolve();
+			});
+		});
 	}
 
 	clearRequests() {
@@ -46,26 +73,93 @@ class GameManager extends EventEmitter {
 		this.loadRaceRequest = null;
 	}
 
-	init(value, key) {
+	async init(value, key) {
 		this.pendingCommands = [];
 		this.clearRequests();
 		this.settings = key;
 		this.scene = value;
 		this.ready = true;
 		this.checkLoadingProgress();
+
+		this.soundManager = new SoundManager([
+			{
+				id: SOUND_ANTIGRAVITY,
+				url: "./sounds/antigravity.mp3",
+			},
+			{
+				id: SOUND_BALLOON,
+				url: "./sounds/balloon.mp3",
+			},
+			{
+				id: SOUND_BIKE_AIR,
+				url: "./sounds/bike_air.mp3",
+			},
+			{
+				id: SOUND_BIKE_FALL_1,
+				url: "./sounds/bike_fall_1.mp3",
+			},
+			{
+				id: SOUND_BIKE_FALL_2,
+				url: "./sounds/bike_fall_2.mp3",
+			},
+			{
+				id: SOUND_BIKE_FALL_3,
+				url: "./sounds/bike_fall_3.mp3",
+			},
+			{
+				id: SOUND_BIKE_GROUND,
+				url: "./sounds/bike_ground.mp3",
+			},
+			{
+				id: SOUND_BLOB,
+				url: "./sounds/blob.mp3",
+			},
+			{
+				id: SOUND_BOMB,
+				url: "./sounds/bomb.mp3",
+			},
+			{
+				id: SOUND_BOOST,
+				url: "./sounds/boost.mp3",
+			},
+			{
+				id: SOUND_CHECKPOINT,
+				url: "./sounds/checkpoint.mp3",
+			},
+			{
+				id: SOUND_GOAL,
+				url: "./sounds/goal.mp3",
+			},
+			{
+				id: SOUND_GRAVITY,
+				url: "./sounds/gravity.mp3",
+			},
+			{
+				id: SOUND_HELICOPTER,
+				url: "./sounds/helicopter.mp3",
+			},
+			{
+				id: SOUND_SLOWMO,
+				url: "./sounds/slowmo.mp3",
+			},
+			{
+				id: SOUND_TELEPORT,
+				url: "./sounds/teleport.mp3",
+			},
+			{
+				id: SOUND_VICTORY,
+				url: "./sounds/victory.mp3",
+			},
+		]);
+
+		await Promise.all([this.soundManager.load(), this.loadAssets()]);
+		this.loadGame();
 	}
 
 	checkLoadingProgress() {
 		if (this.baseAssetsLoaded) {
 			this.loadGame();
 		}
-	}
-
-	handleComplete() {
-		if (this.ready) {
-			this.loadGame();
-		}
-		this.baseAssetsLoaded = true;
 	}
 
 	handleProgress(event) {
@@ -125,7 +219,7 @@ class GameManager extends EventEmitter {
 	}
 
 	loadGame() {
-		this.game = new Game(this.scene, loader, this.settings);
+		this.game = new Game(this.scene, loader, this.settings, this.soundManager);
 		this.game.onStateChange = this.stateChange.bind(this);
 		this.executePendingCommands();
 		this.executePendingRaceCommands();
@@ -241,15 +335,23 @@ class GameManager extends EventEmitter {
 		this.loadTrackRequest = t;
 	}
 
-	svrTrackRequest(trackId) {
-		const data = {
-			id: trackId,
-			fields: ["id", "code", "vehicle", "vehicles"],
-		};
-		const s = `/track_api/load_track?${decodeURIComponent($.param(data))}`;
-		// eslint-disable-next-line no-undef
-		const t = Application.Helpers.AjaxHelper.get(s);
-		t.done(this.svrTrackRequestSuccess.bind(this));
+	async svrTrackRequest(trackId) {
+		const path = `/track_api/load_track?id=${trackId}&fields[]=id&fields[]=code&fields[]=vehicle&fields[]=vehicles`;
+
+		try {
+			const response = await fetch(basePath + path, {
+				headers: {
+					"Access-Control-Allow-Origin": "*",
+				},
+			});
+			const data = await response.json();
+			console.log(data);
+		} catch (error) {
+			console.log(error);
+		}
+		this.command("add track");
+		// const t = Application.Helpers.AjaxHelper.get(s);
+		// t.done(this.svrTrackRequestSuccess.bind(this));
 		this.loadTrackRequest = t;
 	}
 

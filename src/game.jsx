@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
+import { blur, focus, togglePaused } from "./actions";
 import { useDispatch, useSelector } from "react-redux";
 import GameManager from "./game/gameManager";
 import PropTypes from "prop-types";
 import gameSettings from "./game/gameSettings";
 import { selectHasSecondaryToolsMenu } from "./selectors";
-import { togglePaused } from "./actions";
 import useFullscreen from "./useFullscreen";
 
 const Game = ({ scene, children, containerClassName }) => {
@@ -54,6 +54,33 @@ const Game = ({ scene, children, containerClassName }) => {
 		}
 		gameManager.current.resize();
 	}, [fullscreen]);
+
+	const isFocused = useSelector((state) => state.game.focused);
+	useEffect(() => {
+		const handleDocumentClick = (e) => {
+			if (gameContainer.current.contains(e.target)) {
+				dispatch(focus());
+			} else {
+				dispatch(blur());
+			}
+		};
+		document.addEventListener("click", handleDocumentClick);
+		return () => {
+			document.removeEventListener("click", handleDocumentClick);
+		};
+	}, [dispatch]);
+
+	useEffect(() => {
+		const handleWindowBlur = () => {
+			dispatch(blur());
+		};
+
+		window.addEventListener("blur", handleWindowBlur);
+		return () => {
+			document.removeEventListener("blur", handleWindowBlur);
+		};
+	}, [dispatch]);
+
 	return (
 		<div className="relative" ref={gameContainer}>
 			{children}
@@ -63,6 +90,11 @@ const Game = ({ scene, children, containerClassName }) => {
 				}`}
 			>
 				<div className="h-full" id="canvas" />
+				{!isFocused && (
+					<div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-90">
+						Click to resume
+					</div>
+				)}
 			</div>
 		</div>
 	);

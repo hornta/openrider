@@ -4,6 +4,7 @@ import Vector2 from "../math/vector2";
 import Vehicle from "./vehicle";
 import Wheel from "./wheel";
 import inventoryManager from "../inventoryManager";
+import { SOUND_TRUCK } from "../utils/sounds";
 
 function drawTire(ctx, radius, y, offset, scale, position) {
 	ctx.beginPath();
@@ -156,15 +157,15 @@ class Truck extends Vehicle {
 
 	updateSound() {
 		if (this.player.isInFocus()) {
-			const { sound } = this.scene;
+			const { soundManager } = this.scene;
 			if (this.rearWheel.contact) {
 				const end = Math.min(this.rearWheel.motor, 1);
-				sound.play("truck_idle", end);
+				soundManager.play(SOUND_TRUCK, end);
 			} else if (this.frontWheel.contact) {
 				const end = Math.min(this.frontWheel.motor, 1);
-				sound.play("truck_idle", end);
+				soundManager.play(SOUND_TRUCK, end);
 			} else {
-				sound.stop("truck_idle");
+				soundManager.stop(SOUND_TRUCK);
 			}
 		}
 	}
@@ -175,7 +176,7 @@ class Truck extends Vehicle {
 
 	stopSounds() {
 		const { sound } = this.scene;
-		sound.stop("truck_idle");
+		sound.stop(SOUND_TRUCK);
 	}
 
 	updateDrawHeadAngle() {
